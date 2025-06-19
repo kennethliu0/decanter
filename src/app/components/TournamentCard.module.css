@@ -1,0 +1,36 @@
+.container {
+  min-width: 300px;
+  max-width: 400px;
+  border: var(--foreground) 1px solid;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em;
+  margin: 0.5em;
+  gap: 0.5em;
+}
+
+.title {
+  display: flex;
+  flex: 1 1 0;
+  gap: 0.5em;
+  justify-content: space-between;
+}
+
+.subtext {
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.applyButton {
+  background-color: var(--primary);
+  color: #ffffff;
+  border: none;
+  padding: 0.5em 1em;
+  align-self: flex-end;
+}

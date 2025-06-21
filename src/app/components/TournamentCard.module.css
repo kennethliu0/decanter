@@ -2,6 +2,7 @@
   min-width: 300px;
   max-width: 400px;
   border: var(--foreground) 1px solid;
+  border-radius: 1em;
   display: flex;
   flex-direction: column;
   padding: 0.5em;
@@ -9,7 +10,7 @@
   gap: 0.5em;
 }
 
-.title {
+.header {
   display: flex;
   flex: 1 1 0;
   gap: 0.5em;
@@ -33,4 +34,10 @@
   border: none;
   padding: 0.5em 1em;
   align-self: flex-end;
+  border-radius: 0.5em;
+}
+
+.tournamentIcon {
+  border-radius: 0.5em;
+  height: 2.5em;
 }

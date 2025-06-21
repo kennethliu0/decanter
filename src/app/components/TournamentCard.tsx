@@ -9,29 +9,35 @@ type Props = {
 const TournamentCard = (props: Props) => {
   return (
     <div className={styles.container}>
-      <div className={styles.title}>
-        <div style={{ display: "flex", gap: "6px" }}>
-          <img
-            src={props.tournament.imageUrl}
-            height="40px"
-          />
-          <div>
-            <h3>{props.tournament.name}</h3>
-            <p className={styles.subtext}>
-              {props.tournament.startDate.toLocaleDateString()} -{" "}
-              {props.tournament.endDate.toLocaleDateString()} |{" "}
-              {props.tournament.location}
-            </p>
-          </div>
+      <div className={styles.header}>
+        <img
+          src={props.tournament.imageUrl}
+          alt={props.tournament.name}
+          className={styles.tournamentIcon}
+          height="40px"
+        />
+        <div style={{ flexGrow: 2 }}>
+          <h3>{props.tournament.name}</h3>
+          <p className={styles.subtext}>
+            {props.tournament.startDate.toLocaleDateString()} -{" "}
+            {props.tournament.endDate.toLocaleDateString()} |{" "}
+            {props.tournament.location}{" "}
+            {props.tournament.divisionB ?
+              props.tournament.divisionC ?
+                "B/C"
+              : "B"
+            : "C"}
+          </p>
         </div>
-        <a href={props.tournament.websiteLink}>
-          <Globe height="40px" />
+        <a href={props.tournament.websiteUrl}>
+          <Globe width="1.5em" />
         </a>
       </div>
       <div className={styles.footer}>
         <p className={styles.subtext}>
-          Apply By {props.tournament.applicationDeadline.toLocaleDateString()}{" "}
-          Tests Due {props.tournament.testDeadline.toLocaleDateString()}
+          Apply By{" "}
+          {props.tournament.applicationDeadlineDate.toLocaleDateString()} Tests
+          Due {props.tournament.testDeadlineDate.toLocaleDateString()}
         </p>
         <button className={styles.applyButton}>Apply</button>
       </div>
@@ -43,13 +49,13 @@ type TournamentInfo = {
   name: string;
   startDate: Date;
   endDate: Date;
+  testDeadlineDate: Date;
+  applicationDeadlineDate: Date;
   location: string;
-  websiteLink: string;
+  websiteUrl: string;
   divisionB: boolean;
   divisionC: boolean;
   imageUrl: string;
-  testDeadline: Date;
-  applicationDeadline: Date;
 };
 
 export { TournamentCard };

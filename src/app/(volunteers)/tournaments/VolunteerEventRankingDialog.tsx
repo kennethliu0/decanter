@@ -15,6 +15,11 @@ const VolunteerEventRankingDialog = (props: Props) => {
     newSelections[rank] = event;
     setEventSelections(newSelections);
   };
+
+  const handleSubmitSelections = () => {
+    // to be updated
+  };
+
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -68,7 +73,7 @@ const VolunteerEventRankingDialog = (props: Props) => {
             </Button>
           </Dialog.Close>
           <Dialog.Close>
-            <Button>Submit</Button>
+            <Button onClick={handleSubmitSelections}>Submit</Button>
           </Dialog.Close>
         </Flex>
       </Dialog.Content>

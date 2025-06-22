@@ -4,13 +4,12 @@ import {
   Avatar,
   Badge,
   Box,
-  Button,
   Card,
   Flex,
   Heading,
   Text,
 } from "@radix-ui/themes";
-import VolunteerEventRankingDialog from "./VolunteerEventRankingDialog";
+import VolunteerEventRankingDialog from "../VolunteerEventRankingDialog";
 
 type Props = {
   tournament: TournamentInfo;
@@ -36,9 +35,8 @@ const TournamentCard = (props: Props) => {
               {props.tournament.startDate.toLocaleDateString()} -{" "}
               {props.tournament.endDate.toLocaleDateString()}{" "}
             </Text>
-            <Badge>
-              {props.tournament.location} {props.tournament.division}
-            </Badge>
+            <Badge>{props.tournament.location}</Badge>{" "}
+            <Badge>{props.tournament.division}</Badge>
           </Box>
           <a href={props.tournament.websiteUrl}>
             <Globe width="1.5em" />

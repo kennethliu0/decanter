@@ -2,7 +2,6 @@ import {
   TournamentCard,
   TournamentInfo,
 } from "@/app/(volunteers)/tournaments/search/TournamentCard";
-import VolunteerEventRanking from "./components/VolunteerEventRankingDialog";
 
 export default function Home() {
   let jso: TournamentInfo = {

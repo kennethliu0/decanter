@@ -1,6 +1,16 @@
 import React from "react";
 import { Globe } from "lucide-react";
-import styles from "./TournamentCard.module.css";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Text,
+} from "@radix-ui/themes";
+import VolunteerEventRankingDialog from "./VolunteerEventRankingDialog";
 
 type Props = {
   tournament: TournamentInfo;
@@ -8,40 +18,45 @@ type Props = {
 
 const TournamentCard = (props: Props) => {
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <img
-          src={props.tournament.imageUrl}
-          alt={props.tournament.name}
-          className={styles.tournamentIcon}
-          height="40px"
-        />
-        <div style={{ flexGrow: 2 }}>
-          <h3>{props.tournament.name}</h3>
-          <p className={styles.subtext}>
-            {props.tournament.startDate.toLocaleDateString()} -{" "}
-            {props.tournament.endDate.toLocaleDateString()} |{" "}
-            {props.tournament.location}{" "}
-            {props.tournament.divisionB ?
-              props.tournament.divisionC ?
-                "B/C"
-              : "B"
-            : "C"}
-          </p>
-        </div>
-        <a href={props.tournament.websiteUrl}>
-          <Globe width="1.5em" />
-        </a>
-      </div>
-      <div className={styles.footer}>
-        <p className={styles.subtext}>
-          Apply By{" "}
-          {props.tournament.applicationDeadlineDate.toLocaleDateString()} Tests
-          Due {props.tournament.testDeadlineDate.toLocaleDateString()}
-        </p>
-        <button className={styles.applyButton}>Apply</button>
-      </div>
-    </div>
+    <Box
+      maxWidth="400px"
+      m="1"
+    >
+      <Card>
+        <Flex gap="3">
+          <Avatar
+            src={props.tournament.imageUrl}
+            alt={props.tournament.name}
+            size="3"
+            fallback="?"
+          />
+          <Box flexGrow="2">
+            <Heading size="2">{props.tournament.name}</Heading>
+            <Text size="1">
+              {props.tournament.startDate.toLocaleDateString()} -{" "}
+              {props.tournament.endDate.toLocaleDateString()}{" "}
+            </Text>
+            <Badge>
+              {props.tournament.location} {props.tournament.division}
+            </Badge>
+          </Box>
+          <a href={props.tournament.websiteUrl}>
+            <Globe width="1.5em" />
+          </a>
+        </Flex>
+        <Flex
+          justify="between"
+          align="center"
+        >
+          <Text size="1">
+            Apply By{" "}
+            {props.tournament.applicationDeadlineDate.toLocaleDateString()}{" "}
+            Tests Due {props.tournament.testDeadlineDate.toLocaleDateString()}
+          </Text>
+          <VolunteerEventRankingDialog division={props.tournament.division} />
+        </Flex>
+      </Card>
+    </Box>
   );
 };
 
@@ -53,8 +68,7 @@ type TournamentInfo = {
   applicationDeadlineDate: Date;
   location: string;
   websiteUrl: string;
-  divisionB: boolean;
-  divisionC: boolean;
+  division: "B" | "C";
   imageUrl: string;
 };
 

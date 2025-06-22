@@ -1,7 +1,7 @@
 import {
   TournamentCard,
   TournamentInfo,
-} from "@/app/components/TournamentCard";
+} from "@/app/(volunteers)/tournaments/search/TournamentCard";
 import VolunteerEventRanking from "./components/VolunteerEventRankingDialog";
 
 export default function Home() {

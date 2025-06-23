@@ -1,7 +1,17 @@
 "use client";
-import { Button, Dialog, Flex } from "@radix-ui/themes";
 import React, { useState } from "react";
 import EventSelectionDropdown from "./EventSelectionDropdown";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   division: "B" | "C";
@@ -21,63 +31,55 @@ const VolunteerEventRankingDialog = (props: Props) => {
   };
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <Button size="1">Apply</Button>
-      </Dialog.Trigger>
-      <Dialog.Content maxWidth="450px">
-        <Dialog.Title>Confirm Event Preferences</Dialog.Title>
-        <Dialog.Description
-          size="2"
-          mb="4"
-        >
-          Update the events that you would like to volunteer for.
-        </Dialog.Description>
-        <Flex
-          maxWidth="400px"
-          direction="column"
-          gap="3"
-        >
-          <EventSelectionDropdown
-            division={props.division}
-            rank={0}
-            updateSelection={handleUpdateEventSelection}
-          />
-          <EventSelectionDropdown
-            division={props.division}
-            rank={1}
-            updateSelection={handleUpdateEventSelection}
-          />
-          <EventSelectionDropdown
-            division={props.division}
-            rank={2}
-            updateSelection={handleUpdateEventSelection}
-          />
-          <EventSelectionDropdown
-            division={props.division}
-            rank={3}
-            updateSelection={handleUpdateEventSelection}
-          />
-        </Flex>
-        <Flex
-          gap="3"
-          mt="4"
-          justify="end"
-        >
-          <Dialog.Close>
+    <Dialog>
+      <form>
+        <DialogTrigger asChild>
+          <Button size="sm">Apply</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Event Preferences</DialogTitle>
+            <DialogDescription>
+              Update the events that you would like to volunteer for.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-3 w-full">
+            <EventSelectionDropdown
+              division={props.division}
+              rank={0}
+              updateSelection={handleUpdateEventSelection}
+            />
+            <EventSelectionDropdown
+              division={props.division}
+              rank={1}
+              updateSelection={handleUpdateEventSelection}
+            />
+            <EventSelectionDropdown
+              division={props.division}
+              rank={2}
+              updateSelection={handleUpdateEventSelection}
+            />
+            <EventSelectionDropdown
+              division={props.division}
+              rank={3}
+              updateSelection={handleUpdateEventSelection}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
             <Button
-              variant="soft"
-              color="gray"
+              type="submit"
+              onClick={handleSubmitSelections}
             >
-              Cancel
+              Save changes
             </Button>
-          </Dialog.Close>
-          <Dialog.Close>
-            <Button onClick={handleSubmitSelections}>Submit</Button>
-          </Dialog.Close>
-        </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
   );
 };
 

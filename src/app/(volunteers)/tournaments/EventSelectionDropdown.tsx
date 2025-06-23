@@ -1,7 +1,15 @@
 "use client";
-import { Box, Button, DropdownMenu, Text } from "@radix-ui/themes";
 import React, { useState } from "react";
 import { events } from "@/app/data.js";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Props = {
   rank: number;
@@ -25,34 +33,25 @@ const EventSelectionDropdown = (props: Props) => {
   };
 
   return (
-    <Box>
-      <DropdownMenu.Root>
-        <DropdownMenu.Label>
-          {textRank}
-          {props.rank === 0 && <Text color="red">*</Text>}
-        </DropdownMenu.Label>
-        <DropdownMenu.Trigger>
-          <Button>
-            {selectedEvent ? selectedEvent : "None"}
-            <DropdownMenu.TriggerIcon />
-          </Button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item onClick={() => handleUpdateEventSelection("")}>
-            None
-          </DropdownMenu.Item>
-          <DropdownMenu.Separator />
+    <Select onValueChange={(value) => handleUpdateEventSelection(value)}>
+      <SelectTrigger>
+        <SelectValue placeholder={textRank} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value={" "}>None</SelectItem>
+          <SelectLabel>Division {props.division} events</SelectLabel>
           {events[props.division].map((event, index) => (
-            <DropdownMenu.Item
+            <SelectItem
+              value={event}
               key={index}
-              onClick={() => handleUpdateEventSelection(event)}
             >
               {event}
-            </DropdownMenu.Item>
+            </SelectItem>
           ))}
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    </Box>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 };
 

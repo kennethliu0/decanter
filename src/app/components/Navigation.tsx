@@ -1,19 +1,18 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
-  Flex,
-  Box,
-  Text,
-  Link,
-  Container,
-  IconButton,
-  Avatar,
-} from "@radix-ui/themes";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { FlaskConical, Menu } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
-type Props = {
-  children: React.ReactNode;
-};
+type Props = {};
 
 const Navigation = (props: Props) => {
   const links = [
@@ -23,78 +22,47 @@ const Navigation = (props: Props) => {
   ];
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <nav>
-      <Box width="100%">
-        <Flex
-          height="80px"
-          align="center"
-          p="5"
-          gap="5"
-          style={{
-            borderBottomWidth: 1,
-            borderBottomStyle: "solid",
-            borderBottomColor: "var(--gray-7)",
-          }}
-        >
-          <Flex
-            flexGrow="1"
-            align="center"
-            gap="5"
-          >
-            <FlaskConical
-              height="24px"
-              width="24px"
-            />
-            <Text size="5">Decanter</Text>
-            <Flex
-              display={{ initial: "none", sm: "inline-flex" }}
-              justify="start"
-              flexGrow="1"
-              gap="5"
+    <div className="flex w-full h-[80px] items-center p-5 gap-5 border-b border-zinc-500">
+      <div className="flex items-center gap-5 grow-1">
+        <FlaskConical size={24} />
+        <h1 className="text-3xl">Decanter</h1>
+        <div className="hidden sm:flex items-center grow-1 gap-5">
+          {links.map((link, index) => (
+            <Link
+              href={link.path}
+              key={index}
             >
-              {links.map((link, index) => (
-                <Link
-                  href={link.path}
-                  key={index}
-                >
-                  <Text>{link.label}</Text>
-                </Link>
-              ))}
-            </Flex>
-          </Flex>
-          <Container
-            display={{ sm: "none" }}
-            flexGrow="0"
+              <p>{link.label}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            className="sm:hidden grow-0"
+            size="icon"
+            variant="ghost"
           >
-            <IconButton
-              variant="ghost"
-              size="2"
-              onClick={() => setMenuOpen(!menuOpen)}
+            <Menu />
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="p-6">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Menu</SheetTitle>
+            <SheetDescription>Mobile navigation links</SheetDescription>
+          </SheetHeader>
+          {links.map((link, index) => (
+            <Link
+              href={link.path}
+              key={index}
             >
-              <Menu />
-            </IconButton>
-          </Container>
-        </Flex>
-        {menuOpen && (
-          <Flex
-            direction="column"
-            gap="2"
-            p="5"
-            style={{ zIndex: 1 }}
-          >
-            {links.map((link, index) => (
-              <Link
-                href={link.path}
-                key={index}
-              >
-                <Text>{link.label}</Text>
-              </Link>
-            ))}
-          </Flex>
-        )}
-      </Box>
-      {!menuOpen && props.children}
-    </nav>
+              <p>{link.label}</p>
+            </Link>
+          ))}
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 };
 

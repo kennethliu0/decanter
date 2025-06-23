@@ -1,15 +1,9 @@
 import React from "react";
 import { Globe } from "lucide-react";
-import {
-  Avatar,
-  Badge,
-  Box,
-  Card,
-  Flex,
-  Heading,
-  Text,
-} from "@radix-ui/themes";
 import VolunteerEventRankingDialog from "../VolunteerEventRankingDialog";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   tournament: TournamentInfo;
@@ -17,44 +11,41 @@ type Props = {
 
 const TournamentCard = (props: Props) => {
   return (
-    <Box
-      maxWidth="400px"
-      m="1"
-    >
-      <Card>
-        <Flex gap="3">
-          <Avatar
+    <div className="max-w-[400px] border p-4 rounded-lg bg-zinc-900">
+      <div className="flex gap-2">
+        <Avatar className="w-[40px] h-[40px] rounded-sm">
+          <AvatarImage
             src={props.tournament.imageUrl}
             alt={props.tournament.name}
-            size="3"
-            fallback="?"
           />
-          <Box flexGrow="2">
-            <Heading size="2">{props.tournament.name}</Heading>
-            <Text size="1">
+          <AvatarFallback>T</AvatarFallback>
+        </Avatar>
+        <div className="grow-1">
+          <p className="text-sm">
+            <strong>{props.tournament.name}</strong>
+          </p>
+          <div className="flex gap-1">
+            <p className="text-sm">
               {props.tournament.startDate.toLocaleDateString()} -{" "}
               {props.tournament.endDate.toLocaleDateString()}{" "}
-            </Text>
-            <Badge>{props.tournament.location}</Badge>{" "}
-            <Badge>{props.tournament.division}</Badge>
-          </Box>
-          <a href={props.tournament.websiteUrl}>
-            <Globe width="1.5em" />
-          </a>
-        </Flex>
-        <Flex
-          justify="between"
-          align="center"
-        >
-          <Text size="1">
-            Apply By{" "}
-            {props.tournament.applicationDeadlineDate.toLocaleDateString()}{" "}
-            Tests Due {props.tournament.testDeadlineDate.toLocaleDateString()}
-          </Text>
-          <VolunteerEventRankingDialog division={props.tournament.division} />
-        </Flex>
-      </Card>
-    </Box>
+            </p>
+            <Badge className="rounded-sm">{props.tournament.location}</Badge>{" "}
+            <Badge className="rounded-sm">{props.tournament.division}</Badge>
+          </div>
+        </div>
+        <a href={props.tournament.websiteUrl}>
+          <Globe width="1.5em" />
+        </a>
+      </div>
+      <div className="flex justify-between align-middle">
+        <p className="text-sm">
+          Apply By{" "}
+          {props.tournament.applicationDeadlineDate.toLocaleDateString()} Tests
+          Due {props.tournament.testDeadlineDate.toLocaleDateString()}
+        </p>
+        <VolunteerEventRankingDialog division={props.tournament.division} />
+      </div>
+    </div>
   );
 };
 

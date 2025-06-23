@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Theme, ThemePanel } from "@radix-ui/themes";
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
+import Navigation from "./components/Navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,7 @@ export default function RootLayout({
           appearance="dark"
           accentColor="sky"
         >
-          {children}
+          <Navigation>{children}</Navigation>
           <ThemePanel />
         </Theme>
       </body>

@@ -12,6 +12,7 @@ import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { usStates } from "../data";
 import { cn } from "@/lib/utils";
+import { DatePicker } from "@/components/ui/datepicker";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 
@@ -43,13 +44,33 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           />
           <AccordionOption
             id="division-c"
-            text="Division C (High School"
+            text="Division C (High School)"
             onCheckedChange={() => handleCheckedChange("division", "c")}
             defaultChecked={searchParams.getAll("division").includes("c")}
           />
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
+        <AccordionTrigger>Date</AccordionTrigger>
+        <AccordionContent className="flex flex-col gap-4 text-balance">
+          <DatePicker
+            label="Start Date After"
+            param="startDateAfter"
+            buttonId="start-date-after-button"
+          />
+          <DatePicker
+            label="Start Date Before"
+            param="startDatebefore"
+            buttonId="start-date-before-button"
+          />
+          <DatePicker
+            label="Application Deadline After"
+            param="applyDateAfter"
+            buttonId="apply-date-after-button"
+          />
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
         <AccordionTrigger>Location</AccordionTrigger>
         <AccordionContent className="columns-2">
           <AccordionOption
@@ -65,7 +86,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
               text={state}
               onCheckedChange={() => handleCheckedChange("location", state)}
               defaultChecked={searchParams.getAll("location").includes(state)}
-              className="mt-3"
+              className="mt-4"
             />
           ))}
         </AccordionContent>

@@ -8,7 +8,6 @@ export default function Home() {
     name: "JordanSO Invitational",
     startDate: new Date(2025, 2, 1),
     endDate: new Date(2025, 2, 8),
-    testDeadlineDate: new Date(2025, 1, 15),
     applicationDeadlineDate: new Date(2025, 0, 15),
     location: "Online",
     websiteUrl: "https://https://scilympiad.com/jordan-so",

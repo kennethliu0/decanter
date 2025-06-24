@@ -40,8 +40,7 @@ const TournamentCard = (props: Props) => {
       <div className="flex justify-between align-middle">
         <p className="text-sm">
           Apply By{" "}
-          {props.tournament.applicationDeadlineDate.toLocaleDateString()} Tests
-          Due {props.tournament.testDeadlineDate.toLocaleDateString()}
+          {props.tournament.applicationDeadlineDate.toLocaleDateString()}
         </p>
         <VolunteerEventRankingDialog division={props.tournament.division} />
       </div>
@@ -53,7 +52,6 @@ type TournamentInfo = {
   name: string;
   startDate: Date;
   endDate: Date;
-  testDeadlineDate: Date;
   applicationDeadlineDate: Date;
   location: string;
   websiteUrl: string;

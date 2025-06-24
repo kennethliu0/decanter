@@ -1,6 +1,7 @@
 import Pagination from "@/app/components/Pagination";
 import Search from "@/app/components/Search";
 import TournamentFilters from "@/app/components/TournamentFilters";
+import TournamentSortSelect from "@/app/components/TournamentSortSelect";
 // import Table from "@/app/ui/invoices/table";
 // import { CreateInvoice } from "@/app/ui/invoices/buttons";
 // import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
@@ -25,6 +26,12 @@ const Page = async (props: Props) => {
       />
       <div className="w-5xl">
         <Search placeholder="Search tournaments..." />
+        <div className="grid columns-3 py-4 items-center">
+          <div className="col-[2] justify-self-center">5 tournaments</div>
+          <div className="col-[3] justify-self-end">
+            <TournamentSortSelect />
+          </div>
+        </div>
         {/*  <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
       </Suspense> */}

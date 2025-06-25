@@ -1,22 +1,3 @@
-import {
-  TournamentCard,
-  TournamentInfo,
-} from "@/app/(volunteers)/tournaments/search/TournamentCard";
-
 export default function Home() {
-  let jso: TournamentInfo = {
-    name: "JordanSO Invitational",
-    startDate: new Date(2025, 2, 1),
-    endDate: new Date(2025, 2, 8),
-    applicationDeadlineDate: new Date(2025, 0, 15),
-    location: "Online",
-    websiteUrl: "https://https://scilympiad.com/jordan-so",
-    division: "B",
-    imageUrl: "https://www.duosmium.org/images/logos/jordan_invitational.png",
-  };
-  return (
-    <div>
-      <TournamentCard tournament={jso} />
-    </div>
-  );
+  return <div>Home</div>;
 }

@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { usStates } from "../data";
+import { usStates } from "@/app/data";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/datepicker";
 
@@ -43,7 +43,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           <AccordionOption
             id="division-b"
             text="Division B (Middle School)"
-            onCheckedChange={(checked) =>
+            onCheckedChange={(checked: boolean | "indeterminate") =>
               handleCheckedChange("division", "b", checked)
             }
             defaultChecked={searchParams.getAll("division").includes("b")}
@@ -51,7 +51,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           <AccordionOption
             id="division-c"
             text="Division C (High School)"
-            onCheckedChange={(checked) =>
+            onCheckedChange={(checked: boolean | "indeterminate") =>
               handleCheckedChange("division", "c", checked)
             }
             defaultChecked={searchParams.getAll("division").includes("c")}
@@ -63,17 +63,17 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
         <AccordionContent className="flex flex-col gap-4 text-balance">
           <DatePicker
             label="Start Date After"
-            param="startDateAfter"
+            param="startDateAfterISO"
             buttonId="start-date-after-button"
           />
           <DatePicker
             label="Start Date Before"
-            param="startDatebefore"
+            param="startDateBeforeISO"
             buttonId="start-date-before-button"
           />
           <DatePicker
             label="Application Deadline After"
-            param="applyDateAfter"
+            param="applyDateAfterISO"
             buttonId="apply-date-after-button"
           />
         </AccordionContent>
@@ -84,7 +84,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           <AccordionOption
             id="online"
             text="Online"
-            onCheckedChange={(checked) =>
+            onCheckedChange={(checked: boolean | "indeterminate") =>
               handleCheckedChange("location", "Online", checked)
             }
             defaultChecked={searchParams.getAll("location").includes("Online")}
@@ -94,7 +94,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
               key={index}
               id={state}
               text={state}
-              onCheckedChange={(checked) =>
+              onCheckedChange={(checked: boolean | "indeterminate") =>
                 handleCheckedChange("location", state, checked)
               }
               defaultChecked={searchParams.getAll("location").includes(state)}

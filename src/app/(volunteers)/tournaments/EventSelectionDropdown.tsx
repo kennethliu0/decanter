@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { events } from "@/app/data.js";
+import { events } from "@/app/data";
 import {
   Select,
   SelectContent,

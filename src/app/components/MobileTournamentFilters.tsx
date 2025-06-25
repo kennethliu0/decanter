@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -19,7 +21,7 @@ const MobileTournamentFilters = (props: Props) => {
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          className="sm:hidden"
+          className="md:hidden"
           variant="ghost"
         >
           <FilterIcon />
@@ -35,12 +37,20 @@ const MobileTournamentFilters = (props: Props) => {
             Set or clear filters while searching for tournaments
           </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="h-full">
-          <TournamentFilters
-            type="multiple"
-            className="w-full h-full px-4"
-          />
-        </ScrollArea>
+        <TournamentFilters
+          type="multiple"
+          className="w-full px-4 flex-1 overflow-y-auto "
+        />
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button
+              type="submit"
+              variant="outline"
+            >
+              Close
+            </Button>
+          </SheetClose>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

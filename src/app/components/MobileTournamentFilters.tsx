@@ -9,7 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { FilterIcon } from "lucide-react";
 import React from "react";
 import TournamentFilters from "./TournamentFilters";

@@ -1,6 +1,5 @@
 import React from "react";
 import { tournaments } from "../data";
-import TournamentCardSkeleton from "@/app/(volunteers)/tournaments/search/TournamentCardSkeleton";
 import { TournamentCard } from "../(volunteers)/tournaments/search/TournamentCard";
 
 type Props = {

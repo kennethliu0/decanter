@@ -23,7 +23,7 @@ const TournamentCard = (props: Props) => {
   };
 
   return (
-    <div className="min-w-[312px] max-w-[400px] border p-4 rounded-lg bg-zinc-900">
+    <div className="min-w-[312px] max-w-[413px] border p-4 rounded-lg bg-zinc-900">
       <div className="flex gap-2">
         <Avatar className="w-[60px] h-[60px] rounded-sm">
           <AvatarImage

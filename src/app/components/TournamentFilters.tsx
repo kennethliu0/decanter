@@ -20,12 +20,16 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const handleCheckedChange = (property: string, value: string) => {
+  const handleCheckedChange = (
+    property: string,
+    value: string,
+    checked: boolean | "indeterminate",
+  ) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", "1");
-    if (params.getAll(property)?.includes(value)) {
+    if (params.getAll(property)?.includes(value) && !checked) {
       params.delete(property, value);
-    } else {
+    } else if (checked && checked !== "indeterminate") {
       params.append(property, value);
     }
     replace(`${pathname}?${params.toString()}`);
@@ -39,13 +43,17 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           <AccordionOption
             id="division-b"
             text="Division B (Middle School)"
-            onCheckedChange={() => handleCheckedChange("division", "b")}
+            onCheckedChange={(checked) =>
+              handleCheckedChange("division", "b", checked)
+            }
             defaultChecked={searchParams.getAll("division").includes("b")}
           />
           <AccordionOption
             id="division-c"
             text="Division C (High School)"
-            onCheckedChange={() => handleCheckedChange("division", "c")}
+            onCheckedChange={(checked) =>
+              handleCheckedChange("division", "c", checked)
+            }
             defaultChecked={searchParams.getAll("division").includes("c")}
           />
         </AccordionContent>
@@ -76,7 +84,9 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           <AccordionOption
             id="online"
             text="Online"
-            onCheckedChange={() => handleCheckedChange("location", "Online")}
+            onCheckedChange={(checked) =>
+              handleCheckedChange("location", "Online", checked)
+            }
             defaultChecked={searchParams.getAll("location").includes("Online")}
           />
           {usStates.map((state, index) => (
@@ -84,7 +94,9 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
               key={index}
               id={state}
               text={state}
-              onCheckedChange={() => handleCheckedChange("location", state)}
+              onCheckedChange={(checked) =>
+                handleCheckedChange("location", state, checked)
+              }
               defaultChecked={searchParams.getAll("location").includes(state)}
               className="mt-4"
             />

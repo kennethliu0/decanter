@@ -72,7 +72,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
       </AccordionItem>
       <AccordionItem value="item-3">
         <AccordionTrigger>Location</AccordionTrigger>
-        <AccordionContent className="columns-2">
+        <AccordionContent className="columns-2 xs:columns-3 sm:columns-2">
           <AccordionOption
             id="online"
             text="Online"

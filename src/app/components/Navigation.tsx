@@ -18,7 +18,7 @@ const Navigation = (props: Props) => {
   const links = [
     { label: "My Tournaments", path: "/" },
     { label: "Tournament Search", path: "/tournaments/search" },
-    { label: "User Profile", path: "/" },
+    { label: "User Profile", path: "/profile" },
   ];
   const [menuOpen, setMenuOpen] = useState(false);
   return (

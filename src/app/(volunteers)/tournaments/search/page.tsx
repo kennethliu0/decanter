@@ -1,18 +1,8 @@
+import MobileTournamentFilters from "@/app/components/MobileTournamentFilters";
 import Pagination from "@/app/components/Pagination";
 import Search from "@/app/components/Search";
 import TournamentFilters from "@/app/components/TournamentFilters";
 import TournamentSortSelect from "@/app/components/TournamentSortSelect";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { FilterIcon } from "lucide-react";
 // import Table from "@/app/ui/invoices/table";
 // import { CreateInvoice } from "@/app/ui/invoices/buttons";
 // import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
@@ -39,33 +29,7 @@ const Page = async (props: Props) => {
       <div className="w-5xl flex flex-col">
         <div className="flex">
           {/* For mobile layouts*/}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                className="sm:hidden"
-                variant="ghost"
-              >
-                <FilterIcon />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-full"
-            >
-              <SheetHeader>
-                <SheetTitle>Tournament Filters</SheetTitle>
-                <SheetDescription>
-                  Set or clear filters while searching for tournaments
-                </SheetDescription>
-              </SheetHeader>
-              <ScrollArea className="h-full">
-                <TournamentFilters
-                  type="multiple"
-                  className="w-full h-full px-4"
-                />
-              </ScrollArea>
-            </SheetContent>
-          </Sheet>
+          <MobileTournamentFilters />
           <Search
             className="grow-1 m-auto"
             placeholder="Search tournaments..."

@@ -2,56 +2,97 @@
 import React, { useState } from "react";
 import { events } from "@/app/data";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import clsx from "clsx";
 
 type Props = {
   rank: number;
+  Label?: string;
   division: "B" | "C";
-  updateSelection: (event: string, rank: number) => void;
+  style?: "group" | "single";
+  updateSelection?: (event: string, rank: number) => void;
 };
 
 const EventSelectionDropdown = (props: Props) => {
-  const [selectedEvent, setSelectedEvent] = useState("");
+  const [value, setValue] = useState("");
+  const [open, setOpen] = useState(false);
 
-  let textRank =
-    props.rank === 0 ? "First Selection"
-    : props.rank === 1 ? "Second Selection"
-    : props.rank === 2 ? "Third Selection"
-    : props.rank === 3 ? "Fourth Selection"
+  let textRank = [
+    "First Selection",
+    "Second Selection",
+    "Third Selection",
+    "Fourth Selection",
+  ];
+
+  const borderRadius =
+    props.style === "group" ?
+      props.rank === 0 ? "rounded-b-none"
+      : props.rank === 3 ? "rounded-t-none"
+      : "rounded-none"
     : "";
 
-  const handleUpdateEventSelection = (event: string) => {
-    setSelectedEvent(event);
-    props.updateSelection(event, props.rank);
-  };
-
   return (
-    <Select onValueChange={(value) => handleUpdateEventSelection(value)}>
-      <SelectTrigger>
-        <SelectValue placeholder={textRank} />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectItem value={" "}>None</SelectItem>
-          <SelectLabel>Division {props.division} events</SelectLabel>
-          {events[props.division].map((event, index) => (
-            <SelectItem
-              value={event}
-              key={index}
-            >
-              {event}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={clsx("justify-between w-full", borderRadius)}
+        >
+          {value || `${textRank[props.rank]}...`}
+          <ChevronsUpDown className="opacity-50 z-0" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]">
+        <Command>
+          <CommandInput
+            placeholder={`${textRank[props.rank]}...`}
+            className="h-9"
+          />
+          <CommandList>
+            <CommandEmpty>No events found.</CommandEmpty>
+            <CommandGroup>
+              {events[props.division].map((event: string) => (
+                <CommandItem
+                  key={event}
+                  value={event}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue);
+                    setOpen(false);
+                  }}
+                >
+                  {event}
+                  <Check
+                    className={cn(
+                      "ml-auto",
+                      value === event ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };
 

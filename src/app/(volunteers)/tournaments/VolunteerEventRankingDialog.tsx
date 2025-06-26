@@ -36,7 +36,7 @@ const VolunteerEventRankingDialog = (props: Props) => {
         <DialogTrigger asChild>
           <Button size="sm">Apply</Button>
         </DialogTrigger>
-        <DialogContent className="max-w-[450px]">
+        <DialogContent className="w-[350px]">
           <DialogHeader>
             <DialogTitle>Confirm Event Preferences</DialogTitle>
             <DialogDescription>
@@ -44,7 +44,7 @@ const VolunteerEventRankingDialog = (props: Props) => {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-3 w-full">
+          <div className="space-y-3">
             <EventSelectionDropdown
               division={props.division}
               rank={0}
@@ -68,7 +68,12 @@ const VolunteerEventRankingDialog = (props: Props) => {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button
+                variant="outline"
+                type="reset"
+              >
+                Cancel
+              </Button>
             </DialogClose>
             <Button
               type="submit"

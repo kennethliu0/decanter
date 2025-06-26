@@ -178,10 +178,25 @@ const tournaments: Array<TournamentInfo> = [
 let jay: UserInfo = {
   name: "Jay Sahni",
   email: "jaysahni70@gmail.com",
-  generalExperience:
-    "This is a ton of text that I am testing with no knowledge of if it will work or not. The first law of aviation says that bees should not be able to fly. However, they do.",
-  volunteerExperience: "CurdSO Warrior",
+  education: "Jordan HS '26",
+  bio: "This is a ton of text that I am testing with no knowledge of if it will work or not.\nThe first law of aviation says that bees should not be able to fly. However, they do.",
+  experience:
+    "CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior ",
   imageUrl:
     "https://static.wixstatic.com/media/dd6156_5ed04aa610cb47fcbe0f1f8deada2de9~mv2.png/v1/fill/w_299,h_300,al_c,lg_1,q_85,enc_auto/dd6156_5ed04aa610cb47fcbe0f1f8deada2de9~mv2.png",
+  events: {
+    B: [
+      "Electric Wright Stuff",
+      "Rocks and Minerals",
+      "Potions and Poisons",
+      "Can't Judge a Powder",
+    ],
+    C: [
+      "Detector Building",
+      "Chemistry Lab",
+      "Rocks and Minerals",
+      "Robot Tour",
+    ],
+  },
 };
 export { events, usStates, tournaments, jay };

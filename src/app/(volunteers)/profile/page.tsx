@@ -1,10 +1,10 @@
-import { ProfileCard } from "./ProfileCard";
 import { jay } from "@/app/data";
+import { ProfileCard } from "./ProfileCard";
 
 export default function Home() {
   return (
-    <div className="h-full">
-      <ProfileCard user={jay}></ProfileCard>
+    <div>
+      <ProfileCard user={jay} />
     </div>
   );
 }

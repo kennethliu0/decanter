@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -53,12 +54,17 @@ const Navigation = (props: Props) => {
             <SheetDescription>Mobile navigation links</SheetDescription>
           </SheetHeader>
           {links.map((link, index) => (
-            <Link
-              href={link.path}
+            <SheetClose
+              asChild
               key={index}
             >
-              <p>{link.label}</p>
-            </Link>
+              <Link
+                href={link.path}
+                key={index}
+              >
+                <p>{link.label}</p>
+              </Link>
+            </SheetClose>
           ))}
         </SheetContent>
       </Sheet>

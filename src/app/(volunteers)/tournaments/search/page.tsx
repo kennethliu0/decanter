@@ -5,6 +5,8 @@ import TournamentFilters from "@/app/components/TournamentFilters";
 import TournamentSortSelect from "@/app/components/TournamentSortSelect";
 import TournamentTable from "@/app/components/TournamentTable";
 import TournamentTableSkeleton from "@/app/components/TournamentTableSkeleton";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 // import Table from "@/app/ui/invoices/table";
 // import { CreateInvoice } from "@/app/ui/invoices/buttons";
 // import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
@@ -53,7 +55,7 @@ const Page = async (props: Props) => {
         type="multiple"
         className="min-w-[280px] shrink-0 hidden md:block"
       />
-      <div className="max-w-5xl shrink flex flex-col">
+      <div className="max-w-5xl shrink flex flex-col gap-2">
         <div className="flex">
           {/* For mobile layouts*/}
           <MobileTournamentFilters />
@@ -62,12 +64,24 @@ const Page = async (props: Props) => {
             placeholder="Search tournaments..."
           />
         </div>
-        <div className="grid columns-3 py-4 items-center">
+        <div className="grid columns-3 items-center">
           <div className="col-[2] justify-self-center">6 tournaments</div>
           <div className="col-[3] justify-self-end">
             <TournamentSortSelect />
           </div>
         </div>
+        {startDateAfter
+          && startDateBefore
+          && startDateAfter > startDateBefore && (
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle>Invalid filters</AlertTitle>
+              <AlertDescription>
+                "Start Date After" field cannot be a date greater than "Start
+                Date Before"
+              </AlertDescription>
+            </Alert>
+          )}
         <Suspense fallback={<TournamentTableSkeleton />}>
           <TournamentTable
             query={query}

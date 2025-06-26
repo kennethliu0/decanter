@@ -16,7 +16,8 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 type Props = {
   label: string;
   param: string;
-  buttonId: string | undefined;
+  buttonId: string;
+  defaultDate?: Date;
 };
 
 const DatePicker = (props: Props) => {
@@ -25,7 +26,7 @@ const DatePicker = (props: Props) => {
   const { replace } = useRouter();
   const [date, setDate] = React.useState<Date | undefined>(() => {
     const value = searchParams.get(props.param);
-    return value ? new Date(value) : undefined;
+    return value ? new Date(value) : props.defaultDate;
   });
 
   const handleSetDate = (date: Date | undefined) => {

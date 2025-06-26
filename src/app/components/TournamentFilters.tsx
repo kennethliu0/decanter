@@ -20,6 +20,8 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const handleCheckedChange = (
     property: string,
     value: string,
@@ -65,6 +67,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             label="Start Date After"
             param="startDateAfterISO"
             buttonId="start-date-after-button"
+            defaultDate={today}
           />
           <DatePicker
             label="Start Date Before"
@@ -75,6 +78,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             label="Application Deadline After"
             param="applyDateAfterISO"
             buttonId="apply-date-after-button"
+            defaultDate={today}
           />
         </AccordionContent>
       </AccordionItem>

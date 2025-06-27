@@ -1,6 +1,6 @@
 import React from "react";
-import { tournaments } from "../data";
-import { TournamentCard } from "../(volunteers)/tournaments/search/TournamentCard";
+import { tournaments } from "../../../data";
+import { TournamentCard } from "./TournamentCard";
 
 type Props = {
   query?: string;

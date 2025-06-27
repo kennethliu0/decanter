@@ -1,5 +1,5 @@
 import React from "react";
-import TournamentCardSkeleton from "../(volunteers)/tournaments/search/TournamentCardSkeleton";
+import TournamentCardSkeleton from "./TournamentCardSkeleton";
 
 type Props = {};
 

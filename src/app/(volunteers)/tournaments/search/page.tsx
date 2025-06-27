@@ -1,10 +1,10 @@
-import MobileTournamentFilters from "@/app/components/MobileTournamentFilters";
-import Pagination from "@/app/components/Pagination";
-import Search from "@/app/components/Search";
-import TournamentFilters from "@/app/components/TournamentFilters";
-import TournamentSortSelect from "@/app/components/TournamentSortSelect";
-import TournamentTable from "@/app/components/TournamentTable";
-import TournamentTableSkeleton from "@/app/components/TournamentTableSkeleton";
+import MobileTournamentFilters from "@/app/(volunteers)/tournaments/search/TournamentFiltersMobile";
+import { Pagination } from "@/components/ui/Pagination";
+import Search from "@/components/ui/Search";
+import TournamentFilters from "@/app/(volunteers)/tournaments/search/TournamentFilters";
+import TournamentSortSelect from "@/app/(volunteers)/tournaments/search/TournamentSortSelect";
+import TournamentTable from "@/app/(volunteers)/tournaments/search/TournamentTable";
+import TournamentTableSkeleton from "@/app/(volunteers)/tournaments/search/TournamentTableSkeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 // import Table from "@/app/ui/invoices/table";

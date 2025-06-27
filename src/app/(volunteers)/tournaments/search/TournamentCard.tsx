@@ -1,6 +1,6 @@
 import React from "react";
 import { FlaskConical, Globe } from "lucide-react";
-import VolunteerEventRankingDialog from "@/app/(volunteers)/tournaments/VolunteerEventRankingDialog";
+import VolunteerEventRankingDialog from "@/app/(volunteers)/tournaments/search/VolunteerEventRankingDialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import EventSelectionDropdown from "./EventSelectionDropdown";
+import EventSelectionDropdown from "../../EventSelectionDropdown";
 import {
   Dialog,
   DialogClose,

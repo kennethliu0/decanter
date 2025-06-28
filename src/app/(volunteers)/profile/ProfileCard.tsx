@@ -1,7 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { FlaskConical } from "lucide-react";
 import React from "react";
 
 type Props = {

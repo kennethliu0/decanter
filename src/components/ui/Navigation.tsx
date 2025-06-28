@@ -23,7 +23,7 @@ const Navigation = (props: Props) => {
   ];
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className="flex w-full h-[80px] items-center p-5 gap-5 border-b border">
+    <div className="flex w-full h-[80px] items-center p-5 gap-5 border-b">
       <div className="flex items-center gap-5 grow-1">
         <FlaskConical size={24} />
         <h1 className="text-3xl">Decanter</h1>

@@ -49,6 +49,7 @@ const EventSelectionDropdown = (props: Props) => {
     <Popover
       open={open}
       onOpenChange={setOpen}
+      modal={true}
     >
       <PopoverTrigger asChild>
         <Button

@@ -48,22 +48,34 @@ const VolunteerEventRankingDialog = (props: Props) => {
             <EventSelectionDropdown
               division={props.division}
               rank={0}
-              updateSelection={handleUpdateEventSelection}
+              onChange={(event: string) => {
+                handleUpdateEventSelection(event, 0);
+              }}
+              value=""
             />
             <EventSelectionDropdown
               division={props.division}
               rank={1}
-              updateSelection={handleUpdateEventSelection}
+              onChange={(event: string) => {
+                handleUpdateEventSelection(event, 1);
+              }}
+              value=""
             />
             <EventSelectionDropdown
               division={props.division}
               rank={2}
-              updateSelection={handleUpdateEventSelection}
+              onChange={(event: string) => {
+                handleUpdateEventSelection(event, 2);
+              }}
+              value=""
             />
             <EventSelectionDropdown
               division={props.division}
               rank={3}
-              updateSelection={handleUpdateEventSelection}
+              onChange={(event: string) => {
+                handleUpdateEventSelection(event, 3);
+              }}
+              value=""
             />
           </div>
           <DialogFooter>

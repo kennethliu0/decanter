@@ -56,7 +56,7 @@ const ProfileCard = (props: Props) => {
         </Label>
         <div className="border py-2 px-3 rounded-md bg-background shadow-xs dark:bg-input/30 dark:border-input">
           <ol className="space-y-1">
-            {props.user.events.B.map((event, index) => (
+            {props.user.eventsB.map((event, index) => (
               <li key={index}>{`${index + 1}. ${event}`}</li>
             ))}
           </ol>
@@ -69,7 +69,7 @@ const ProfileCard = (props: Props) => {
         </Label>
         <div className="border py-2 px-3 rounded-md bg-background shadow-xs dark:bg-input/30 dark:border-input">
           <ol className="space-y-1">
-            {props.user.events.C.map((event, index) => (
+            {props.user.eventsC.map((event, index) => (
               <li key={index}>{`${index + 1}. ${event}`}</li>
             ))}
           </ol>
@@ -109,10 +109,8 @@ type UserInfo = {
   bio: string;
   experience: string;
   imageUrl: string;
-  events: {
-    B: string[];
-    C: string[];
-  };
+  eventsB: string[];
+  eventsC: string[];
 };
 
 export { ProfileCard };

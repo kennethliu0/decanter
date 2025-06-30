@@ -24,11 +24,11 @@ type Props = {
   Label?: string;
   division: "B" | "C";
   style?: "group" | "single";
-  updateSelection?: (event: string, rank: number) => void;
+  value: string;
+  onChange: (value: string) => void;
 };
 
 const EventSelectionDropdown = (props: Props) => {
-  const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
 
   let textRank = [
@@ -58,7 +58,7 @@ const EventSelectionDropdown = (props: Props) => {
           aria-expanded={open}
           className={clsx("justify-between w-full", borderRadius)}
         >
-          {value || `${textRank[props.rank]}...`}
+          {props.value || `${textRank[props.rank]}...`}
           <ChevronsUpDown className="opacity-50 z-0" />
         </Button>
       </PopoverTrigger>
@@ -76,7 +76,9 @@ const EventSelectionDropdown = (props: Props) => {
                   key={event}
                   value={event}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    props.onChange(
+                      currentValue === props.value ? "" : currentValue,
+                    );
                     setOpen(false);
                   }}
                 >
@@ -84,7 +86,7 @@ const EventSelectionDropdown = (props: Props) => {
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === event ? "opacity-100" : "opacity-0",
+                      props.value === event ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

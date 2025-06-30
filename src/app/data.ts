@@ -1,7 +1,7 @@
 import { UserInfo } from "./(volunteers)/profile/ProfileCard";
 import { TournamentInfo } from "./(volunteers)/tournaments/search/TournamentCard";
 
-let events = {
+export const events = {
   B: [
     "Air Trajectory",
     "Anatomy & Physiology",
@@ -31,11 +31,9 @@ let events = {
     "Anatomy & Physiology",
     "Astronomy",
     "Boomilever",
-    "Botany",
     "Bungee Drop",
     "Chemistry Lab",
     "Circuit Lab",
-    "Code Craze",
     "Codebusters",
     "Designer Genes",
     "Disease Detectives",
@@ -49,15 +47,13 @@ let events = {
     "Hovercraft",
     "Machines",
     "Materials Science",
-    "Protein Modeling",
     "Remote Sensing",
     "Robot Tour",
     "Rocks and Minerals",
-    "Scrambler",
     "Water Quality",
   ],
 };
-const usStates = [
+export const usStates = [
   "Alabama",
   "Alaska",
   "Arizona",
@@ -110,7 +106,7 @@ const usStates = [
   "Wyoming",
 ];
 
-const tournaments: Array<TournamentInfo> = [
+export const tournaments: Array<TournamentInfo> = [
   {
     name: "Empire State Invitational",
     startDate: new Date(2025, 0, 20),
@@ -175,7 +171,7 @@ const tournaments: Array<TournamentInfo> = [
   },
 ];
 
-let jay: UserInfo = {
+export let jay: UserInfo = {
   name: "Jay Sahni",
   email: "jaysahni70@gmail.com",
   education: "Jordan HS '26",
@@ -184,19 +180,16 @@ let jay: UserInfo = {
     "CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior ",
   imageUrl:
     "https://static.wixstatic.com/media/dd6156_5ed04aa610cb47fcbe0f1f8deada2de9~mv2.png/v1/fill/w_299,h_300,al_c,lg_1,q_85,enc_auto/dd6156_5ed04aa610cb47fcbe0f1f8deada2de9~mv2.png",
-  events: {
-    B: [
-      "Electric Wright Stuff",
-      "Rocks and Minerals",
-      "Potions and Poisons",
-      "Can't Judge a Powder",
-    ],
-    C: [
-      "Detector Building",
-      "Chemistry Lab",
-      "Rocks and Minerals",
-      "Robot Tour",
-    ],
-  },
+  eventsB: [
+    "Air Trajectory",
+    "Rocks and Minerals",
+    "Potions and Poisons",
+    "Water Quality",
+  ],
+  eventsC: [
+    "Engineering CAD",
+    "Chemistry Lab",
+    "Rocks and Minerals",
+    "Robot Tour",
+  ],
 };
-export { events, usStates, tournaments, jay };

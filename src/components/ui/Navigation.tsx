@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,50 +8,89 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FlaskConical, Menu } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { FlaskConical, Menu, XIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 
 type Props = {};
 
 const Navigation = (props: Props) => {
   const links = [
-    { label: "My Tournaments", path: "/" },
     { label: "Tournament Search", path: "/tournaments/search" },
     { label: "User Profile", path: "/profile" },
+    { label: "Edit Profile", path: "/profile/edit" },
   ];
-  const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className="flex w-full h-[80px] items-center p-5 gap-5 border-b">
-      <div className="flex items-center gap-5 grow-1">
-        <FlaskConical size={24} />
-        <h1 className="text-3xl">Decanter</h1>
-        <div className="hidden sm:flex items-center grow-1 gap-5">
-          {links.map((link, index) => (
-            <Link
-              href={link.path}
-              key={index}
+    <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
+      <NavigationMenu
+        className="hidden sm:flex"
+        viewport={false}
+      >
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
             >
-              <p>{link.label}</p>
-            </Link>
+              <Link href="/">
+                <FlaskConical color="white" />
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          {links.map(({ label, path }, index) => (
+            <NavigationMenuItem key={index}>
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <Link href={path}>
+                  <p className="font-semibold">{label}</p>
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           ))}
-        </div>
-      </div>
+        </NavigationMenuList>
+      </NavigationMenu>
       <Sheet>
         <SheetTrigger asChild>
           <Button
-            className="sm:hidden grow-0"
+            className="ml-auto sm:hidden grow-0"
             size="icon"
             variant="ghost"
           >
-            <Menu />
+            <div className="flex gap-2 items-center">
+              <Menu />
+              Menu
+            </div>
           </Button>
         </SheetTrigger>
-        <SheetContent className="p-6">
+        <SheetContent
+          side="left"
+          className="px-8 py-2"
+        >
           <SheetHeader className="sr-only">
             <SheetTitle>Menu</SheetTitle>
             <SheetDescription>Mobile navigation links</SheetDescription>
           </SheetHeader>
+          <SheetClose asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+            >
+              <div className="flex gap-2 items-center">
+                <XIcon />
+                Menu
+                <span className="sr-only">Close</span>
+              </div>
+            </Button>
+          </SheetClose>
           {links.map((link, index) => (
             <SheetClose
               asChild
@@ -68,7 +106,7 @@ const Navigation = (props: Props) => {
           ))}
         </SheetContent>
       </Sheet>
-    </div>
+    </header>
   );
 };
 

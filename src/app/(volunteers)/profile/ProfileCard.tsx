@@ -14,7 +14,7 @@ const ProfileCard = (props: Props) => {
       .join("");
   };
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-4">
+    <div className="p-6 space-y-4">
       <div className="flex gap-4 sm:mx-auto ">
         <Avatar className="w-32 h-32 rounded-full">
           <AvatarImage

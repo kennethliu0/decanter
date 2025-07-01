@@ -6,7 +6,7 @@ import { UserInfo } from "../ProfileCard";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { events } from "@/app/data";
 import { zodResolver } from "@hookform/resolvers/zod";

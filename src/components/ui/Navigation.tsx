@@ -24,8 +24,7 @@ type Props = {};
 const Navigation = (props: Props) => {
   const links = [
     { label: "Tournament Search", path: "/tournaments/search" },
-    { label: "User Profile", path: "/profile" },
-    { label: "Edit Profile", path: "/profile/edit" },
+    { label: "Volunteer Profile", path: "/profile" },
   ];
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">

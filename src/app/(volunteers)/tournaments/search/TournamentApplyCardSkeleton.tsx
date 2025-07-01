@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {};
 
-const TournamentCardSkeleton = (props: Props) => {
+const TournamentApplyCardSkeleton = (props: Props) => {
   return (
     <div className="min-w-[312px] max-w-[400px] border p-4 rounded-lg bg-card space-y-1">
       <div className="flex gap-2">
@@ -27,4 +27,4 @@ const TournamentCardSkeleton = (props: Props) => {
   );
 };
 
-export default TournamentCardSkeleton;
+export default TournamentApplyCardSkeleton;

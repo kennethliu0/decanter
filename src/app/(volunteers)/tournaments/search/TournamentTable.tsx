@@ -1,6 +1,6 @@
 import React from "react";
 import { tournaments } from "../../../data";
-import { TournamentCard } from "./TournamentCard";
+import { TournamentApplyCard } from "./TournamentApplyCard";
 
 type Props = {
   query?: string;
@@ -16,7 +16,7 @@ const TournamentTable = (props: Props) => {
   return (
     <div className="grid gap-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
       {tournaments.map((tournament, index) => (
-        <TournamentCard
+        <TournamentApplyCard
           tournament={tournament}
           key={index}
         />

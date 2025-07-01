@@ -1,5 +1,5 @@
 import { UserInfo } from "./(volunteers)/profile/ProfileCard";
-import { TournamentInfo } from "./(volunteers)/tournaments/search/TournamentCard";
+import { TournamentInfo } from "./(volunteers)/tournaments/search/TournamentApplyCard";
 
 export const events = {
   B: [

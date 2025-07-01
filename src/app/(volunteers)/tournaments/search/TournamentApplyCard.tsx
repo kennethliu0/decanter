@@ -9,7 +9,7 @@ type Props = {
   tournament: TournamentInfo;
 };
 
-const TournamentCard = (props: Props) => {
+const TournamentApplyCard = (props: Props) => {
   const truncate = (str: string, maxLength = 69, ellipsis = "...") => {
     if (str.length <= maxLength) return str;
 
@@ -80,5 +80,5 @@ type TournamentInfo = {
   imageUrl: string;
 };
 
-export { TournamentCard };
+export { TournamentApplyCard };
 export type { TournamentInfo };

@@ -7,8 +7,8 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="max-w-2xl mx-auto">
-      <div className="flex justify-start items-center gap-2">
-        <h1 className="pl-2 text-3xl">Volunteer Profile</h1>
+      <div className="px-4 flex justify-start items-center gap-2">
+        <h1 className="text-3xl font-bold">Volunteer Profile</h1>
         <Link href="/profile/edit">
           <Button variant="ghost">
             <Pencil />

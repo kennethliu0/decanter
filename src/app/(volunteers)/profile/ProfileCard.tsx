@@ -14,90 +14,63 @@ const ProfileCard = (props: Props) => {
       .join("");
   };
   return (
-    <div className="p-4 flex flex-wrap justify-center gap-x-8 gap-y-2 text-lg">
-      <div className="w-[360px] space-y-2">
-        <div className="flex gap-4">
-          <Avatar className="w-32 h-32 mx-auto rounded-full">
-            <AvatarImage
-              className="mx-auto rounded-full"
-              src={props.user.imageUrl} // Your image source
-              alt={props.user.name}
-            />
-            <AvatarFallback>
-              <span className="text-6xl leading-[53.3px] mb-[6.7px] ">
-                {getInitials(props.user.name)}
-              </span>
-            </AvatarFallback>
-          </Avatar>
-          <div className="p-2">
-            <h1 className="text-4xl pb-2">{props.user.name}</h1>
-            <p>{props.user.email}</p>
-            <p>{props.user.education}</p>
-          </div>
-        </div>
-
-        <DisplayField
-          id="bio"
-          label="Bio"
-          value={props.user.bio}
-        />
-        <DisplayField
-          id="experience"
-          label="Experience"
-          value={props.user.experience}
-        />
-      </div>
-      <div className="w-[360px]">
-        <Label
-          htmlFor="divB"
-          className="text-muted-foreground mb-2"
-        >
-          Division B Preferences
-        </Label>
-        <div className="border py-2 px-3 rounded-md bg-background shadow-xs dark:bg-input/30 dark:border-input">
-          <ol className="space-y-1">
-            {props.user.eventsB.map((event, index) => (
-              <li key={index}>{`${index + 1}. ${event}`}</li>
-            ))}
-          </ol>
-        </div>
-        <Label
-          htmlFor="divC"
-          className="text-muted-foreground my-2"
-        >
-          Division C Preferences
-        </Label>
-        <div className="border py-2 px-3 rounded-md bg-background shadow-xs dark:bg-input/30 dark:border-input">
-          <ol className="space-y-1">
-            {props.user.eventsC.map((event, index) => (
-              <li key={index}>{`${index + 1}. ${event}`}</li>
-            ))}
-          </ol>
+    <div className="p-6 max-w-2xl mx-auto space-y-4">
+      <div className="flex gap-4 sm:mx-auto ">
+        <Avatar className="w-32 h-32 rounded-full">
+          <AvatarImage
+            className="rounded-full"
+            src={props.user.imageUrl}
+            alt={props.user.name}
+          />
+          <AvatarFallback>
+            <span className="text-6xl leading-[53.3px] mb-[6.7px] ">
+              {getInitials(props.user.name)}
+            </span>
+          </AvatarFallback>
+        </Avatar>
+        <div className="grow p-2 space-y-2">
+          <h1 className="text-4xl">{props.user.name}</h1>
+          <p>{props.user.education}</p>
         </div>
       </div>
-    </div>
-  );
-};
-
-const DisplayField = (props: { id: string; label?: string; value: string }) => {
-  return (
-    <div className="space-y-2">
-      {props.label && (
-        <Label
-          htmlFor={props.id}
-          className="text-muted-foreground"
-        >
-          {props.label}
-        </Label>
-      )}
-      <div
-        id={props.id}
-        className={`selection:bg-primary selection:text-primary-foreground 
-  dark:bg-input/30 border-input flex w-full min-w-0 rounded-md border 
-  bg-transparent px-3 py-1 shadow-xs transition-[color,box-shadow] outline-none`}
+      <Label
+        htmlFor="bio"
+        className="text-muted-foreground"
       >
-        {props.value}
-      </div>
+        Bio
+      </Label>
+      <p className="px-2 -mt-2">{props.user.bio}</p>
+      <Label
+        htmlFor="experience"
+        className="text-muted-foreground"
+      >
+        Experience
+      </Label>
+      <p className="px-2 -mt-2">{props.user.experience}</p>
+      <Label
+        htmlFor="divB"
+        className="text-muted-foreground"
+      >
+        Division B Preferences
+      </Label>
+      <ol className="px-2 space-y-2 -mt-2">
+        {props.user.eventsB.map(
+          (event, index) =>
+            event && <li key={index}>{`${index + 1}. ${event}`}</li>,
+        )}
+      </ol>
+      <Label
+        htmlFor="divC"
+        className="text-muted-foreground"
+      >
+        Division C Preferences
+      </Label>
+      <ol className="px-2 space-y-2 -mt-2">
+        {props.user.eventsC.map(
+          (event, index) =>
+            event && <li key={index}>{`${index + 1}. ${event}`}</li>,
+        )}
+      </ol>
     </div>
   );
 };

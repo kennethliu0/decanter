@@ -77,165 +77,158 @@ const ProfileCardEdit = (props: Props) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="p-4 flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm">
-          <div className="space-y-4">
-            <div className="flex gap-4 flex-wrap">
-              <div className="m-auto">
-                <FormField
-                  control={form.control}
-                  name="imageUrl"
-                  render={({ field, fieldState }) => (
-                    <FormItem>
-                      <div className="mx-auto">
-                        <FormLabel>Profile Picture</FormLabel>
-                      </div>
-                      <FormControl>
-                        <AvatarUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          error={Boolean(fieldState.error)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription className="sr-only">
-                        Upload a new image
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="space-y-2 grow">
-                {" "}
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Name"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription className="sr-only">
-                        Name
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="education"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Education</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="School and graduation year"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription className="sr-only">
-                        School and graduation year
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-              </div>
+        <div className="p-4 flex flex-col max-w-2xl mx-auto justify-center gap-4">
+          <div className="flex gap-4 flex-wrap">
+            <div className="m-auto">
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <div className="mx-auto">
+                      <FormLabel>Profile Picture</FormLabel>
+                    </div>
+                    <FormControl>
+                      <AvatarUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={Boolean(fieldState.error)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription className="sr-only">
+                      Upload a new image
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
             </div>
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="min-h-30"
-                      placeholder="Any relevant achievements"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription className="sr-only">
-                    Any relevant achievements
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="experience"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Experience</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="min-h-30"
-                      placeholder="Past volunteering experience, including events and roles"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription className="sr-only">
-                    Past volunteering experience, including events and roles
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-            {/* </div>
-          <div className="w-[360px] space-y-2"> */}
-            <FormField
-              control={form.control}
-              name="eventsB"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Division B Events</FormLabel>
-                  <FormControl>
-                    <GroupedEventPreferencesInput
-                      division="B"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="eventsC"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Division C Events</FormLabel>
-                  <FormControl>
-                    <GroupedEventPreferencesInput
-                      division="C"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                type="reset"
-                onClick={() => {
-                  form.reset();
-                }}
-              >
-                Reset
-              </Button>
-              <Button type="submit">Submit</Button>
+            <div className="space-y-2 grow">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription className="sr-only">Name</FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="education"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Education</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="School and graduation year"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription className="sr-only">
+                      School and graduation year
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
             </div>
+          </div>
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="min-h-30"
+                    placeholder="Any relevant achievements"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+                <FormDescription className="sr-only">
+                  Any relevant achievements
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="experience"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Experience</FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="min-h-30"
+                    placeholder="Past volunteering experience, including events and roles"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+                <FormDescription className="sr-only">
+                  Past volunteering experience, including events and roles
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="eventsB"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Division B Events</FormLabel>
+                <FormControl>
+                  <GroupedEventPreferencesInput
+                    division="B"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="eventsC"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Division C Events</FormLabel>
+                <FormControl>
+                  <GroupedEventPreferencesInput
+                    division="C"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              type="reset"
+              onClick={() => {
+                form.reset();
+              }}
+            >
+              Reset
+            </Button>
+            <Button type="submit">Submit</Button>
           </div>
         </div>
       </form>

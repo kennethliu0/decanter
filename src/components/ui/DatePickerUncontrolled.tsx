@@ -37,7 +37,7 @@ const DatePickerUncontrolled = ({
             data-empty={!value}
             className={clsx(
               "data-[empty=true]:text-muted-foreground w-[280px] justify-start text-left font-normal",
-              { "border-red-400": error },
+              { "!border-red-400": error },
             )}
           >
             <CalendarIcon />

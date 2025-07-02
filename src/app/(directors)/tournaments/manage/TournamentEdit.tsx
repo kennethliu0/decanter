@@ -45,6 +45,11 @@ const formSchema = z
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: "End date must be on or after start date",
+    path: ["endDate"],
+  })
+  .refine((data) => data.applyDate <= data.startDate, {
+    message: "Application deadline must be on or before start date",
+    path: ["applyDate"],
   });
 
 const TournamentEdit = (props: Props) => {
@@ -179,7 +184,7 @@ const TournamentEdit = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="endDate"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Tournament End Date</FormLabel>
                       <FormControl>
@@ -187,6 +192,7 @@ const TournamentEdit = (props: Props) => {
                           {...field}
                           disablePast
                           disableOutOfSeason
+                          error={Boolean(fieldState.error)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -201,7 +207,7 @@ const TournamentEdit = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="applyDate"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Volunteer Application Due Date</FormLabel>
                       <FormControl>
@@ -209,6 +215,7 @@ const TournamentEdit = (props: Props) => {
                           {...field}
                           disablePast
                           disableOutOfSeason
+                          error={Boolean(fieldState.error)}
                         />
                       </FormControl>
                       <FormMessage />

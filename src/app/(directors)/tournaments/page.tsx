@@ -1,5 +1,3 @@
-import { tournaments } from "@/app/data";
-import { TournamentAdminCard } from "./TournamentAdminCard";
 import TournamentAdminTable from "./TournamentAdminTable";
 
 export default function Home() {

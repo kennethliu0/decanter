@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import * as z from "zod/v4";
 import { events } from "@/app/data";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -38,7 +38,7 @@ const noEmptyGaps = (arr: string[]) => {
 };
 
 const formSchema = z.object({
-  imageUrl: z.string().url(),
+  imageUrl: z.url(),
   name: z.string().min(1, "Name cannot be empty"),
   education: z.string().min(1, "Education cannot be empty"),
   bio: z.string().min(1, "Bio cannot be empty"),
@@ -90,9 +90,9 @@ const ProfileCardEdit = (props: Props) => {
                     </div>
                     <FormControl>
                       <AvatarUpload
-                        value={field.value}
-                        onChange={field.onChange}
+                        {...field}
                         error={Boolean(fieldState.error)}
+                        circle
                       />
                     </FormControl>
                     <FormMessage />
@@ -192,8 +192,7 @@ const ProfileCardEdit = (props: Props) => {
                 <FormControl>
                   <GroupedEventPreferencesInput
                     division="B"
-                    value={field.value}
-                    onChange={field.onChange}
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -209,8 +208,7 @@ const ProfileCardEdit = (props: Props) => {
                 <FormControl>
                   <GroupedEventPreferencesInput
                     division="C"
-                    value={field.value}
-                    onChange={field.onChange}
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />

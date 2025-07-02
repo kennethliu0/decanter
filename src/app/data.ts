@@ -109,9 +109,9 @@ export const usStates = [
 export const tournaments: Array<TournamentInfo> = [
   {
     name: "Empire State Invitational",
-    startDate: new Date(2025, 0, 20),
-    endDate: new Date(2025, 0, 20),
-    applicationDeadlineDate: new Date(2024, 11, 15),
+    startDate: "2026-01-20",
+    endDate: "2026-01-20",
+    applyDate: "2025-11-15",
     location: "New York",
     websiteUrl: "https://scilympiad.com/empire",
     division: "C",
@@ -119,9 +119,9 @@ export const tournaments: Array<TournamentInfo> = [
   },
   {
     name: "Golden Gate Invitational",
-    startDate: new Date(2025, 1, 10),
-    endDate: new Date(2025, 1, 10),
-    applicationDeadlineDate: new Date(2025, 0, 10),
+    startDate: "2026-02-10",
+    endDate: "2026-02-10",
+    applyDate: "2026-01-10",
     location: "California",
     websiteUrl: "https://scilympiad.com/goldengate",
     division: "C",
@@ -130,9 +130,9 @@ export const tournaments: Array<TournamentInfo> = [
   },
   {
     name: "Midwest Online Invitational",
-    startDate: new Date(2025, 1, 17),
-    endDate: new Date(2025, 1, 24),
-    applicationDeadlineDate: new Date(2025, 0, 25),
+    startDate: "2026-02-17",
+    endDate: "2026-02-17",
+    applyDate: "2026-01-25",
     location: "Online",
     websiteUrl: "https://scilympiad.com/midwest",
     division: "B",
@@ -140,9 +140,9 @@ export const tournaments: Array<TournamentInfo> = [
   },
   {
     name: "JordanSO Invitational",
-    startDate: new Date(2025, 2, 1),
-    endDate: new Date(2025, 2, 8),
-    applicationDeadlineDate: new Date(2025, 0, 15),
+    startDate: "2026-03-01",
+    endDate: "2026-03-08",
+    applyDate: "2026-02-10",
     location: "Online",
     websiteUrl: "https://scilympiad.com/jordan-so",
     division: "B",
@@ -150,9 +150,9 @@ export const tournaments: Array<TournamentInfo> = [
   },
   {
     name: "Lone Star Science Olympiad",
-    startDate: new Date(2025, 3, 5),
-    endDate: new Date(2025, 3, 5),
-    applicationDeadlineDate: new Date(2025, 2, 10),
+    startDate: "2026-04-05",
+    endDate: "2026-04-05",
+    applyDate: "2026-03-10",
     location: "Texas",
     websiteUrl: "https://scilympiad.com/lonestar",
     division: "B",
@@ -161,9 +161,9 @@ export const tournaments: Array<TournamentInfo> = [
 
   {
     name: "Pacific Inter-Rim Fake That Probably Doesn't Need to Exist Science Bowl",
-    startDate: new Date(2025, 4, 3),
-    endDate: new Date(2025, 4, 3),
-    applicationDeadlineDate: new Date(2025, 3, 15),
+    startDate: "2026-05-03",
+    endDate: "2026-05-3",
+    applyDate: "2026-04-15",
     location: "Washington",
     websiteUrl: "https://scilympiad.com/pacific",
     division: "C",
@@ -193,3 +193,7 @@ export let jay: UserInfo = {
     "Robot Tour",
   ],
 };
+export const calendarStartDate = new Date(2025, 0, 1);
+export const calendarEndDate = new Date(2026, 11, 31);
+export const seasonStartDate = new Date(2025, 9, 1);
+export const seasonEndDate = new Date(2026, 5, 1);

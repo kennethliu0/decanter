@@ -12,7 +12,7 @@ import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { usStates } from "@/app/data";
 import { cn } from "@/lib/utils";
-import { DatePicker } from "@/components/ui/datepicker";
+import { DatePicker } from "@/components/ui/DatePickerWithParams";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 
@@ -65,18 +65,18 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
         <AccordionContent className="flex flex-col gap-4 text-balance">
           <DatePicker
             label="Start Date After"
-            param="startDateAfterISO"
+            param="startDateAfter"
             buttonId="start-date-after-button"
             defaultDate={today}
           />
           <DatePicker
             label="Start Date Before"
-            param="startDateBeforeISO"
+            param="startDateBefore"
             buttonId="start-date-before-button"
           />
           <DatePicker
             label="Application Deadline After"
-            param="applyDateAfterISO"
+            param="applyDateAfter"
             buttonId="apply-date-after-button"
             defaultDate={today}
           />

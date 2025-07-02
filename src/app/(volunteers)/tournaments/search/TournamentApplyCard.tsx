@@ -50,12 +50,12 @@ const TournamentApplyCard = (props: Props) => {
       <div className="flex justify-between items-end">
         <div>
           <p className="text-sm">
-            {props.tournament.startDate.toLocaleDateString()} -{" "}
-            {props.tournament.endDate.toLocaleDateString()}
+            {new Date(props.tournament.startDate).toLocaleDateString()} -{" "}
+            {new Date(props.tournament.endDate).toLocaleDateString()}
           </p>
           <p className="text-sm">
             {"\n"}Apply By{" "}
-            {props.tournament.applicationDeadlineDate.toLocaleDateString()}
+            {new Date(props.tournament.applyDate).toLocaleDateString()}
           </p>
         </div>
         <div className="flex gap-1 items-center">
@@ -71,9 +71,9 @@ const TournamentApplyCard = (props: Props) => {
 
 type TournamentInfo = {
   name: string;
-  startDate: Date;
-  endDate: Date;
-  applicationDeadlineDate: Date;
+  startDate: string;
+  endDate: string;
+  applyDate: string;
   location: string;
   websiteUrl: string;
   division: "B" | "C";

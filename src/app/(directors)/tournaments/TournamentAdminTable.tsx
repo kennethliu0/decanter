@@ -8,14 +8,15 @@ type Props = {
 
 const TournamentAdminTable = ({ upcoming }: Props) => {
   return (
-    <div className="inline-grid sm:grid-cols-2 space-y-2 space-x-2">
-      {tournaments.map((tournament, index) => (
-        <TournamentAdminCard
-          tournament={tournament}
-          key={index}
-          applicationCount={30}
-        />
-      ))}
+    <div className="inline-grid sm:grid-cols-2 gap-2">
+      <TournamentAdminCard
+        tournament={tournaments[0]}
+        applicationCount={30}
+      />
+      <TournamentAdminCard
+        tournament={tournaments[1]}
+        applicationCount={50}
+      />
     </div>
   );
 };

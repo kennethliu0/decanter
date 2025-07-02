@@ -1,18 +1,22 @@
 import React, { ChangeEvent } from "react";
-import { UploadIcon, TrashIcon } from "lucide-react";
+import { UploadIcon, TrashIcon, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import clsx from "clsx";
 
 type AvatarUploadProps = {
   value: string | null;
   onChange: (value: string | null) => void;
   error?: boolean;
+  circle?: boolean;
 };
 
 export default function AvatarUpload({
   value,
   onChange,
   error,
+  circle,
 }: AvatarUploadProps) {
   const handleAvatarUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -28,17 +32,24 @@ export default function AvatarUpload({
 
   return (
     <div
-      className={cn("relative w-32 h-32 rounded-full overflow-hidden", {
+      className={cn("relative w-32 h-32 overflow-hidden", {
         "border-2 border-red-400": error,
+        "rounded-lg": !circle,
+        "rounded-full": circle,
       })}
     >
       {value ?
-        <img
-          src={value}
-          alt="User Avatar"
-          className="w-full h-full object-cover"
-          style={{ aspectRatio: "128/128" }}
-        />
+        <Avatar
+          className={clsx("w-32 h-32 object-cover", { "rounded-lg": !circle })}
+        >
+          <AvatarImage
+            src={value}
+            alt="User Avatar"
+          />
+          <AvatarFallback className={clsx({ "rounded-lg": !circle })}>
+            <FlaskConical />
+          </AvatarFallback>
+        </Avatar>
       : <div
           className={cn(
             "absolute inset-0 bg-muted/50 flex items-center justify-center group-hover:opacity-100 transition-opacity duration-200 text-muted-foreground",

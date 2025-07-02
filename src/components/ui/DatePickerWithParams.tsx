@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,12 +12,20 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@radix-ui/react-label";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import {
+  calendarEndDate,
+  calendarStartDate,
+  seasonEndDate,
+  seasonStartDate,
+} from "@/app/data";
 
 type Props = {
   label: string;
   param: string;
   buttonId: string;
   defaultDate?: Date;
+  disableOutOfSeason?: boolean;
+  disablePast?: boolean;
 };
 
 const DatePicker = (props: Props) => {
@@ -26,14 +34,14 @@ const DatePicker = (props: Props) => {
   const { replace } = useRouter();
   const [date, setDate] = React.useState<Date | undefined>(() => {
     const value = searchParams.get(props.param);
-    return value ? new Date(value) : props.defaultDate;
+    return value ? parse(value, "yyyy-MM-dd", new Date()) : props.defaultDate;
   });
-
+  const today = new Date();
   const handleSetDate = (date: Date | undefined) => {
     const params = new URLSearchParams(searchParams);
     setDate(date);
     if (date) {
-      params.set(props.param, date.toISOString());
+      params.set(props.param, format(date, "yyyy-MM-dd"));
     } else {
       params.delete(props.param);
     }
@@ -41,8 +49,8 @@ const DatePicker = (props: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      {props.label !== "none" && (
+    <div className="flex flex-col gap-2">
+      {props.label && (
         <Label
           htmlFor={props.buttonId}
           className="px-1 text-muted-foreground"
@@ -66,8 +74,17 @@ const DatePicker = (props: Props) => {
           <Calendar
             mode="single"
             selected={date}
+            defaultMonth={date}
+            {...(props.disableOutOfSeason && {
+              disabled: (date) =>
+                date < (props.disablePast ? today : seasonStartDate)
+                || date > seasonEndDate,
+            })}
+            startMonth={calendarStartDate}
+            endMonth={calendarEndDate}
             onSelect={(e) => handleSetDate(e)}
             required={false}
+            captionLayout="dropdown"
           />
         </PopoverContent>
       </Popover>

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { TournamentInfo } from "@/app/(volunteers)/tournaments/search/TournamentApplyCard";
 import { Button } from "@/components/ui/button";
+import { parse } from "date-fns";
 
 type Props = {
   tournament: TournamentInfo;
@@ -53,11 +54,22 @@ const TournamentAdminCard = (props: Props) => {
         <div>
           <p>{props.applicationCount} applications</p>
           <p className="text-sm">
-            {props.tournament.startDate.toLocaleDateString()} -{" "}
-            {props.tournament.endDate.toLocaleDateString()}
+            {parse(
+              props.tournament.startDate,
+              "yyyy-MM-dd",
+              new Date(),
+            ).toLocaleDateString()}{" "}
+            -{" "}
+            {parse(
+              props.tournament.endDate,
+              "yyyy-MM-dd",
+              new Date(),
+            ).toLocaleDateString()}
           </p>
         </div>
-        <Button>Manage Tournament</Button>
+        <Link href="/tournaments/manage">
+          <Button>Manage Tournament</Button>
+        </Link>
       </div>
     </div>
   );

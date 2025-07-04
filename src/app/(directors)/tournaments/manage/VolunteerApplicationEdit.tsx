@@ -102,7 +102,7 @@ const VolunteerApplicationEdit = (props: Props) => {
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
-          modifiers={[restrictToParentElement, restrictToVerticalAxis]}
+          modifiers={[]}
         >
           <SortableContext
             items={fields.map((field) => field.id)}

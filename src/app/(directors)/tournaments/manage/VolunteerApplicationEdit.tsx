@@ -50,7 +50,6 @@ const VolunteerApplicationEdit = (props: Props) => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

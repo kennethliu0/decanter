@@ -23,6 +23,7 @@ type Props = {};
 
 const Navigation = (props: Props) => {
   const links = [
+    { label: "Manage Tournaments", path: "/tournaments" },
     { label: "Tournament Search", path: "/tournaments/search" },
     { label: "Volunteer Profile", path: "/profile" },
   ];

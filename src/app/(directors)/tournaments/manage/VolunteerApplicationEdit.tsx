@@ -72,24 +72,7 @@ const VolunteerApplicationEdit = (props: Props) => {
   }
   return (
     <div className="text-sm">
-      <p>Volunteers already provide the following fields:</p>
-      <ul>
-        <li>- Name</li>
-        <li>- Contact e-mail</li>
-        <li>- School and graduation year</li>
-        <li>- Notable achievements</li>
-        <li>- Past volunteer experience</li>
-        <li>- First four event preferences</li>
-      </ul>
-      <p>
-        Do not include information that would go in your onboarding form such as
-        T-Shirt size. Use this form for additional info that you need to process
-        an application (think ability to travel for in-person tournaments,
-        whether they are competing in the Division C tournament while applying
-        for Division B, etc).
-      </p>
-      <h3 className="text-xl py-2">Fields</h3>
-      <ul className="p-2 space-y-2">
+      <ul className="px-2 space-y-2">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

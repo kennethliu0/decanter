@@ -5,6 +5,8 @@ import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 import Link from "next/link";
 import { DataTable } from "./DataTable";
 import { columns } from "./VolunteerColumns";
+import DataTableSkeleton from "./DataTableSkeleton";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -32,10 +34,12 @@ export default function Home() {
       />
       <Separator className="my-4" />
       <h2 className="text-2xl">View Applications</h2>
-      <DataTable
-        data={volunteers}
-        columns={columns}
-      />
+      <Suspense fallback={<DataTableSkeleton />}>
+        <DataTable
+          data={volunteers}
+          columns={columns}
+        />
+      </Suspense>
     </main>
   );
 }

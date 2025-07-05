@@ -128,7 +128,7 @@ const VolunteerApplicationEdit = (props: Props) => {
           <DragOverlay>
             {activeField ?
               <div className="flex items-center gap-2">
-                <Button variant="ghost">
+                <Button variant="ghost" size="icon">
                   <GripVertical />
                 </Button>
                 <VolunteerField

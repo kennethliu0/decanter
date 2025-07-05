@@ -29,6 +29,7 @@ const SortableItem = ({ id, ...props }: Props) => {
       <Button
         {...attributes}
         {...listeners}
+        size="icon"
         variant="ghost"
       >
         <GripVertical />

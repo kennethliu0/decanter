@@ -72,7 +72,6 @@ const VolunteerApplicationEdit = (props: Props) => {
   }
   return (
     <div className="text-sm">
-      <h2 className="text-2xl pb-2">Edit Volunteer Application</h2>
       <p>Volunteers already provide the following fields:</p>
       <ul>
         <li>- Name</li>
@@ -128,7 +127,10 @@ const VolunteerApplicationEdit = (props: Props) => {
           <DragOverlay>
             {activeField ?
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                >
                   <GripVertical />
                 </Button>
                 <VolunteerField

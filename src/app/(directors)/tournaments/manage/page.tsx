@@ -1,8 +1,10 @@
-import { tournaments } from "@/app/data";
+import { tournaments, volunteers } from "@/app/data";
 import TournamentEdit from "./TournamentEdit";
 import { Separator } from "@/components/ui/separator";
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 import Link from "next/link";
+import { DataTable } from "./DataTable";
+import { columns } from "./VolunteerColumns";
 
 export default function Home() {
   return (
@@ -17,6 +19,7 @@ export default function Home() {
       </div>
       <TournamentEdit tournament={tournaments[3]} />
       <Separator className="my-4" />
+      <h2 className="text-2xl">Edit Volunteer Application</h2>
       <VolunteerApplicationEdit
         fields={[
           {
@@ -28,26 +31,11 @@ export default function Home() {
         ]}
       />
       <Separator className="my-4" />
-      <div>
-        <h2 className="text-2xl">View Applications</h2>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-        <p>Some more stuff</p>
-      </div>
+      <h2 className="text-2xl">View Applications</h2>
+      <DataTable
+        data={volunteers}
+        columns={columns}
+      />
     </main>
   );
 }

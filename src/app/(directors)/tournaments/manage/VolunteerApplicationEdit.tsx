@@ -21,10 +21,6 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  restrictToVerticalAxis,
-  restrictToParentElement,
-} from "@dnd-kit/modifiers";
 import SortableItem from "./SortableItem";
 import VolunteerField from "./VolunteerField";
 
@@ -54,7 +50,6 @@ const VolunteerApplicationEdit = (props: Props) => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    // dragging on touch devices is not supported
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -103,6 +98,7 @@ const VolunteerApplicationEdit = (props: Props) => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           modifiers={[]}
+          id="unique-dnd-context-id"
         >
           <SortableContext
             items={fields.map((field) => field.id)}

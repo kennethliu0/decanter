@@ -24,7 +24,7 @@ const SortableItem = ({ id, ...props }: Props) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 touch-none"
     >
       <Button
         {...attributes}

@@ -9,6 +9,7 @@ import DataTableSkeleton from "./DataTableSkeleton";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
+import TournamentEditSkeleton from "./TournamentEditSkeleton";
 
 export default function Home() {
   return (
@@ -21,7 +22,9 @@ export default function Home() {
           </span>
         </Link>
       </div>
-      <TournamentEdit tournament={tournaments[3]} />
+      <Suspense fallback={<TournamentEditSkeleton />}>
+        <TournamentEdit tournament={tournaments[3]} />
+      </Suspense>
       <Separator />
       <h2 className="text-2xl">Edit Volunteer Application</h2>
       <div className="text-sm">
@@ -45,7 +48,7 @@ export default function Home() {
       </div>
       <Suspense
         fallback={
-          <div className="w-full pb-2">
+          <div className="w-full pb-4">
             <LoaderCircle className="mx-auto animate-spin" />
           </div>
         }

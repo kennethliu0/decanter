@@ -1,9 +1,7 @@
 "use client";
 
 import { TournamentInfo } from "@/app/(volunteers)/tournaments/search/TournamentApplyCard";
-import { DatePicker } from "@/components/ui/DatePickerWithParams";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React from "react";
 import LocationCombobox from "./LocationCombobox";
@@ -134,7 +132,7 @@ const TournamentEdit = (props: Props) => {
                           <RadioGroup
                             onValueChange={field.onChange}
                             defaultValue={field.value}
-                            className="flex flex-row h-9 items-center"
+                            className="flex h-9 items-center"
                           >
                             <FormItem className="flex gap-2">
                               <FormControl>

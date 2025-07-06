@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { startTransition, useActionState } from "react";
 import * as z from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { login } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,25 +12,26 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
   Form,
 } from "@/components/ui/form";
+import { signup } from "@/actions/auth";
+import { SignupFormSchema as FormSchema } from "@/lib/definitions";
 
-const formSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, "Invalid password"),
-});
+const SignupForm = () => {
+  const [state, action, pending] = useActionState(signup, undefined);
 
-const LoginForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    login(values);
+  function onSubmit(values: z.infer<typeof FormSchema>) {
+    startTransition(() => {
+      action(values);
+    });
   }
 
   return (
@@ -48,6 +48,7 @@ const LoginForm = () => {
                   <Input
                     type="email"
                     placeholder="Email"
+                    formNoValidate
                     {...field}
                   />
                 </FormControl>
@@ -55,7 +56,7 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-
+          {state?.errors?.email && <p>{state.errors.email}</p>}
           <FormField
             control={form.control}
             name="password"
@@ -73,11 +74,42 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
+          {state?.errors?.password && (
+            <div>
+              <p>Password requirements:</p>
+              <ul>
+                {state.errors.password.map((error) => (
+                  <li key={error}>- {error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Confirm password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {state?.errors?.confirmPassword && (
+            <p>{state.errors.confirmPassword}</p>
+          )}
           <Button
             type="submit"
             className="w-full"
+            disabled={pending}
           >
-            Log in
+            Create Account
           </Button>
         </div>
       </form>
@@ -85,4 +117,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default SignupForm;

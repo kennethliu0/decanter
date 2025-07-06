@@ -1,9 +1,5 @@
-import { Input } from "@/components/ui/input";
-import { login, signup } from "./actions";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FlaskConical } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import LoginForm from "./LoginForm";
 
 export default function LoginPage() {

@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { startTransition, useActionState } from "react";
 import * as z from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { login } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,25 +12,27 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
   Form,
 } from "@/components/ui/form";
-
-const formSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, "Invalid password"),
-});
+import { login } from "@/actions/auth";
+import { LoginFormSchema as FormSchema } from "@/lib/definitions";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 const LoginForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [state, action, pending] = useActionState(login, undefined);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    login(values);
+  function onSubmit(values: z.infer<typeof FormSchema>) {
+    startTransition(() => {
+      action(values);
+    });
   }
 
   return (
@@ -55,7 +56,7 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-
+          {state?.errors?.email && <p>{state.errors.email}</p>}
           <FormField
             control={form.control}
             name="password"
@@ -73,13 +74,27 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
+          {state?.errors?.password && <p>{state.errors.password}</p>}
+
           <Button
+            disabled={pending}
             type="submit"
             className="w-full"
           >
             Log in
           </Button>
         </div>
+        {state?.message && (
+          <Alert
+            variant="destructive"
+            className="mt-4"
+          >
+            <AlertCircleIcon />
+            <AlertTitle>
+              <p className="text-left">{state.message}</p>
+            </AlertTitle>
+          </Alert>
+        )}
       </form>
     </Form>
   );

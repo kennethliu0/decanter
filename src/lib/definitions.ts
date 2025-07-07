@@ -26,3 +26,23 @@ export type SignupFormState =
       message?: string;
     }
   | undefined;
+
+export const LoginFormSchema = z.object({
+  email: z.email().trim(),
+  password: z.string().min(1, "Invalid password").trim(),
+});
+
+export type LoginFormState =
+  | {
+      errors?: {
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
+export const LoginAuthCodes = {
+  email_not_confirmed: "Check your email to confirm account",
+  invalid_credentials: "Invalid login credentials",
+};

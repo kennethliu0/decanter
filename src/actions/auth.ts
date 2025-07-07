@@ -4,23 +4,49 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
-import { SignupFormSchema, SignupFormState } from "@/lib/definitions";
+import {
+  LoginAuthCodes,
+  LoginFormSchema,
+  LoginFormState,
+  SignupFormSchema,
+  SignupFormState,
+} from "@/lib/definitions";
 import z from "zod/v4";
+import { isAuthApiError } from "@supabase/supabase-js";
 
-export async function login(formData: { email: string; password: string }) {
+export async function login(
+  state: LoginFormState,
+  formData: { email: string; password: string },
+) {
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.email,
+    password: formData.password,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+    };
+  }
+
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.email as string,
-    password: formData.password as string,
+  const { error } = await supabase.auth.signInWithPassword({
+    email: validatedFields.data.email,
+    password: validatedFields.data.password,
+  });
+  console.log(error?.message);
+
+  const isLoginAuthCode = (code: any): code is keyof typeof LoginAuthCodes => {
+    return code in LoginAuthCodes;
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
-  console.log(error);
   if (error) {
-    redirect("/error");
+    if (isAuthApiError(error) && error.code && isLoginAuthCode(error.code)) {
+      return { message: LoginAuthCodes[error.code] };
+    } else {
+      return { message: "An error occurred while signing in." };
+    }
   }
 
   revalidatePath("/", "layout");

@@ -16,7 +16,7 @@ import { isAuthApiError } from "@supabase/supabase-js";
 
 export async function login(
   state: LoginFormState,
-  formData: { email: string; password: string },
+  formData: z.infer<typeof LoginFormSchema>,
 ) {
   const validatedFields = LoginFormSchema.safeParse({
     email: formData.email,
@@ -55,14 +55,11 @@ export async function login(
 
 export async function signup(
   state: SignupFormState,
-  formData: {
-    email: string;
-    password: string;
-    confirmPassword: string;
-  },
+  formData: z.infer<typeof SignupFormSchema>,
 ) {
   const validatedFields = SignupFormSchema.safeParse({
     email: formData.email,
+    name: formData.name,
     password: formData.password,
     confirmPassword: formData.confirmPassword,
   });
@@ -78,6 +75,9 @@ export async function signup(
   const { error } = await supabase.auth.signUp({
     email: validatedFields.data.email,
     password: validatedFields.data.password,
+    options: {
+      data: { display_name: validatedFields.data.name },
+    },
   });
   console.log(error);
   if (error) {

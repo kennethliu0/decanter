@@ -3,6 +3,13 @@ import * as z from "zod/v4";
 export const SignupFormSchema = z
   .object({
     email: z.email().trim(),
+    name: z
+      .string()
+      .refine(
+        (val) => val.split(" ").length >= 2,
+        "Include first and last name",
+      )
+      .trim(),
     password: z
       .string()
       .min(8, "At least 8 characters long")
@@ -20,6 +27,7 @@ export type SignupFormState =
   | {
       errors?: {
         email?: string[];
+        name?: string[];
         password?: string[];
         confirmPassword?: string[];
       };

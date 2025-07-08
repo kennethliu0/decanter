@@ -18,6 +18,7 @@ import { login } from "@/utils/auth";
 import { LoginFormSchema as FormSchema } from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
   const [state, action, pending] = useActionState(login, undefined);
@@ -34,6 +35,8 @@ const LoginForm = () => {
       action(values);
     });
   }
+
+  const searchParams = useSearchParams();
 
   return (
     <Form {...form}>
@@ -93,6 +96,16 @@ const LoginForm = () => {
             <AlertTitle>
               <p className="text-left">{state.message}</p>
             </AlertTitle>
+          </Alert>
+        )}
+        {searchParams.get("message") === "check-email" && (
+          <Alert className="mt-4 text-left">
+            <AlertCircleIcon />
+            <AlertTitle>Check your email</AlertTitle>
+            <AlertDescription>
+              We just sent you a confirmation email. Click the link inside it to
+              confirm your email.
+            </AlertDescription>
           </Alert>
         )}
       </form>

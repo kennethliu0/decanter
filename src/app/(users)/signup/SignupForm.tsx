@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/form";
 import { signup } from "@/utils/auth";
 import { SignupFormSchema as FormSchema } from "@/lib/definitions";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 const SignupForm = () => {
   const [state, action, pending] = useActionState(signup, undefined);
@@ -129,6 +131,17 @@ const SignupForm = () => {
           >
             Create Account
           </Button>
+          {state?.message && (
+            <Alert
+              variant="destructive"
+              className="mt-4"
+            >
+              <AlertCircleIcon />
+              <AlertTitle>
+                <p className="text-left">{state.message}</p>
+              </AlertTitle>
+            </Alert>
+          )}
         </div>
       </form>
     </Form>

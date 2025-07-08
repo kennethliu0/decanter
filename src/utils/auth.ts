@@ -92,8 +92,11 @@ export async function signup(
   });
   if (error) {
     console.log(error);
-    return { message: "An error occurred while creating your account." };
+    return {
+      message:
+        "Something went wrong. If you already have an account, try logging in instead.",
+    };
   }
   revalidatePath("/login", "layout");
-  redirect("/login");
+  redirect("/login?message=check-email");
 }

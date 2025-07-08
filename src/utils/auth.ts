@@ -8,8 +8,10 @@ import {
   LoginAuthCodes,
   LoginFormSchema,
   LoginFormState,
+  EmailSchema,
   SignupFormSchema,
   SignupFormState,
+  UpdatePasswordSchema,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
@@ -99,4 +101,42 @@ export async function signup(
   }
   revalidatePath("/login", "layout");
   redirect("/login?message=check-email");
+}
+
+export async function resetPassword(formData: z.infer<typeof EmailSchema>) {
+  const validatedFields = EmailSchema.safeParse(formData);
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+    };
+  }
+
+  const email = validatedFields.data.email;
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+  if (error) {
+    return { message: "An error occurred while resetting your password." };
+  }
+}
+
+export async function updatePassword(
+  formData: z.infer<typeof UpdatePasswordSchema>,
+) {
+  const validatedFields = UpdatePasswordSchema.safeParse(formData);
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+    };
+  }
+
+  const password = validatedFields.data.password;
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    return { message: "An error occurred while updating your password." };
+  }
+  revalidatePath("/", "layout");
+  redirect("/");
 }

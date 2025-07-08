@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FlaskConical } from "lucide-react";
 import SignupForm from "./SignupForm";
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <main className="w-full grow flex flex-col items-center">
       <div className="w-72 flex flex-col gap-4 text-center">

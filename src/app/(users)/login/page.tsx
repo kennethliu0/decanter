@@ -17,6 +17,11 @@ export default function LoginPage() {
             <span className="text-blue-500">Create account</span>
           </Link>
         </div>
+        <div>
+          <Link href="/reset">
+            <span className="text-blue-500"> Forgot password?</span>
+          </Link>
+        </div>
       </div>
     </main>
   );

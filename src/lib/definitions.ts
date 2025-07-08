@@ -1,6 +1,12 @@
 import { events } from "@/app/data";
 import * as z from "zod/v4";
 
+const password = z
+  .string()
+  .min(8, "At least 8 characters long")
+  .max(256, "At most 256 characters long")
+  .trim();
+
 export const SignupFormSchema = z
   .object({
     email: z.email().trim(),
@@ -11,11 +17,7 @@ export const SignupFormSchema = z
         "Include first and last name",
       )
       .trim(),
-    password: z
-      .string()
-      .min(8, "At least 8 characters long")
-      .max(256, "At most 256 characters long")
-      .trim(),
+    password,
     confirmPassword: z.string(),
   })
   .refine((values) => values.password === values.confirmPassword, {
@@ -84,3 +86,14 @@ export const VolunteerProfileSchema = z.object({
       message: "Empty slots must come after all selected events",
     }),
 });
+
+export const EmailSchema = z.object({
+  email: z.email().trim(),
+});
+
+export const UpdatePasswordSchema = z
+  .object({ password, confirmPassword: z.string() })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });

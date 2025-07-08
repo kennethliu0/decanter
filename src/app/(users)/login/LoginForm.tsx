@@ -19,6 +19,16 @@ import { LoginFormSchema as FormSchema } from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardAction,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import Link from "next/link";
 
 const LoginForm = () => {
   const [state, action, pending] = useActionState(login, undefined);
@@ -39,77 +49,105 @@ const LoginForm = () => {
   const searchParams = useSearchParams();
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="bg-card rounded-md border space-y-4 p-4 text-start">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {state?.errors?.email && <p>{state.errors.email}</p>}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {state?.errors?.password && <p>{state.errors.password}</p>}
-
+    <>
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Log in</CardTitle>
+          <CardDescription>
+            Enter your email and password below to login to your account
+          </CardDescription>
+          <CardAction>
+            <Link href="/signup">
+              <Button variant="link">Sign up </Button>
+            </Link>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              id="loginform"
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {state?.errors?.email && <p>{state.errors.email}</p>}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <div className="flex justify-between grow">
+                        <div>Password</div>
+                        <div className="ml-auto">
+                          <Link href="/reset">Forgot password?</Link>
+                        </div>
+                      </div>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {state?.errors?.password && <p>{state.errors.password}</p>}
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter>
           <Button
             disabled={pending}
             type="submit"
             className="w-full"
+            form="loginform"
           >
             Log in
           </Button>
-        </div>
-        {state?.message && (
-          <Alert
-            variant="destructive"
-            className="mt-4"
-          >
-            <AlertCircleIcon />
-            <AlertTitle>
-              <p className="text-left">{state.message}</p>
-            </AlertTitle>
-          </Alert>
-        )}
-        {searchParams.get("message") === "check-email" && (
-          <Alert className="mt-4 text-left">
-            <AlertCircleIcon />
-            <AlertTitle>Check your email</AlertTitle>
-            <AlertDescription>
-              We just sent you a confirmation email. Click the link inside it to
-              confirm your email.
-            </AlertDescription>
-          </Alert>
-        )}
-      </form>
-    </Form>
+        </CardFooter>
+      </Card>
+      {state?.message && (
+        <Alert
+          variant="destructive"
+          className="mt-4"
+        >
+          <AlertCircleIcon />
+          <AlertTitle>
+            <p className="text-left">{state.message}</p>
+          </AlertTitle>
+        </Alert>
+      )}
+      {searchParams.get("message") === "check-email" && (
+        <Alert className="mt-4 text-left">
+          <AlertCircleIcon />
+          <AlertTitle>Check your email</AlertTitle>
+          <AlertDescription>
+            We just sent you a confirmation email. Click the link inside it to
+            confirm your email.
+          </AlertDescription>
+        </Alert>
+      )}
+    </>
   );
 };
 

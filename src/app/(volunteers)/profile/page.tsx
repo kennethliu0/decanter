@@ -1,21 +1,11 @@
 import { jay } from "@/app/data";
-import { ProfileCard } from "./ProfileCard";
-import { Pencil } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import ProfileCardEdit from "./ProfileCardEdit";
 
 export default function Home() {
   return (
     <main className="max-w-2xl mx-auto">
-      <div className="px-4 flex justify-start items-center gap-2">
-        <h1 className="text-3xl font-bold">Volunteer Profile</h1>
-        <Link href="/profile/edit">
-          <Button variant="ghost">
-            <Pencil />
-          </Button>
-        </Link>
-      </div>
-      <ProfileCard user={jay} />
+      <h1 className="px-4 text-3xl font-bold">Edit Volunteer Profile</h1>
+      <ProfileCardEdit user={jay} />
     </main>
   );
 }

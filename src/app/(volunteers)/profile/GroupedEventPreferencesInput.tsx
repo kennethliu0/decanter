@@ -1,5 +1,5 @@
 import React from "react";
-import EventSelectionDropdown from "../../EventSelectionDropdown";
+import EventSelectionDropdown from "../EventSelectionDropdown";
 
 type Props = {
   value: string[] | null;

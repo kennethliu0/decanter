@@ -14,7 +14,7 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { login } from "@/actions/auth";
+import { login } from "@/utils/auth";
 import { LoginFormSchema as FormSchema } from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";

@@ -20,7 +20,7 @@ import {
 import { FlaskConical, Menu, User, XIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { logout } from "@/actions/auth";
+import { logout } from "@/utils/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,

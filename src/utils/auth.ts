@@ -35,13 +35,13 @@ export async function login(
     email: validatedFields.data.email,
     password: validatedFields.data.password,
   });
-  console.log(error?.message);
 
   const isLoginAuthCode = (code: any): code is keyof typeof LoginAuthCodes => {
     return code in LoginAuthCodes;
   };
 
   if (error) {
+    console.log(error?.message);
     if (isAuthApiError(error) && error.code && isLoginAuthCode(error.code)) {
       return { message: LoginAuthCodes[error.code] };
     } else {
@@ -90,11 +90,10 @@ export async function signup(
       data: { display_name: validatedFields.data.name },
     },
   });
-  console.log(error);
   if (error) {
+    console.log(error);
     return { message: "An error occurred while creating your account." };
   }
-
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/login", "layout");
+  redirect("/login");
 }

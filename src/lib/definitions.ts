@@ -14,8 +14,7 @@ export const SignupFormSchema = z
     password: z
       .string()
       .min(8, "At least 8 characters long")
-      .regex(/[a-zA-Z]/, "Contain at least one letter.")
-      .regex(/[0-9]/, "Contain at least one number.")
+      .max(256, "At most 256 characters long")
       .trim(),
     confirmPassword: z.string(),
   })

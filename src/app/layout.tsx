@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "../components/ui/theme-provider";
 import Navigation from "../components/ui/Navigation";
 import Footer from "@/components/ui/Footer";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

@@ -14,7 +14,7 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { signup } from "@/actions/auth";
+import { signup } from "@/utils/auth";
 import { SignupFormSchema as FormSchema } from "@/lib/definitions";
 
 const SignupForm = () => {

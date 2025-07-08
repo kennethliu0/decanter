@@ -9,14 +9,12 @@ type AvatarUploadProps = {
   value: string | null;
   onChange: (value: string | null) => void;
   error?: boolean;
-  circle?: boolean;
 };
 
 export default function AvatarUpload({
   value,
   onChange,
   error,
-  circle,
 }: AvatarUploadProps) {
   const handleAvatarUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -32,21 +30,17 @@ export default function AvatarUpload({
 
   return (
     <div
-      className={cn("relative w-32 h-32 overflow-hidden", {
+      className={cn("relative w-32 h-32 overflow-hidden rounded-lg", {
         "border-2 border-red-400": error,
-        "rounded-lg": !circle,
-        "rounded-full": circle,
       })}
     >
       {value ?
-        <Avatar
-          className={clsx("w-32 h-32 object-cover", { "rounded-lg": !circle })}
-        >
+        <Avatar className={clsx("w-32 h-32 object-cover rounded-lg")}>
           <AvatarImage
             src={value}
             alt="User Avatar"
           />
-          <AvatarFallback className={clsx({ "rounded-lg": !circle })}>
+          <AvatarFallback className="rounded-lg">
             <FlaskConical />
           </AvatarFallback>
         </Avatar>

@@ -25,13 +25,12 @@ const TournamentApplyCard = (props: Props) => {
   return (
     <div className="min-w-[312px] max-w-[413px] border p-4 rounded-lg bg-card">
       <div className="flex gap-2">
-        <Avatar className="w-[60px] h-[60px] rounded-sm">
+        <Avatar className="w-[60px] h-[60px]">
           <AvatarImage
-            className="rounded-sm"
             src={props.tournament.imageUrl}
             alt={props.tournament.name}
           />
-          <AvatarFallback className="rounded-sm">
+          <AvatarFallback>
             <FlaskConical />
           </AvatarFallback>
         </Avatar>

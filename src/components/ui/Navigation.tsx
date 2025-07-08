@@ -10,14 +10,25 @@ import {
 } from "@/components/ui/sheet";
 import {
   NavigationMenu,
+  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { FlaskConical, Menu, XIcon } from "lucide-react";
+import { FlaskConical, Menu, User, XIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { logout } from "@/actions/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import { Separator } from "./separator";
 
 type Props = {};
 
@@ -29,35 +40,43 @@ const Navigation = (props: Props) => {
   ];
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
-      <NavigationMenu
-        className="hidden sm:flex"
-        viewport={false}
-      >
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuLink
-              asChild
-              className={navigationMenuTriggerStyle()}
-            >
-              <Link href="/">
-                <FlaskConical color="white" />
+      <div className="hidden sm:flex items-center">
+        <Link href="/">
+          <Button variant="ghost">
+            <FlaskConical color="white" />
+          </Button>
+        </Link>
+        <NavigationMenu viewport={false}>
+          <NavigationMenuList>
+            {links.map(({ label, path }, index) => (
+              <NavigationMenuItem key={index}>
+                <NavigationMenuLink
+                  asChild
+                  className={navigationMenuTriggerStyle()}
+                >
+                  <Link href={path}>
+                    <p className="font-semibold">{label}</p>
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+        <div className="grow flex justify-end items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <User />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="mr-4">
+              <Link href="/settings">
+                <DropdownMenuItem>Settings</DropdownMenuItem>
               </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          {links.map(({ label, path }, index) => (
-            <NavigationMenuItem key={index}>
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <Link href={path}>
-                  <p className="font-semibold">{label}</p>
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          ))}
-        </NavigationMenuList>
-      </NavigationMenu>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
       <Sheet>
         <SheetTrigger asChild>
           <Button
@@ -104,6 +123,20 @@ const Navigation = (props: Props) => {
               </Link>
             </SheetClose>
           ))}
+          <Separator />
+          <SheetClose asChild>
+            <Link href="/settings">
+              <p>Settings</p>
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <button
+              className="text-left cursor-pointer"
+              onClick={logout}
+            >
+              Log out
+            </button>
+          </SheetClose>
         </SheetContent>
       </Sheet>
     </header>

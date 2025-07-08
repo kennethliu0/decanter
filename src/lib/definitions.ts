@@ -55,6 +55,7 @@ export type LoginFormState =
 export const LoginAuthCodes = {
   email_not_confirmed: "Check your email to confirm account",
   invalid_credentials: "Invalid login credentials",
+  same_password: "Use a new password.",
 };
 
 const noEmptyGaps = (arr: string[]) => {
@@ -91,9 +92,20 @@ export const EmailSchema = z.object({
   email: z.email().trim(),
 });
 
+export type EmailState =
+  | { errors?: { email?: string[] }; message?: string }
+  | undefined;
+
 export const UpdatePasswordSchema = z
   .object({ password, confirmPassword: z.string() })
   .refine((values) => values.password === values.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export type UpdatePasswordState =
+  | {
+      errors?: { password?: string[]; confirmPassword?: string[] };
+      message?: string;
+    }
+  | undefined;

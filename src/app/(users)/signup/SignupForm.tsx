@@ -49,6 +49,17 @@ const SignupForm = () => {
 
   return (
     <>
+      {state?.message && (
+        <Alert
+          variant="destructive"
+          className="mb-4 w-full max-w-sm"
+        >
+          <AlertCircleIcon />
+          <AlertTitle>
+            <p className="text-left">{state.message}</p>
+          </AlertTitle>
+        </Alert>
+      )}
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
@@ -163,17 +174,6 @@ const SignupForm = () => {
           </Button>
         </CardFooter>
       </Card>
-      {state?.message && (
-        <Alert
-          variant="destructive"
-          className="mt-4"
-        >
-          <AlertCircleIcon />
-          <AlertTitle>
-            <p className="text-left">{state.message}</p>
-          </AlertTitle>
-        </Alert>
-      )}
     </>
   );
 };

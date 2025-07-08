@@ -12,6 +12,8 @@ import {
   SignupFormSchema,
   SignupFormState,
   UpdatePasswordSchema,
+  UpdatePasswordState,
+  EmailState,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
@@ -103,7 +105,10 @@ export async function signup(
   redirect("/login?message=check-email");
 }
 
-export async function resetPassword(formData: z.infer<typeof EmailSchema>) {
+export async function resetPassword(
+  formState: EmailState,
+  formData: z.infer<typeof EmailSchema>,
+) {
   const validatedFields = EmailSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
@@ -122,8 +127,10 @@ export async function resetPassword(formData: z.infer<typeof EmailSchema>) {
 }
 
 export async function updatePassword(
+  formState: UpdatePasswordState,
   formData: z.infer<typeof UpdatePasswordSchema>,
 ) {
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay for the action
   const validatedFields = UpdatePasswordSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
@@ -133,7 +140,17 @@ export async function updatePassword(
 
   const password = validatedFields.data.password;
   const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
+
+  if (!user || sessionError) {
+    return { message: "User not authenticated" };
+  }
   const { error } = await supabase.auth.updateUser({ password });
+  console.log(error?.code);
   if (error) {
     return { message: "An error occurred while updating your password." };
   }

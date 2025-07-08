@@ -50,6 +50,27 @@ const LoginForm = () => {
 
   return (
     <>
+      {state?.message && (
+        <Alert
+          variant="destructive"
+          className="mt-4 w-full max-w-sm"
+        >
+          <AlertCircleIcon />
+          <AlertTitle>
+            <p className="text-left">{state.message}</p>
+          </AlertTitle>
+        </Alert>
+      )}
+      {searchParams.get("message") === "check-email" && (
+        <Alert className="mt-4 w-full max-w-sm">
+          <AlertCircleIcon />
+          <AlertTitle>Check your email</AlertTitle>
+          <AlertDescription>
+            We just sent you a confirmation email. Click the link inside it to
+            confirm your email.
+          </AlertDescription>
+        </Alert>
+      )}
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Log in</CardTitle>
@@ -126,27 +147,6 @@ const LoginForm = () => {
           </Button>
         </CardFooter>
       </Card>
-      {state?.message && (
-        <Alert
-          variant="destructive"
-          className="mt-4"
-        >
-          <AlertCircleIcon />
-          <AlertTitle>
-            <p className="text-left">{state.message}</p>
-          </AlertTitle>
-        </Alert>
-      )}
-      {searchParams.get("message") === "check-email" && (
-        <Alert className="mt-4 text-left">
-          <AlertCircleIcon />
-          <AlertTitle>Check your email</AlertTitle>
-          <AlertDescription>
-            We just sent you a confirmation email. Click the link inside it to
-            confirm your email.
-          </AlertDescription>
-        </Alert>
-      )}
     </>
   );
 };

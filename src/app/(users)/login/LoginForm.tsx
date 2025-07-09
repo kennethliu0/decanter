@@ -14,7 +14,7 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { login } from "@/utils/auth";
+import { login, signInWithGoogleAction } from "@/utils/auth";
 import { LoginFormSchema as FormSchema } from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
@@ -136,7 +136,7 @@ const LoginForm = () => {
             </form>
           </Form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex-col gap-2">
           <Button
             disabled={pending}
             type="submit"
@@ -144,6 +144,13 @@ const LoginForm = () => {
             form="loginform"
           >
             Log in
+          </Button>
+          <Button
+            onClick={signInWithGoogleAction}
+            className="w-full"
+            variant="outline"
+          >
+            Log in with Google
           </Button>
         </CardFooter>
       </Card>

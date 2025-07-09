@@ -17,6 +17,7 @@ import {
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
+import { headers } from "next/headers";
 
 export async function login(
   state: LoginFormState,
@@ -156,4 +157,36 @@ export async function updatePassword(
   }
   revalidatePath("/", "layout");
   redirect("/");
+}
+
+export async function signInWithGoogleAction() {
+  const supabase = await createClient();
+  const requestHeaders = await headers();
+  const origin = requestHeaders.get("origin"); // e.g., 'http://localhost:3000' or 'https://your-site.com'
+
+  if (!origin) {
+    console.error("Missing origin header");
+    return redirect("/login?error=OriginMissing"); // Or your login page
+  }
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      // Dynamically set the callback URL based on the request origin
+      redirectTo: `${origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    console.error("Error signing in with Google:", error);
+    return redirect(`/login?error=OAuthSigninFailed&message`);
+  }
+
+  if (data.url) {
+    // Redirect the browser to the Google auth page
+    return redirect(data.url);
+  } else {
+    console.error("signInWithOAuth did not return a URL");
+    return redirect("/login?error=OAuthConfigurationError");
+  }
 }

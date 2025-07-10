@@ -14,6 +14,7 @@ import {
   UpdatePasswordSchema,
   UpdatePasswordState,
   EmailState,
+  isLoginAuthCode,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
@@ -41,15 +42,15 @@ export async function login(
     password: validatedFields.data.password,
   });
 
-  const isLoginAuthCode = (code: any): code is keyof typeof LoginAuthCodes => {
-    return code in LoginAuthCodes;
-  };
-
   if (error) {
-    console.log(error?.message);
-    if (isAuthApiError(error) && error.code && isLoginAuthCode(error.code)) {
+    if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
       return { message: LoginAuthCodes[error.code] };
     } else {
+      console.error("Login error", {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+      });
       return { message: "An error occurred while signing in." };
     }
   }
@@ -63,7 +64,16 @@ export async function logout() {
 
   const { error } = await supabase.auth.signOut();
   if (error) {
-    return { message: "An error occurred while logging out." };
+    if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
+      return { message: LoginAuthCodes[error.code] };
+    } else {
+      console.error("Log out error", {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+      });
+      return { message: "An error occurred while logging out." };
+    }
   }
   revalidatePath("/login", "layout");
   redirect("/login");
@@ -96,17 +106,25 @@ export async function signup(
     },
   });
   if (error) {
-    console.log(error);
-    return {
-      message:
-        "Something went wrong. If you already have an account, try logging in instead.",
-    };
+    if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
+      return { message: LoginAuthCodes[error.code] };
+    } else {
+      console.error("Signup error", {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+      });
+      return {
+        message:
+          "An error occurred. If you already have an account, try logging in instead.",
+      };
+    }
   }
   revalidatePath("/login", "layout");
-  redirect("/login?message=check-email");
+  redirect("/login?message=check_email");
 }
 
-export async function resetPassword(
+export async function resetPasswordEmail(
   formState: EmailState,
   formData: z.infer<typeof EmailSchema>,
 ) {
@@ -123,15 +141,29 @@ export async function resetPassword(
   const { error } = await supabase.auth.resetPasswordForEmail(email);
 
   if (error) {
-    return { message: "An error occurred while resetting your password." };
+    if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
+      return { message: LoginAuthCodes[error.code] };
+    } else {
+      console.error("Reset password error", {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+      });
+      return { message: "An error occurred while resetting your password." };
+    }
   }
+
+  // Return a success message or redirect
+  return {
+    message:
+      "If an account with that email exists, we've sent a password reset link.",
+  };
 }
 
 export async function updatePassword(
   formState: UpdatePasswordState,
   formData: z.infer<typeof UpdatePasswordSchema>,
 ) {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay for the action
   const validatedFields = UpdatePasswordSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
@@ -151,9 +183,17 @@ export async function updatePassword(
     return { message: "User not authenticated" };
   }
   const { error } = await supabase.auth.updateUser({ password });
-  console.log(error?.code);
   if (error) {
-    return { message: "An error occurred while updating your password." };
+    if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
+      return { message: LoginAuthCodes[error.code] };
+    } else {
+      console.error("Update password", {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+      });
+      return { message: "An error occurred while updating your password." };
+    }
   }
   revalidatePath("/", "layout");
   redirect("/");
@@ -164,9 +204,10 @@ export async function signInWithGoogleAction() {
   const requestHeaders = await headers();
   const origin = requestHeaders.get("origin"); // e.g., 'http://localhost:3000' or 'https://your-site.com'
 
-  if (!origin) {
-    console.error("Missing origin header");
-    return redirect("/login?error=OriginMissing"); // Or your login page
+  const allowedOrigins = ["http://localhost:3000"];
+  if (!origin || !allowedOrigins.includes(origin)) {
+    console.error("Untrusted origin:", origin);
+    return redirect("/login");
   }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -176,10 +217,13 @@ export async function signInWithGoogleAction() {
       redirectTo: `${origin}/auth/callback`,
     },
   });
-
   if (error) {
-    console.error("Error signing in with Google:", error);
-    return redirect(`/login?error=OAuthSigninFailed&message`);
+    console.error("Error signing in with Google:", {
+      message: error?.message,
+      code: error?.code,
+      name: error?.name,
+    });
+    return redirect("/login?message=oauth_failed");
   }
 
   if (data.url) {
@@ -187,6 +231,6 @@ export async function signInWithGoogleAction() {
     return redirect(data.url);
   } else {
     console.error("signInWithOAuth did not return a URL");
-    return redirect("/login?error=OAuthConfigurationError");
+    return redirect("/login?message=oauth_failed");
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { startTransition, useActionState } from "react";
+import React, { startTransition, useActionState, useState } from "react";
 import * as z from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,6 +28,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
+import GoogleSignInButton from "../GoogleSignInButton";
 
 const SignupForm = () => {
   const [state, action, pending] = useActionState(signup, undefined);
@@ -48,19 +49,16 @@ const SignupForm = () => {
   }
 
   return (
-    <>
-      {state?.message && (
-        <Alert
-          variant="destructive"
-          className="mb-4 w-full max-w-sm"
-        >
+    <div className="space-y-4 w-full max-w-sm px-4">
+      {!pending && state?.message && (
+        <Alert variant="destructive">
           <AlertCircleIcon />
           <AlertTitle>
             <p className="text-left">{state.message}</p>
           </AlertTitle>
         </Alert>
       )}
-      <Card className="w-full max-w-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
           <CardDescription>Create a new Decanter account</CardDescription>
@@ -163,18 +161,19 @@ const SignupForm = () => {
             </form>
           </Form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex-col gap-2">
           <Button
             className="w-full"
             type="submit"
             form="signupform"
             disabled={pending}
           >
-            Create Account
+            {pending ? "Redirecting..." : "Create Account"}
           </Button>
+          <GoogleSignInButton signin={false} />
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 };
 

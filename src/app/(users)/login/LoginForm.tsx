@@ -14,8 +14,12 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { login, signInWithGoogleAction } from "@/utils/auth";
-import { LoginFormSchema as FormSchema } from "@/lib/definitions";
+import { login } from "@/utils/auth";
+import {
+  LoginFormSchema as FormSchema,
+  isLoginMessageKey,
+  LoginMessages,
+} from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -29,6 +33,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
+import GoogleSignInButton from "../GoogleSignInButton";
 
 const LoginForm = () => {
   const [state, action, pending] = useActionState(login, undefined);
@@ -47,31 +52,27 @@ const LoginForm = () => {
   }
 
   const searchParams = useSearchParams();
+  const code = searchParams.get("message") ?? "";
+  const message = isLoginMessageKey(code) ? LoginMessages[code] : null;
 
   return (
-    <>
+    <div className="space-y-4 w-full max-w-sm px-4">
       {state?.message && (
-        <Alert
-          variant="destructive"
-          className="mt-4 w-full max-w-sm"
-        >
+        <Alert variant="destructive">
           <AlertCircleIcon />
           <AlertTitle>
             <p className="text-left">{state.message}</p>
           </AlertTitle>
         </Alert>
       )}
-      {searchParams.get("message") === "check-email" && (
-        <Alert className="mt-4 w-full max-w-sm">
+      {message && (
+        <Alert variant={message.error ? "destructive" : "default"}>
           <AlertCircleIcon />
-          <AlertTitle>Check your email</AlertTitle>
-          <AlertDescription>
-            We just sent you a confirmation email. Click the link inside it to
-            confirm your email.
-          </AlertDescription>
+          <AlertTitle>{message.title}</AlertTitle>
+          <AlertDescription>{message.description}</AlertDescription>
         </Alert>
       )}
-      <Card className="w-full max-w-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Log in</CardTitle>
           <CardDescription>
@@ -145,16 +146,10 @@ const LoginForm = () => {
           >
             Log in
           </Button>
-          <Button
-            onClick={signInWithGoogleAction}
-            className="w-full"
-            variant="outline"
-          >
-            Log in with Google
-          </Button>
+          <GoogleSignInButton />
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 };
 

@@ -53,9 +53,41 @@ export type LoginFormState =
   | undefined;
 
 export const LoginAuthCodes = {
-  email_not_confirmed: "Check your email to confirm account",
-  invalid_credentials: "Invalid login credentials",
+  email_not_confirmed: "Check your email to confirm this account.",
+  invalid_credentials: "Invalid login credentials.",
   same_password: "Use a new password.",
+  over_email_send_rate:
+    "Too many emails sent to this address, please wait a while before trying again.",
+  over_request_rate_limit:
+    "Too many requests from this client, please wait a while before trying again.",
+  email_address_invalid: "Use a different email address.",
+};
+
+export const isLoginAuthCode = (
+  code: any,
+): code is keyof typeof LoginAuthCodes => {
+  return code in LoginAuthCodes;
+};
+
+export const LoginMessages = {
+  check_email: {
+    error: false,
+    title: "Check your email",
+    description:
+      "We just sent you a confirmation email. Click the link inside it to activate your account.",
+  },
+  oauth_failed: {
+    error: true,
+    title: "Something went wrong",
+    description:
+      "Something went wrong while signing in with Google OAuth. Please try again.",
+  },
+};
+
+export const isLoginMessageKey = (
+  key: string,
+): key is keyof typeof LoginMessages => {
+  return key in LoginMessages;
 };
 
 const noEmptyGaps = (arr: string[]) => {

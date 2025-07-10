@@ -21,16 +21,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { resetPassword } from "@/utils/auth";
+import { resetPasswordEmail } from "@/utils/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 
 type Props = {};
 
 const ResetPasswordForm = (props: Props) => {
-  const [state, action, pending] = useActionState(resetPassword, undefined);
+  const [state, action, pending] = useActionState(
+    resetPasswordEmail,
+    undefined,
+  );
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: { email: "" },
@@ -43,19 +46,18 @@ const ResetPasswordForm = (props: Props) => {
   }
 
   return (
-    <>
-      {state?.message && (
+    <div className="space-y-4 w-full max-w-sm px-4">
+      {!pending && state?.message && (
         <Alert
-          variant="destructive"
-          className="mb-4 w-full max-w-sm"
+          variant={state.message.includes("error") ? "destructive" : "default"}
         >
           <AlertCircleIcon />
-          <AlertTitle>
+          <AlertDescription>
             <p className="text-left">{state.message}</p>
-          </AlertTitle>
+          </AlertDescription>
         </Alert>
       )}
-      <Card className="w-full max-w-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Forgot Password</CardTitle>
           <CardDescription>
@@ -100,7 +102,7 @@ const ResetPasswordForm = (props: Props) => {
           </Button>
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 };
 

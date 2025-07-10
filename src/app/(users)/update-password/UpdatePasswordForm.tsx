@@ -43,19 +43,16 @@ const UpdatePasswordForm = (props: Props) => {
   }
 
   return (
-    <>
-      {state?.message && (
-        <Alert
-          variant="destructive"
-          className="mb-4 w-full max-w-sm"
-        >
+    <div className="space-y-4 max-w-sm px-4">
+      {!pending && state?.message && (
+        <Alert variant="destructive">
           <AlertCircleIcon />
           <AlertTitle>
             <p className="text-left">{state.message}</p>
           </AlertTitle>
         </Alert>
       )}
-      <Card className="w-full max-w-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Update Password</CardTitle>
           <CardDescription>Create a new password for Decanter.</CardDescription>
@@ -130,7 +127,7 @@ const UpdatePasswordForm = (props: Props) => {
           </Button>
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 };
 

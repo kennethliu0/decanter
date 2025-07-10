@@ -3,7 +3,7 @@ import { FlaskConical, Globe, Pencil } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { TournamentInfo } from "@/app/(volunteers)/tournaments/search/TournamentApplyCard";
+import { TournamentInfo } from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentApplyCard";
 import { Button } from "@/components/ui/button";
 import { parse } from "date-fns";
 

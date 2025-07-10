@@ -1,6 +1,6 @@
 "use client";
 
-import { TournamentInfo } from "@/app/(volunteers)/tournaments/search/TournamentApplyCard";
+import { TournamentInfo } from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentApplyCard";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React from "react";

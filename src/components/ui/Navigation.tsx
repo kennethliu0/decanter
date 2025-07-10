@@ -10,11 +10,9 @@ import {
 } from "@/components/ui/sheet";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { FlaskConical, Menu, User, XIcon } from "lucide-react";
@@ -41,7 +39,7 @@ const Navigation = (props: Props) => {
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
       <div className="hidden sm:flex items-center">
-        <Link href="/">
+        <Link href="/dashboard">
           <Button variant="ghost">
             <FlaskConical color="white" />
           </Button>
@@ -62,7 +60,7 @@ const Navigation = (props: Props) => {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        <div className="grow flex justify-end items-center">
+        <div className="h-full ml-auto flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger>
               <User />

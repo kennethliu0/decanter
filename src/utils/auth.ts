@@ -55,8 +55,8 @@ export async function login(
     }
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard");
 }
 
 export async function logout() {
@@ -195,8 +195,8 @@ export async function updatePassword(
       return { message: "An error occurred while updating your password." };
     }
   }
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard");
 }
 
 export async function signInWithGoogleAction() {
@@ -214,7 +214,7 @@ export async function signInWithGoogleAction() {
     provider: "google",
     options: {
       // Dynamically set the callback URL based on the request origin
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/auth/callback?next=%2Fdashboard`,
     },
   });
   if (error) {

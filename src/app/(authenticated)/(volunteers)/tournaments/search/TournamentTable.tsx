@@ -1,5 +1,5 @@
 import React from "react";
-import { tournaments } from "../../../data";
+import { tournaments } from "../../../../data";
 import { TournamentApplyCard } from "./TournamentApplyCard";
 
 type Props = {

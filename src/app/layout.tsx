@@ -38,7 +38,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navigation />
           {children}
           <Footer />
         </ThemeProvider>

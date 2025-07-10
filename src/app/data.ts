@@ -1,4 +1,4 @@
-import { TournamentInfo } from "./(volunteers)/tournaments/search/TournamentApplyCard";
+import { TournamentInfo } from "./(authenticated)/(volunteers)/tournaments/search/TournamentApplyCard";
 
 export const events = {
   B: [

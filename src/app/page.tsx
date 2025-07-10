@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import Footer from "@/components/ui/Footer";
 import Header from "@/components/ui/Header";
 import Link from "next/link";
 

@@ -28,9 +28,10 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      className="w-full h-full"
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-dvh w-dvw flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} w-full h-full flex flex-col`}
       >
         <ThemeProvider
           attribute="class"

@@ -27,6 +27,7 @@ const ProfileCardEdit = (props: Props) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      name: props.user.name,
       education: props.user.education,
       bio: props.user.bio,
       experience: props.user.experience,
@@ -42,6 +43,22 @@ const ProfileCardEdit = (props: Props) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="p-4 flex flex-col max-w-2xl mx-auto justify-center gap-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Name"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="education"

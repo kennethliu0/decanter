@@ -37,7 +37,6 @@ const SignupForm = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
-      name: "",
       password: "",
       confirmPassword: "",
     },
@@ -94,23 +93,6 @@ const SignupForm = () => {
                 )}
               />
               {state?.errors?.email && <p>{state.errors.email}</p>}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Name"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {state?.errors?.name && <p>{state.errors.name}</p>}
               <FormField
                 control={form.control}
                 name="password"

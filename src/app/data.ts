@@ -171,6 +171,7 @@ export const tournaments: Array<TournamentInfo> = [
 ];
 
 export let jay = {
+  name: "Jay Sahni",
   education: "Jordan HS '26",
   bio: "This is a ton of text that I am testing with no knowledge of if it will work or not.\nThe first law of aviation says that bees should not be able to fly. However, they do.",
   experience:

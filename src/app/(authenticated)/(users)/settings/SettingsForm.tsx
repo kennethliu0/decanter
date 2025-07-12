@@ -33,7 +33,6 @@ import { toast } from "sonner";
 type Props = {
   settings: Promise<{
     email: string;
-    name: string;
   }>;
 };
 
@@ -43,7 +42,7 @@ const SettingsForm = ({ settings }: Props) => {
   const [state, action, pending] = useActionState(updateSettings, undefined);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: { name: user.name, email: user.email },
+    defaultValues: { email: user.email },
   });
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
@@ -75,8 +74,10 @@ const SettingsForm = ({ settings }: Props) => {
       )}
       <Card>
         <CardHeader>
-          <CardTitle>Settings</CardTitle>
-          <CardDescription>Update name and email.</CardDescription>
+          <CardTitle>Update email</CardTitle>
+          <CardDescription>
+            Confirmation links will be sent to old and new emails.
+          </CardDescription>
           <CardAction>
             <Link href="/update-password">
               <Button variant="link">Update password</Button>
@@ -90,25 +91,6 @@ const SettingsForm = ({ settings }: Props) => {
               id="updatesettingsform"
               className="space-y-4"
             >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Name"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {state?.errors?.name && (
-                <p className="text-red-400">{state.errors.name}</p>
-              )}
               <FormField
                 control={form.control}
                 name="email"

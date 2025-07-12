@@ -87,7 +87,6 @@ export async function signup(
 ) {
   const validatedFields = SignupFormSchema.safeParse({
     email: formData.email,
-    name: formData.name,
     password: formData.password,
     confirmPassword: formData.confirmPassword,
   });
@@ -103,9 +102,6 @@ export async function signup(
   const { error } = await supabase.auth.signUp({
     email: validatedFields.data.email,
     password: validatedFields.data.password,
-    options: {
-      data: { display_name: validatedFields.data.name },
-    },
   });
   if (error) {
     if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
@@ -261,10 +257,6 @@ export async function updateSettings(
 
   const { error } = await supabase.auth.updateUser({
     email: validatedFields.data.email,
-    data: {
-      name: validatedFields.data.name,
-      full_name: validatedFields.data.name,
-    },
   });
 
   if (error) {
@@ -285,8 +277,7 @@ export async function updateSettings(
   return { success: true };
 }
 
-export async function getSettings(): Promise<{ email: string; name: string }> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+export async function getSettings(): Promise<{ email: string }> {
   const supabase = await createClient();
 
   const {
@@ -301,6 +292,5 @@ export async function getSettings(): Promise<{ email: string; name: string }> {
 
   return {
     email: user.email ?? user.user_metadata.email ?? "",
-    name: user.user_metadata.name ?? user.user_metadata.full_name ?? "",
   };
 }

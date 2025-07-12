@@ -20,19 +20,17 @@ const SettingsFormSkeleton = (props: Props) => {
     <div className="w-full max-w-sm px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Settings</CardTitle>
-          <CardDescription>Update name and email.</CardDescription>
+          <CardTitle>Update email</CardTitle>
+          <CardDescription>
+            Confirmation links will be sent to old and new emails.
+          </CardDescription>
           <CardAction>
             <Link href="/update-password">
               <Button variant="link">Update password</Button>
             </Link>
           </CardAction>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium leading-none">Name</Label>
-            <Skeleton className="h-9 w-full" />
-          </div>
+        <CardContent>
           <div className="space-y-2">
             <Label className="text-sm font-medium leading-none">Email</Label>
             <Skeleton className="h-9 w-full" />

@@ -1,4 +1,5 @@
 import { events } from "@/app/data";
+import { unauthorized } from "next/navigation";
 import * as z from "zod/v4";
 
 const password = z
@@ -82,6 +83,12 @@ export const LoginMessages = {
     description:
       "Something went wrong while signing in with Google OAuth. Please try again.",
   },
+  unauthorized: {
+    error: true,
+    title: "Unauthorized access",
+    description:
+      "You weren't authorized to access this resource. Please log in.",
+  },
 };
 
 export const isLoginMessageKey = (
@@ -139,5 +146,21 @@ export type UpdatePasswordState =
   | {
       errors?: { password?: string[]; confirmPassword?: string[] };
       message?: string;
+    }
+  | undefined;
+
+export const UpdateSettingsSchema = z.object({
+  email: z.email().trim(),
+  name: z
+    .string()
+    .refine((val) => val.split(" ").length >= 2, "Include first and last name")
+    .trim(),
+});
+
+export type UpdateSettingsState =
+  | {
+      errors?: { email?: string[]; name?: string[] };
+      message?: string;
+      success?: boolean;
     }
   | undefined;

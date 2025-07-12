@@ -15,6 +15,8 @@ import {
   UpdatePasswordState,
   EmailState,
   isLoginAuthCode,
+  UpdateSettingsState,
+  UpdateSettingsSchema,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
@@ -233,4 +235,72 @@ export async function signInWithGoogleAction() {
     console.error("signInWithOAuth did not return a URL");
     return redirect("/login?message=oauth_failed");
   }
+}
+
+export async function updateSettings(
+  formState: UpdateSettingsState,
+  formData: z.infer<typeof UpdateSettingsSchema>,
+) {
+  const validatedFields = UpdateSettingsSchema.safeParse(formData);
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+      success: false,
+    };
+  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
+
+  if (!user || sessionError) {
+    revalidatePath("/login", "layout");
+    redirect("/login?message=unauthorized");
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    email: validatedFields.data.email,
+    data: {
+      name: validatedFields.data.name,
+      full_name: validatedFields.data.name,
+    },
+  });
+
+  if (error) {
+    if (isAuthApiError(error) && isLoginAuthCode(error.code)) {
+      return { message: LoginAuthCodes[error.code], success: false };
+    } else {
+      console.error("Update settings", {
+        message: error?.message,
+        code: error?.code,
+        name: error?.name,
+      });
+      return {
+        message: "An error occurred while updating your settings.",
+        success: false,
+      };
+    }
+  }
+  return { success: true };
+}
+
+export async function getSettings(): Promise<{ email: string; name: string }> {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
+
+  if (!user || sessionError) {
+    revalidatePath("/login", "layout");
+    redirect("/login?message=unauthorized");
+  }
+
+  return {
+    email: user.email ?? user.user_metadata.email ?? "",
+    name: user.user_metadata.name ?? user.user_metadata.full_name ?? "",
+  };
 }

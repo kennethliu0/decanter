@@ -2,15 +2,16 @@
 
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React, { startTransition, useActionState } from "react";
+import React, { startTransition, use, useActionState, useEffect } from "react";
 import { z } from "zod/v4";
-import { UpdatePasswordSchema as FormSchema } from "@/lib/definitions";
+import { UpdateSettingsSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,19 +22,28 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { updatePassword } from "@/utils/auth";
+import { updateSettings } from "@/utils/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
 
-type Props = {};
+type Props = {
+  settings: Promise<{
+    email: string;
+    name: string;
+  }>;
+};
 
-const UpdatePasswordForm = (props: Props) => {
-  const [state, action, pending] = useActionState(updatePassword, undefined);
+const SettingsForm = ({ settings }: Props) => {
+  const user = use(settings);
+
+  const [state, action, pending] = useActionState(updateSettings, undefined);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: { password: "", confirmPassword: "" },
+    defaultValues: { name: user.name, email: user.email },
   });
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
@@ -41,6 +51,17 @@ const UpdatePasswordForm = (props: Props) => {
       action(values);
     });
   }
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success("Updated successfully", {
+        description:
+          "If you changed your email, check both old and new addresses for confirmation.",
+      });
+    } else if (state?.success === false) {
+      toast.error("Something went wrong");
+    }
+  }, [state]);
 
   return (
     <div className="space-y-4 w-full max-w-sm px-4">
@@ -54,27 +75,30 @@ const UpdatePasswordForm = (props: Props) => {
       )}
       <Card>
         <CardHeader>
-          <CardTitle>Update Password</CardTitle>
-          <CardDescription>Create a new password for Decanter.</CardDescription>
+          <CardTitle>Settings</CardTitle>
+          <CardDescription>Update name and email.</CardDescription>
+          <CardAction>
+            <Link href="/update-password">
+              <Button variant="link">Update password</Button>
+            </Link>
+          </CardAction>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              id="updatepwdform"
+              id="updatesettingsform"
               className="space-y-4"
             >
               <FormField
                 control={form.control}
-                name="password"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
-                        type="password"
-                        placeholder="Password"
-                        formNoValidate
+                        placeholder="Name"
                         {...field}
                       />
                     </FormControl>
@@ -82,26 +106,19 @@ const UpdatePasswordForm = (props: Props) => {
                   </FormItem>
                 )}
               />
-              {state?.errors?.password && (
-                <div className="text-red-400">
-                  <p>Password requirements:</p>
-                  <ul>
-                    {state.errors.password.map((error) => (
-                      <li key={error}>- {error}</li>
-                    ))}
-                  </ul>
-                </div>
+              {state?.errors?.name && (
+                <p className="text-red-400">{state.errors.name}</p>
               )}
               <FormField
                 control={form.control}
-                name="confirmPassword"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        type="password"
-                        placeholder="Confirm password"
+                        type="email"
+                        placeholder="Email"
                         formNoValidate
                         {...field}
                       />
@@ -110,8 +127,8 @@ const UpdatePasswordForm = (props: Props) => {
                   </FormItem>
                 )}
               />{" "}
-              {state?.errors?.confirmPassword && (
-                <p className="text-red-400">{state.errors.confirmPassword}</p>
+              {state?.errors?.email && (
+                <p className="text-red-400">{state.errors.email}</p>
               )}
             </form>
           </Form>
@@ -120,10 +137,10 @@ const UpdatePasswordForm = (props: Props) => {
           <Button
             type="submit"
             className="w-full"
-            form="updatepwdform"
+            form="updatesettingsform"
             disabled={pending}
           >
-            Update Password
+            Update Settings
           </Button>
         </CardFooter>
       </Card>
@@ -131,4 +148,4 @@ const UpdatePasswordForm = (props: Props) => {
   );
 };
 
-export default UpdatePasswordForm;
+export default SettingsForm;

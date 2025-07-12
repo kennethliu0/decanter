@@ -14,7 +14,6 @@ const GoogleSignInButton = ({ signin = true }: Props) => {
     setGoogleLoading(true);
     try {
       await signInWithGoogleAction();
-      setGoogleLoading(false);
     } catch (error) {
       console.error("OAuth error", error);
       setGoogleLoading(false);

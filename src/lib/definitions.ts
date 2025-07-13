@@ -109,19 +109,34 @@ export const VolunteerProfileSchema = z.object({
   education: z.string().min(1, "Education cannot be empty"),
   bio: z.string().min(1, "Bio cannot be empty"),
   experience: z.string().min(1, "Experience cannot be empty"),
-  eventsB: z
+  preferencesB: z
     .array(z.string().refine((val) => val === "" || events.B.includes(val)))
     .length(4)
     .refine(noEmptyGaps, {
       message: "Empty slots must come after all selected events",
     }),
-  eventsC: z
+  preferencesC: z
     .array(z.string().refine((val) => val === "" || events.C.includes(val)))
     .length(4)
     .refine(noEmptyGaps, {
       message: "Empty slots must come after all selected events",
     }),
 });
+
+export type UpdateProfileState =
+  | {
+      errors?: {
+        name?: string[];
+        education?: string[];
+        bio?: string[];
+        experience?: string[];
+        preferencesB?: string[];
+        preferencesC?: string[];
+      };
+      message?: string;
+      success?: boolean;
+    }
+  | undefined;
 
 export const EmailSchema = z.object({
   email: z.email().trim(),

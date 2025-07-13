@@ -176,13 +176,13 @@ export let jay = {
   bio: "This is a ton of text that I am testing with no knowledge of if it will work or not.\nThe first law of aviation says that bees should not be able to fly. However, they do.",
   experience:
     "CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior CurdSO Warrior ",
-  eventsB: [
+  preferencesB: [
     "Air Trajectory",
     "Rocks and Minerals",
     "Potions and Poisons",
     "Water Quality",
   ],
-  eventsC: [
+  preferencesC: [
     "Engineering CAD",
     "Chemistry Lab",
     "Rocks and Minerals",

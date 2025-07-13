@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Header from "@/components/ui/Header";
+import { getProfile } from "@/utils/volunteer_profile";
 import Link from "next/link";
 
 export default function Home() {

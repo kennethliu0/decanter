@@ -66,8 +66,11 @@ const Navigation = (props: Props) => {
               <User />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="mr-4">
-              <Link href="/settings">
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+              <Link href="/update-email">
+                <DropdownMenuItem>Change Email</DropdownMenuItem>
+              </Link>
+              <Link href="/update-password">
+                <DropdownMenuItem>Change Password</DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
@@ -123,8 +126,13 @@ const Navigation = (props: Props) => {
           ))}
           <Separator />
           <SheetClose asChild>
-            <Link href="/settings">
-              <p>Settings</p>
+            <Link href="/update-email">
+              <p>Change Email</p>
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <Link href="/update-password">
+              <p>Change Password</p>
             </Link>
           </SheetClose>
           <SheetClose asChild>

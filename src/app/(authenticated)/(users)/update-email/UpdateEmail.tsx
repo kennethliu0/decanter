@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import React, { startTransition, use, useActionState, useEffect } from "react";
 import { z } from "zod/v4";
-import { UpdateSettingsSchema as FormSchema } from "@/lib/definitions";
+import { UpdateEmailSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -22,7 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { updateSettings } from "@/utils/auth";
+import { updateEmail } from "@/utils/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -39,7 +39,7 @@ type Props = {
 const SettingsForm = ({ settings }: Props) => {
   const user = use(settings);
 
-  const [state, action, pending] = useActionState(updateSettings, undefined);
+  const [state, action, pending] = useActionState(updateEmail, undefined);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: { email: user.email },

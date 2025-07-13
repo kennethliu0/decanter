@@ -15,8 +15,8 @@ import {
   UpdatePasswordState,
   EmailState,
   isLoginAuthCode,
-  UpdateSettingsState,
-  UpdateSettingsSchema,
+  UpdateEmailState,
+  UpdateEmailSchema,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
@@ -233,11 +233,11 @@ export async function signInWithGoogleAction() {
   }
 }
 
-export async function updateSettings(
-  formState: UpdateSettingsState,
-  formData: z.infer<typeof UpdateSettingsSchema>,
+export async function updateEmail(
+  formState: UpdateEmailState,
+  formData: z.infer<typeof UpdateEmailSchema>,
 ) {
-  const validatedFields = UpdateSettingsSchema.safeParse(formData);
+  const validatedFields = UpdateEmailSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
       errors: z.flattenError(validatedFields.error).fieldErrors,
@@ -277,7 +277,7 @@ export async function updateSettings(
   return { success: true };
 }
 
-export async function getSettings(): Promise<{ email: string }> {
+export async function getEmail(): Promise<{ email: string }> {
   const supabase = await createClient();
 
   const {

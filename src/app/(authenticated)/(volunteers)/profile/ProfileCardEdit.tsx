@@ -199,10 +199,12 @@ const ProfileCardEdit = (props: Props) => {
             <Button
               type="submit"
               disabled={!form.formState.isDirty || pending}
+              className="relative"
             >
-              {pending ?
-                <LoaderCircle className="mx-auto animate-spin" />
-              : "Submit"}
+              {pending && (
+                <LoaderCircle className="mx-auto animate-spin absolute m-auto h-5 w-4" />
+              )}
+              <span className={pending ? "invisible" : "visible"}>Submit</span>
             </Button>
           </div>
         </div>

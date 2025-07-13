@@ -144,15 +144,3 @@ export type UpdatePasswordState =
       message?: string;
     }
   | undefined;
-
-export const UpdateEmailSchema = z.object({
-  email: z.email().trim(),
-});
-
-export type UpdateEmailState =
-  | {
-      errors?: { email?: string[] };
-      message?: string;
-      success?: boolean;
-    }
-  | undefined;

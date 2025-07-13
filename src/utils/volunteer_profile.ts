@@ -51,7 +51,7 @@ export async function upsertProfile(
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  if (!user?.id || userError) {
+  if (!user?.id || !user?.email || userError) {
     console.error(userError);
     return { message: "Unauthenticated", success: false };
   }
@@ -59,6 +59,7 @@ export async function upsertProfile(
   const { error } = await supabase.from("volunteer_profiles").upsert(
     {
       user_id: user.id,
+      email: user.email,
       name: validatedFields.data.name,
       education: validatedFields.data.education,
       bio: validatedFields.data.bio,

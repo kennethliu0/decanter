@@ -4,9 +4,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import clsx from "clsx";
-import { createClient } from "@/utils/supabase/client";
-import sanitize from "sanitize-filename";
-import { v4 as uuidv4 } from "uuid";
 
 type AvatarUploadProps = {
   value: string | null;
@@ -21,29 +18,23 @@ export default function AvatarUpload({
 }: AvatarUploadProps) {
   const handleAvatarUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const supabase = await createClient();
-      const fileName = `${uuidv4()}_${sanitize(file.name)}`;
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file);
 
-      const bucket = "tournament-icons";
-
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, {
-          upsert: false,
-        });
-      if (error) {
-        alert(
-          "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
-        );
-      } else {
-        onChange(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/${bucket}/${fileName}`,
-        );
-      }
+    const res = await fetch("/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+    if (res.ok) {
+      const data = await res.json();
+      onChange(data.url);
+    } else {
+      alert(
+        "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
+      );
     }
   };
-
   const handleAvatarDelete = () => {
     onChange(null);
   };

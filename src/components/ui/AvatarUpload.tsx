@@ -18,21 +18,22 @@ export default function AvatarUpload({
 }: AvatarUploadProps) {
   const handleAvatarUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("image", file);
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
 
-    const res = await fetch("/upload-image", {
-      method: "POST",
-      body: formData,
-    });
-    if (res.ok) {
-      const data = await res.json();
-      onChange(data.url);
-    } else {
-      alert(
-        "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
-      );
+      const res = await fetch("/tournament-icons", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        onChange(data.url);
+      } else {
+        alert(
+          "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
+        );
+      }
     }
   };
   const handleAvatarDelete = () => {

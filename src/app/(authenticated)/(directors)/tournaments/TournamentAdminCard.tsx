@@ -53,17 +53,8 @@ const TournamentAdminCard = (props: Props) => {
         <div>
           <p>{props.applicationCount} applications</p>
           <p className="text-sm">
-            {parse(
-              props.tournament.startDate,
-              "yyyy-MM-dd",
-              new Date(),
-            ).toLocaleDateString()}{" "}
-            -{" "}
-            {parse(
-              props.tournament.endDate,
-              "yyyy-MM-dd",
-              new Date(),
-            ).toLocaleDateString()}
+            {props.tournament.startDate.toLocaleDateString()} -{" "}
+            {props.tournament.endDate.toLocaleDateString()}
           </p>
         </div>
         <Link href="/tournaments/manage">

@@ -1,4 +1,6 @@
+import { z } from "zod/v4";
 import { TournamentInfo } from "./(authenticated)/(volunteers)/tournaments/search/TournamentApplyCard";
+import { EditTournamentSchemaClient } from "@/lib/definitions";
 
 export const events = {
   B: [
@@ -105,68 +107,79 @@ export const usStates = [
   "Wyoming",
 ];
 
-export const tournaments: Array<TournamentInfo> = [
+export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
   {
     name: "Empire State Invitational",
-    startDate: "2026-01-20",
-    endDate: "2026-01-20",
-    applyDate: "2025-11-15",
+    startDate: new Date("2026-01-20"),
+    endDate: new Date("2026-01-20"),
+    applyDeadlineDate: new Date("2025-11-15"),
+    applyDeadlineTime: "23:59",
     location: "New York",
     websiteUrl: "https://scilympiad.com/empire",
     division: "C",
     imageUrl: "https://www.duosmium.org/images/logos/empire_state.png",
+    closedEarly: false,
   },
   {
     name: "Golden Gate Invitational",
-    startDate: "2026-02-10",
-    endDate: "2026-02-10",
-    applyDate: "2026-01-10",
+    startDate: new Date("2026-02-10"),
+    endDate: new Date("2026-02-10"),
+    applyDeadlineDate: new Date("2026-01-10"),
+    applyDeadlineTime: "23:59",
     location: "California",
     websiteUrl: "https://scilympiad.com/goldengate",
     division: "C",
     imageUrl:
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAADACAMAAAB/Pny7AAAAvVBMVEX///89PT06Ojo3NzckJCTDw8PR0dFOTk6goKAxMTHHx8fs7Oz7+/vx8fGIiIgtLS0AAADb29tdXV2qqqp3d3fm3NtJSUk5NDZUVFQVFRU4NjHl5eVERESSkpK8vLyamppfU1GOg4GAgIBlZWUcHBxvb2+zs7MLCwtqY2U5QD1ORkcbExQjGRuAenuZkZHIwMEaERgvIyJXSlA1KywtLid2bG0kHhsYFxAgJSA9JS0bCgyJfIJGNjmjlpsPAACLTyUBAAAOzklEQVR4nO1ca2OjNhYVEi+BBBZyMS4YZjAmsWcnszPptN1tt///Z+0VD4FjMpO0M42zq/MlgAHdw9V9iUsQMjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDD4vwVjLy3BtwLL20MdhC8txjdBLk/v4vgfe+f10+FO8o5YANrU7ksL8xchdhtqDYhP8jUrh5V7ii0NQt+/XuWEdydqzYFp1r5Sv5YfNsR6AGLt+EvL9WcgTgQ/5KKU8/kVsimbC7UMfiDNX1q250KuFtQyTLVGvLR0zwKT225OPZxo/QHSvCanxqu4U8Fhtz9jgw/RrZp8hASvxqnx6seeQ4nagkygnwIkO0sip/KlhXwieIWVxDitckjMUk8jbUOUR73deB9ehW64b/VP3wvUnjuDkl9uejZZ8NKCPgEMZlYn7uZ2MRMLvP5nmrwCLxAMXMjJWT7hbvAJdH/18UaM6Ri9e+QMngxnxOsrzwVYNkhKMpQvWoXgLh500zzG90rw2R4iyr0I14vz7D8+kvEQd27av1u+50D+s5fyaEuwDaUZFs7QebOPAToMbPDHK05shD0mk2sUNJ3zFZ/eaHz6AQ7I+zchHwzrSJOrNRu+p8fB7fL8FHdxxo2nDOCnjszGfo8C0ru8Y3ytZsN2o/FbAVvf00TNIXczpWY/KjJlQX6WyLd7J4DxIw78pRGk/ePGVCIJwkplIhdk+HuKqcvrYUaS5dD60gjXQzUW37EAkv11l3xdkEEiIyQJxZ4OqvFfVuxlSKufOfE+/yEhx1POFqdZyNqNRd8zxxoyhWtMa8RtLzY9BXxNraZk/ge0QEaWaB1jAtFmWIWiu+vLn+V9/6Bxi3xq2TVyrM6bXZA5hQiqs9RBUR9tSHp1+bN409kAJhVqKdQzKKfeMpmPayYai2aCH3qzid9eWbBhsvdOtGbBiW6oYPtfs2UyeKs8M8TVEFxB9wCsK1ONeNOvju9DcRtbGxD3HcmUZbsbfE6mtY6NC2Zj2W+Bd3eVfV0Lg6z92HFJc/7+/hhHyLUtEikR3Xu66TFkAPme0BPPE4o3PvoQK6r4dFUpWti5Moj8aGdb9JDnHiF97ZXLGToFOAWOa+akhNAS+R0b278mh+b+rLiQElXxkWYu+ObjJkCLsZ2zanPcSCYJJqeOPFz56ZrSgBq8LI4lau/xsWh5hcEOWLlo16Xge4JTh0UUpqXgkWJjX1GGFt5DthyDCWwIpjtUnjDNmFhef5EHLj5ikojwMwUthqGq5+jh7xb5cYCnxXal1jKO9MBd8Lg3OUqWg6H8GSLRO0hoQtcjUCyE+edfQTXX4wJifARHC8Id6SnPIRa+a9Hul0c08yN45s/2Ma5QucGKfH4bH+P3f7fMj0H+cqQRTCsK/kyw6FfLvkPBCncZAGIzdCdj8i+GPhELKmvIe6z4PRO31Pr3lbgAjvFm3QVLEn9AfgN5Mw8bvDko3yx+e6vxmxI4yI72Hrm/E7Jx0FtwHHHE3IRAoX0NYG8ppCb5IQZ/5oM/s8jJZXtKvC61d+1Y4+eunpHWEeKK3IBnFioTON7fMfeWxlexlP5h09Q8X4MPADNwIMksWgglFiT5XaVJHuRmUGoSvPmgauw4ydkensGmYiLZJtcw0VwZcXGwjzBfkMAQCiteFpiuudvnZg/IuLmA9CDJQ/ATv4KbvlUa3XHxtr2O1VqGyt9tEgOnBALhmqvC2MrzbhHwgox/h0pI3Nah8uDKByb0aCcCXU+uyV3/dAhzqOtp0vnmf35AUbFcAtyX7C2wqXgLObNaL/CSVlxTbgbaEbk4EAsXLoc8xf4NtfYj9cymCPknKJmVZYEfrHieXxeVDiL5xfoJMsiNFd/y8P6xShN+ReIjVMtQ1VDSRNczv87RriBa3mMS5yjb0GzRAbQb8st/ULu1Yi9Hp/vrSWMuwCGugCGU6P09zCN15HLdLCLWHwG7sy37TXitWhnQFiSuWEkx7bOtSzJ5Qqzfw3Afb7IrVkuPHz6/D0WKyac8XFwEzFlpHTefwSVfV+W/DA5PHVx0wHYqQbmMMxLtYovueHiFPmwB4vP9PypwW3NvhrU3O7n8NqavQS098h1Mo83cNdPNvU17Mj/tmfDkq+ECUy3nWTwFTby5cwOZ/DG8bHqLrizifw3hqenjjFq3obeia29WebHEf1xNVflk5Ieo+3v3h1pN7tL7Th3hvnpFU2zE2DLvr/DZ0vjrbqV3fmqql5bh2+GHuytb5jcwMFiEcKTfuvNAwNxSynJ8vS1Kx+HnF4wYozpznTnKUF0U8PkV5cNVpcthEQqG03LnHAEPg/Mjj1CJEg/K+OwwfX7grrPCstJs3TskP029sypEFmM7aXKQfVSMCm8G6qIWe8W0xOd7Hj5/9Z/vLoZVRXhadP0ObZbO75cmwj07knqLXIKUqCZqTIg1vpuXxXCIprKTBHbPyPgxwT3gl0QtffHIxjPcuEg2mHp6VawiD5q0g2wcFs9yaR/2s46MReb3I5kLcs4P4EW9QMWL46ZRf2gf5lQLDLG3WzhEiOyGwNa5ZqhlNVtAE2NMLabIxBbuDnVYBUi9ibZ164IPO3MyLlbDdmNguxrPYmsKZYM6T25XNzc3WxiHwt+bFXEDD1tUD3CzXSKzxeqLEMdtU7gPUfNCrOAOnh+4sqAWKZxlMnap2nydGoSi+44MLoKp/5f3r9VvRgI+PiOTq5cHZBdAVg0PYTsaQNdkS+qOl0K4pnHE+3cJQCaOZh3GC1wq2yL7XlB4tvEarG9P1NJjdwiKR7jZIpktn8anZUcmnedfPRlSjLnaGRkmG4v0iwFq+Vl301UUF5hMvXU9mXEgbMsldUywMPaG58ISO6YByoFLMsz1EB5f4i6TGX1TCwo99GTO/GHf8GBXS2T4HqR2R4Ftuuq38zW1JcaFbuJ8SObLvVBcLROPD9Rd12sXOUAmGn+vYtXo9kUyoEmShYtkCnCJW7FEpsC0Hm8Q1PXgNZ2U2GA2tP5zZPJ4JnkPB5yMVqfTqPWwL5OpKc7yJTI4izxM9+ySTEhwfNkFwKqYHlCwJck42LPJWA/OaIGMjg/iCWQiglN3yWaw50ZgUPKSjLCtBTLiQJoWMfDx48N8ns3k8UwNExkdXvMnkPEpToOOjPZmoieTijzF/cu0czLqtpdkYE4QuBLm2UjgAZnJmwVLdetIhsldh8hBkuBiIrN9OhnLygakEevJuKo1m9TsQjPNqLBhWGXyfGdT1Vuv5pl2DmdkcDqOYC0ti2oy+z68Qvzyn0tGxiOZMTzba00GJaTzTudk3JFMRvsLlMnnGbFVasOpavtYIqM++NIZxpfIUKK6juOKnWvmCdNMjprB25seq8NEJl9BUBWPklEN0NiKFRkHjEWdwmo6urqHZOKbcYQvkqlBd0lH5swBPM9m8rFjniNNRjX9xLuFadbZzKGbMx0Zvo4HDsDKcpfI2BWf9+QvkJm6csMUPyTzFG+2o495s44M8ii2gvPcLJ97s/xAFRl1THIFUYDfYktkvh5ndnqnUKeXZHjJ0t3hKXGGYE8sxpmeTAA2UEfFGRk6izNiTxQZlTGkadHBGvrWnkcmjGcZgKDYbpWDxJqfD6nb1zKAA2QA/AtkIBZaOLUeZABaSKhBVD8RS4iqBzrg8eTnkYHcrO+qVIDchTpIQDpzGCTlUHRkX8nNhIfJfjE3G8igPFGJ/RmZhOhhWUWtJkBiC5Va2qMYi4dnkolsC9d9WllCaaISaHCmw1fiTBkvGKUic9Z8MMua8zUE+XYxax7JsLb7qmmeNYPGaT8saz1CihD8BPbkUBmXa0q8cIHMV7LmXBWIh1YIt4JKjiq7c9QzqkshHHC3RJW+iowjNPKunnHVptseoGRKWE/Gnc7hMzJd5XZenIlC6b91YVhPtToxRDGdvkZrY6txLsnEu2mAxZeJUlVnaZKo/oq4L2OiBiYfHPJgdnRt7uBXrSwZkVWKDO63QShKxSCvPiVRsX8ig1RfxhkZ1sZwYQE3gOLOhmHdreq7GdE1PLGFDGAaIVkiA0+QdpYH5euhn0t8t+2MURXP3a38vlgfEEdd2TzYKm66tQ7V1GBNXwCtzskg/wEZGJaeDbumQ6eaVqXNlzIA/ZExWSKjHsMWqjK7mZwlxBo4FNtb2vvoyp5jWyN/q3eGXuuwvpmfo9YAVg3R4of7rf0garvJjRp2S324AV/Z2/3Mf0i4hVSX3azq4bBDmjMxlsnADJZRvSvPzDfw66gaH5Xrz1E5yK2GbemO62ZONT9nl6tz5OQ14Ba7i3Uzf7eunO4GOVw9XwnLpV8BGd761SgXHDrDY2QMDAz+MsIyn225Y+bJShfl409MjNUrb8uyHcMYC6attmz1pVMHIyuljnnMdZGYOZ9yiob5xVL7n4SrO8fdbAdpzXjcqlGZ6qxq/B4+T9Ii1W7nMIYGHnmWtx+uDG90HIFiNhl3wvoQSqqlZpZeZ0IO/UY9Q0ExkUn5rhmPHwq024cjmUTrqMr0Sw/Xy0bZ8iDW+shX4x1Zs3OTMTHnNXVbW5NxZyvi5bdqr5+RSbZiIuM3aD12VjM/0TOnnW2SSbbc1uqYyPBVyep60GNYb+VMM5LYOnZ+FzLNrtJkxMr1xng1JyP1wh2q9mSqVKfPSh6QiTSZZr3DU3G0jjX970ImSWttM/ym1a+QlsmEaz/RHQBPIZNme6K14Tmergy/BxlPJmTKhEimW/mWyYjEifa6eH2EDF9rMuu6tvXUEsSNsu9JJg0iEusf6kZLukxG/W+QRgv3qGa0zax3stBkWij/i3GnjL8DGce1Js3Irfady2RkKiud7S+SYdtK7CfN7MRek9+lrdQXl7HzbbqfAzpK4YI5eyv9g1jpfJXtspEM88c3uLxecx6PRiNuZmT0ZmQX6bgTHmoerUZnvwdPqQcoV0VRf4u4mev0PYTQXk4JN/dnwbvUhuu24xpIGTDUjj4inKoA7k+b0tf/g4o5AdQHwx5vQSty1GDuS7+cL5IYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGPzP4r+2uCW8DOda2wAAAABJRU5ErkJggg==",
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAADACAMAAAB/Pny7AAAAvVBMVEX///89PT0...", // truncated
+    closedEarly: false,
   },
   {
     name: "Midwest Online Invitational",
-    startDate: "2026-02-17",
-    endDate: "2026-02-17",
-    applyDate: "2026-01-25",
+    startDate: new Date("2026-02-17"),
+    endDate: new Date("2026-02-17"),
+    applyDeadlineDate: new Date("2026-01-25"),
+    applyDeadlineTime: "23:59",
     location: "Online",
     websiteUrl: "https://scilympiad.com/midwest",
     division: "B",
     imageUrl: "https://www.duosmium.org/images/logos/midwest_online.png",
+    closedEarly: false,
   },
   {
     name: "JordanSO Invitational",
-    startDate: "2026-03-01",
-    endDate: "2026-03-08",
-    applyDate: "2026-02-10",
+    startDate: new Date("2026-03-01"),
+    endDate: new Date("2026-03-08"),
+    applyDeadlineDate: new Date("2026-02-10"),
+    applyDeadlineTime: "23:59",
     location: "Online",
     websiteUrl: "https://scilympiad.com/jordan-so",
     division: "B",
     imageUrl: "https://www.duosmium.org/images/logos/jordan_invitational.png",
+    closedEarly: false,
   },
   {
     name: "Lone Star Science Olympiad",
-    startDate: "2026-04-05",
-    endDate: "2026-04-05",
-    applyDate: "2026-03-10",
+    startDate: new Date("2026-04-05"),
+    endDate: new Date("2026-04-05"),
+    applyDeadlineDate: new Date("2026-03-10"),
+    applyDeadlineTime: "23:59",
     location: "Texas",
     websiteUrl: "https://scilympiad.com/lonestar",
     division: "B",
     imageUrl: "https://www.duosmium.org/images/logos/lone_star.png",
+    closedEarly: false,
   },
-
   {
     name: "Pacific Inter-Rim Fake That Probably Doesn't Need to Exist Science Bowl",
-    startDate: "2026-05-03",
-    endDate: "2026-05-3",
-    applyDate: "2026-04-15",
+    startDate: new Date("2026-05-03"),
+    endDate: new Date("2026-05-03"),
+    applyDeadlineDate: new Date("2026-04-15"),
+    applyDeadlineTime: "23:59",
     location: "Washington",
     websiteUrl: "https://scilympiad.com/pacific",
     division: "C",
     imageUrl: "https://www.duosmium.org/images/logos/pacific_bowl.png",
+    closedEarly: false,
   },
 ];
 

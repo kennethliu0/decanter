@@ -7,10 +7,10 @@ import React from "react";
 import LocationCombobox from "./LocationCombobox";
 import { Button } from "@/components/ui/button";
 import * as z from "zod/v4";
-import { usStates } from "@/app/data";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AvatarUpload from "@/components/ui/AvatarUpload";
+import { Switch } from "@/components/ui/switch";
 import {
   FormField,
   FormItem,
@@ -21,44 +21,36 @@ import {
   Form,
 } from "@/components/ui/form";
 import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
+import { EditTournamentSchemaClient as FormSchema } from "@/lib/definitions";
 
 type Props = { tournament: TournamentInfo };
 
 const today = new Date();
-const todayString = today.toISOString().substring(0, 10);
-
-const formSchema = z
-  .object({
-    imageUrl: z.url(),
-    name: z.string().min(1, "Tournament Name cannot be empty"),
-    location: z
-      .string()
-      .refine((value) => value === "Online" || usStates.includes(value), {
-        message: "Tournament must be online or in a US state",
-      }),
-    division: z.enum(["B", "C"]),
-    startDate: z.iso.date(),
-    endDate: z.iso.date(),
-    applyDate: z.iso.date(),
-  })
-  .refine((data) => data.endDate >= data.startDate, {
-    message: "End date must be on or after start date",
-    path: ["endDate"],
-  })
-  .refine((data) => data.applyDate <= data.startDate, {
-    message: "Application deadline must be on or before start date",
-    path: ["applyDate"],
-  });
 
 const TournamentEdit = (props: Props) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       ...props.tournament,
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  function onSubmit(values: z.infer<typeof FormSchema>) {
+    const {
+      applyDeadlineDate: applyDeadline,
+      applyDeadlineTime,
+      startDate,
+      endDate,
+      ...formValues
+    } = values;
+    const [hours, minutes] = applyDeadlineTime.split(":").map(Number);
+    applyDeadline.setHours(hours, minutes, 59, 999);
+    console.log({
+      id: "stuff",
+      applyDeadline: applyDeadline.toISOString(),
+      startDate: startDate.toISOString().substring(0, 10),
+      endDate: endDate.toISOString().substring(0, 10),
+      ...formValues,
+    });
   }
   return (
     <Form {...form}>
@@ -170,6 +162,7 @@ const TournamentEdit = (props: Props) => {
                           error={Boolean(fieldState.error)}
                           disablePast
                           disableOutOfSeason
+                          small
                         />
                       </FormControl>
                       <FormMessage />
@@ -191,6 +184,7 @@ const TournamentEdit = (props: Props) => {
                           disablePast
                           disableOutOfSeason
                           error={Boolean(fieldState.error)}
+                          small
                         />
                       </FormControl>
                       <FormMessage />
@@ -201,10 +195,10 @@ const TournamentEdit = (props: Props) => {
                   )}
                 />
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap gap-4 items-start">
                 <FormField
                   control={form.control}
-                  name="applyDate"
+                  name="applyDeadlineDate"
                   render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Volunteer Application Due Date</FormLabel>
@@ -213,6 +207,7 @@ const TournamentEdit = (props: Props) => {
                           {...field}
                           disablePast
                           disableOutOfSeason
+                          small
                           error={Boolean(fieldState.error)}
                         />
                       </FormControl>
@@ -220,6 +215,45 @@ const TournamentEdit = (props: Props) => {
                       <FormDescription className="sr-only">
                         Volunteer Application Due Date
                       </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="applyDeadlineTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Time</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="time"
+                          step="60"
+                          {...field}
+                          className="text-sm bg-background appearance-none py-2 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription className="sr-only">
+                        Volunteer Application Deadline Time
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="closedEarly"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Manually close application early</FormLabel>
+                      <div className="h-9 flex items-center">
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

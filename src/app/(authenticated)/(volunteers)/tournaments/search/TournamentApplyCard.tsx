@@ -54,7 +54,7 @@ const TournamentApplyCard = (props: Props) => {
           </p>
           <p className="text-sm">
             {"\n"}Apply By{" "}
-            {new Date(props.tournament.applyDate).toLocaleDateString()}
+            {new Date(props.tournament.applyDeadline).toLocaleDateString()}
           </p>
         </div>
         <div className="flex gap-1 items-center">
@@ -70,13 +70,14 @@ const TournamentApplyCard = (props: Props) => {
 
 type TournamentInfo = {
   name: string;
-  startDate: string;
-  endDate: string;
-  applyDate: string;
+  startDate: Date;
+  endDate: Date;
+  applyDeadline: Date;
   location: string;
   websiteUrl: string;
   division: "B" | "C";
   imageUrl: string;
+  closedEarly: boolean;
 };
 
 export { TournamentApplyCard };

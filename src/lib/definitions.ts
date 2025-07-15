@@ -159,23 +159,25 @@ export type UpdatePasswordState =
     }
   | undefined;
 
-export const EditTournamentSchemaClient = z
-  .object({
-    imageUrl: z.url(),
-    websiteUrl: z.url(),
-    name: z.string().min(1, "Tournament Name cannot be empty"),
-    location: z
-      .string()
-      .refine((value) => value === "Online" || usStates.includes(value), {
-        message: "Tournament must be online or in a US state",
-      }),
-    division: z.enum(["B", "C"]),
-    startDate: z.date(),
-    endDate: z.date(),
-    applyDeadlineDate: z.date(),
-    applyDeadlineTime: z.iso.time({ precision: -1 }),
-    closedEarly: z.boolean(),
-  })
+export const EditTournamentSchemaBase = z.object({
+  imageUrl: z.url(),
+  websiteUrl: z.url(),
+  name: z.string().min(1, "Tournament Name cannot be empty").trim(),
+  location: z
+    .string()
+    .refine((value) => value === "Online" || usStates.includes(value), {
+      message: "Tournament must be online or in a US state",
+    }),
+  division: z.enum(["B", "C"]),
+  closedEarly: z.boolean(),
+});
+
+export const EditTournamentSchemaClient = EditTournamentSchemaBase.extend({
+  startDate: z.date(),
+  endDate: z.date(),
+  applyDeadlineDate: z.date(),
+  applyDeadlineTime: z.iso.time({ precision: -1 }),
+})
   .refine((data) => data.endDate >= data.startDate, {
     message: "End date must be on or after start date",
     path: ["endDate"],
@@ -185,18 +187,45 @@ export const EditTournamentSchemaClient = z
     path: ["applyDate"],
   });
 
-export type EditTournamentState =
+export const EditTournamentSchemaServer = EditTournamentSchemaBase.extend({
+  id: z.uuid({ version: "v4" }).optional(),
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
+  applyDeadline: z.iso.datetime({ offset: true }),
+})
+  .refine((data) => data.endDate >= data.startDate, {
+    message: "End date must be on or after start date",
+    path: ["endDate"],
+  })
+  .refine((data) => data.applyDeadline.substring(0, 10) <= data.startDate, {
+    message: "Application deadline must be on or before start date",
+    path: ["applyDate"],
+  });
+
+export const GetTournamentSchemaServer = EditTournamentSchemaServer.extend({
+  applicationFields: z.array(
+    z.object({
+      prompt: z.string(),
+      type: z.enum(["short", "long"]),
+    }),
+  ),
+});
+
+export type EditTournamentServerState =
   | {
       error?: {
         imageUrl?: string[];
+        websiteUrl?: string[];
         name?: string[];
         location?: string[];
         division?: string[];
         startDate?: string[];
         endDate?: string[];
         applyDeadline?: string[];
-        manualClose?: string[];
+        closedEarly?: string[];
+        id?: string[];
       };
       message?: string;
+      success?: boolean;
     }
   | undefined;

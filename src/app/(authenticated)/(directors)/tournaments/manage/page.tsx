@@ -25,45 +25,6 @@ export default function Home() {
       <Suspense fallback={<TournamentEditSkeleton />}>
         <TournamentEdit tournament={tournaments[3]} />
       </Suspense>
-      <Separator />
-      <h2 className="text-2xl">Edit Volunteer Application</h2>
-      <div className="text-sm">
-        <p>Volunteers already provide the following fields:</p>
-        <ul>
-          <li>- Name</li>
-          <li>- Contact e-mail</li>
-          <li>- School and graduation year</li>
-          <li>- Notable achievements</li>
-          <li>- Past volunteer experience</li>
-          <li>- First four event preferences</li>
-        </ul>
-        <p>
-          Do not include information that would go in your onboarding form such
-          as T-Shirt size. Use this form for additional info that you need to
-          process an application (think ability to travel for in-person
-          tournaments, whether they are competing in the Division C tournament
-          while applying for Division B, etc).
-        </p>
-        <h3 className="text-xl py-2">Fields</h3>
-      </div>
-      <Suspense
-        fallback={
-          <div className="w-full pb-4">
-            <LoaderCircle className="mx-auto animate-spin" />
-          </div>
-        }
-      >
-        <VolunteerApplicationEdit
-          fields={[
-            {
-              prompt:
-                "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
-              type: "input",
-              id: "0",
-            },
-          ]}
-        />
-      </Suspense>
 
       <Separator />
       <h2 className="text-2xl">View Applications</h2>

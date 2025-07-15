@@ -1,6 +1,5 @@
 "use client";
 
-import { TournamentInfo } from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentApplyCard";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React from "react";
@@ -22,8 +21,9 @@ import {
 } from "@/components/ui/form";
 import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
 import { EditTournamentSchemaClient as FormSchema } from "@/lib/definitions";
+import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 
-type Props = { tournament: TournamentInfo };
+type Props = { tournament: z.infer<typeof FormSchema> };
 
 const today = new Date();
 
@@ -45,7 +45,6 @@ const TournamentEdit = (props: Props) => {
     const [hours, minutes] = applyDeadlineTime.split(":").map(Number);
     applyDeadline.setHours(hours, minutes, 59, 999);
     console.log({
-      id: "stuff",
       applyDeadline: applyDeadline.toISOString(),
       startDate: startDate.toISOString().substring(0, 10),
       endDate: endDate.toISOString().substring(0, 10),
@@ -260,10 +259,43 @@ const TournamentEdit = (props: Props) => {
               </div>
             </div>
           </div>
-          {form.formState.isDirty && (
-            <div className="flex justify-end items-center gap-2">
-              <p className="text-muted-foreground text-sm">Unsaved Changes </p>
+          <h2 className="text-xl">Edit Volunteer Application</h2>
+          <div className="text-sm">
+            <p>Volunteers already provide the following fields:</p>
+            <ul>
+              <li>- Name</li>
+              <li>- Contact e-mail</li>
+              <li>- School and graduation year</li>
+              <li>- Notable achievements</li>
+              <li>- Past volunteer experience</li>
+              <li>- First four event preferences</li>
+            </ul>
+            <p>
+              Do not include information that would go in your onboarding form
+              such as T-Shirt size. Use this form for additional info that you
+              need to process an application (think ability to travel for
+              in-person tournaments, whether they are competing in the Division
+              C tournament while applying for Division B, etc).
+            </p>
+            <h3 className="text-xl pt-2">Fields</h3>
+          </div>
+          <FormField
+            control={form.control}
+            name="applicationFields"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel className="sr-only">
+                  Edit Volunteer Application Fields
+                </FormLabel>
+                <FormMessage />
+                <VolunteerApplicationEdit {...field} />
+              </FormItem>
+            )}
+          />
 
+          {form.formState.isDirty && (
+            <div className="flex items-center gap-2 sticky bottom-4 justify-end bg-card/80 p-2 border-2 rounded-md">
+              <p className="text-sm">Unsaved Changes </p>
               <Button
                 variant="outline"
                 type="reset"

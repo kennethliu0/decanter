@@ -13,7 +13,6 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  TouchSensor,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -23,30 +22,18 @@ import {
 } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 import VolunteerField from "./VolunteerField";
+import { v4 as uuidv4 } from "uuid";
+import { uuid } from "zod/v4";
 
-type InputType = "input" | "textarea";
+type InputType = "short" | "long";
 type Field = { prompt: string; type: InputType; id: string };
 type Props = {
-  fields: Field[];
-};
-const deepEquals = (arr1: Field[], arr2: Field[]) => {
-  if (arr1 === arr2) {
-    return true;
-  }
-
-  if (arr1.length != arr2.length) return false;
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i].prompt !== arr2[i].prompt || arr1[i].type !== arr2[i].type)
-      return false;
-  }
-  return true;
+  value: Field[];
+  onChange: (value: Field[] | null) => void;
 };
 
-const VolunteerApplicationEdit = (props: Props) => {
-  const [initialFields, setInitialFields] = useState(props.fields);
+const VolunteerApplicationEdit = ({ value, onChange }: Props) => {
   const [activeField, setActiveField] = useState<Field | null>(null);
-  const [fields, setFields] = useState(props.fields);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -56,20 +43,19 @@ const VolunteerApplicationEdit = (props: Props) => {
   );
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
-    setActiveField(fields.find((field) => field.id === active.id) || null);
+    setActiveField(value.find((field) => field.id === active.id) || null);
   }
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setFields((fields) => {
-        const oldIndex = fields.findIndex((field) => field.id === active.id);
-        const newIndex = fields.findIndex((field) => field.id === over.id);
+      const oldIndex = value.findIndex((field) => field.id === active.id);
+      const newIndex = value.findIndex((field) => field.id === over.id);
 
-        return arrayMove(fields, oldIndex, newIndex);
-      });
+      onChange(arrayMove(value, oldIndex, newIndex));
     }
   }
+
   return (
     <div className="text-sm">
       <ul className="px-2 space-y-2">
@@ -82,33 +68,33 @@ const VolunteerApplicationEdit = (props: Props) => {
           id="unique-dnd-context-id"
         >
           <SortableContext
-            items={fields.map((field) => field.id)}
+            items={value.map((field) => field.id)}
             strategy={verticalListSortingStrategy}
           >
-            {fields.map((field, index) => (
+            {value.map((field, index) => (
               <SortableItem
                 key={field.id}
                 id={field.id}
                 prompt={field.prompt}
                 type={field.type}
-                onPromptChange={(value: string) => {
-                  const updated = [...fields];
-                  updated[index].prompt = value;
-                  setFields(updated);
+                onPromptChange={(e: string) => {
+                  const updated = [...value];
+                  updated[index].prompt = e;
+                  onChange(updated);
                 }}
-                onTypeChange={(value: InputType) => {
-                  const updated = [...fields];
-                  updated[index].type = value;
-                  setFields(updated);
+                onTypeChange={(e: InputType) => {
+                  const updated = [...value];
+                  updated[index].type = e;
+                  onChange(updated);
                 }}
                 onDelete={() => {
-                  setFields(fields.filter((_, i) => i !== index));
+                  onChange(value.filter((_, i) => i !== index));
                 }}
               ></SortableItem>
             ))}
           </SortableContext>
           <DragOverlay>
-            {activeField ?
+            {activeField && (
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
@@ -121,7 +107,7 @@ const VolunteerApplicationEdit = (props: Props) => {
                   type={activeField.type}
                 />
               </div>
-            : null}
+            )}
           </DragOverlay>
         </DndContext>
       </ul>
@@ -130,56 +116,19 @@ const VolunteerApplicationEdit = (props: Props) => {
           variant="outline"
           onClick={() => {
             let newFields = [
-              ...fields,
+              ...value,
               {
                 prompt: "",
-                type: "input" as InputType,
-                id: String(fields.length),
+                type: "short" as InputType,
+                id: uuidv4(),
               },
             ];
-            setFields(newFields);
+            onChange(newFields);
           }}
         >
           <Plus />
           Add Field
         </Button>
-        {!deepEquals(fields, initialFields) && (
-          <div className="flex gap-2 items-center">
-            <p className="text-muted-foreground">Unsaved Changes</p>
-            <Button
-              variant="outline"
-              onClick={() =>
-                setFields(
-                  initialFields.map((field, index) => ({
-                    ...field,
-                    id: String(index),
-                  })),
-                )
-              }
-            >
-              Discard
-            </Button>
-            <Button
-              onClick={() => {
-                // remove empty fields
-                setFields(fields.filter((field) => field.prompt));
-                // call server function
-                console.log(fields);
-                setInitialFields(
-                  fields.map((field) => {
-                    return {
-                      prompt: field.prompt,
-                      type: field.type,
-                      id: field.id,
-                    };
-                  }),
-                );
-              }}
-            >
-              Save
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

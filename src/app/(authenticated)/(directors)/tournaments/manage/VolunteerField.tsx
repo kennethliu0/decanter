@@ -4,8 +4,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { TrashIcon } from "lucide-react";
+import clsx from "clsx";
 
-type InputType = "input" | "textarea";
+type InputType = "short" | "long";
 
 interface VolunteerFieldProps {
   prompt: string;
@@ -28,7 +29,9 @@ const VolunteerField = forwardRef<HTMLLIElement, VolunteerFieldProps>(
             onPromptChange ? onPromptChange(e.target.value) : null
           }
           placeholder="Prompt text"
-          className="max-w-128 h-32 sm:h-9"
+          className={clsx("max-w-128 h-32 sm:h-9", {
+            "border-destructive": !prompt,
+          })}
         />
         <div className="flex gap-2 justify-between items-center">
           <RadioGroup
@@ -42,21 +45,21 @@ const VolunteerField = forwardRef<HTMLLIElement, VolunteerFieldProps>(
           >
             <div className="flex gap-2 items-center">
               <RadioGroupItem
-                value="textarea"
-                id="textarea"
+                value="long"
+                id="long"
               />
-              <Label htmlFor="textarea">Long Response</Label>
+              <Label htmlFor="long">Long Response</Label>
               <RadioGroupItem
-                value="input"
-                id="input"
+                value="short"
+                id="short"
               />
-              <Label htmlFor="input">Short Response</Label>
+              <Label htmlFor="short">Short Response</Label>
             </div>
           </RadioGroup>
           <Button
             variant="ghost"
             size="icon"
-            className="hover:text-red-400"
+            className="hover:text-destructive"
             onClick={onDelete}
           >
             <TrashIcon />

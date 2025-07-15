@@ -119,6 +119,14 @@ export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
     division: "C",
     imageUrl: "https://www.duosmium.org/images/logos/empire_state.png",
     closedEarly: false,
+    applicationFields: [
+      {
+        prompt:
+          "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
+        type: "short",
+        id: "71814270-9dcb-4622-a3bf-29a89a31ff01",
+      },
+    ],
   },
   {
     name: "Golden Gate Invitational",
@@ -132,6 +140,14 @@ export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
     imageUrl:
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAADACAMAAAB/Pny7AAAAvVBMVEX///89PT0...", // truncated
     closedEarly: false,
+    applicationFields: [
+      {
+        prompt:
+          "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
+        type: "short",
+        id: "71814270-9dcb-4622-a3bf-29a89a31ff01",
+      },
+    ],
   },
   {
     name: "Midwest Online Invitational",
@@ -144,6 +160,14 @@ export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
     division: "B",
     imageUrl: "https://www.duosmium.org/images/logos/midwest_online.png",
     closedEarly: false,
+    applicationFields: [
+      {
+        prompt:
+          "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
+        type: "short",
+        id: "71814270-9dcb-4622-a3bf-29a89a31ff01",
+      },
+    ],
   },
   {
     name: "JordanSO Invitational",
@@ -156,6 +180,14 @@ export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
     division: "B",
     imageUrl: "https://www.duosmium.org/images/logos/jordan_invitational.png",
     closedEarly: false,
+    applicationFields: [
+      {
+        prompt:
+          "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
+        type: "short",
+        id: "71814270-9dcb-4622-a3bf-29a89a31ff01",
+      },
+    ],
   },
   {
     name: "Lone Star Science Olympiad",
@@ -168,6 +200,14 @@ export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
     division: "B",
     imageUrl: "https://www.duosmium.org/images/logos/lone_star.png",
     closedEarly: false,
+    applicationFields: [
+      {
+        prompt:
+          "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
+        type: "short",
+        id: "71814270-9dcb-4622-a3bf-29a89a31ff01",
+      },
+    ],
   },
   {
     name: "Pacific Inter-Rim Fake That Probably Doesn't Need to Exist Science Bowl",
@@ -180,6 +220,14 @@ export const tournaments: Array<z.infer<typeof EditTournamentSchemaClient>> = [
     division: "C",
     imageUrl: "https://www.duosmium.org/images/logos/pacific_bowl.png",
     closedEarly: false,
+    applicationFields: [
+      {
+        prompt:
+          "I understand that I will be responsible for supervising and grading the test after the invitational period has completed. ",
+        type: "short",
+        id: "71814270-9dcb-4622-a3bf-29a89a31ff01",
+      },
+    ],
   },
 ];
 

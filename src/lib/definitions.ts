@@ -170,6 +170,18 @@ export const EditTournamentSchemaBase = z.object({
     }),
   division: z.enum(["B", "C"]),
   closedEarly: z.boolean(),
+  applicationFields: z
+    .array(
+      z.object({
+        prompt: z.string().trim(),
+        type: z.enum(["short", "long"]),
+        id: z.uuid({ version: "v4" }),
+      }),
+    )
+    .refine(
+      (val) => !val.find((field) => !field.prompt),
+      "Application fields cannot be empty",
+    ),
 });
 
 export const EditTournamentSchemaClient = EditTournamentSchemaBase.extend({
@@ -201,15 +213,6 @@ export const EditTournamentSchemaServer = EditTournamentSchemaBase.extend({
     message: "Application deadline must be on or before start date",
     path: ["applyDate"],
   });
-
-export const GetTournamentSchemaServer = EditTournamentSchemaServer.extend({
-  applicationFields: z.array(
-    z.object({
-      prompt: z.string(),
-      type: z.enum(["short", "long"]),
-    }),
-  ),
-});
 
 export type EditTournamentServerState =
   | {

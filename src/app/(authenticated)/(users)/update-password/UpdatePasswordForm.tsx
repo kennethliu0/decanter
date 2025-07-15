@@ -83,7 +83,7 @@ const UpdatePasswordForm = (props: Props) => {
                 )}
               />
               {state?.errors?.password && (
-                <div className="text-red-400">
+                <div className="text-destructive">
                   <p>Password requirements:</p>
                   <ul>
                     {state.errors.password.map((error) => (
@@ -111,7 +111,9 @@ const UpdatePasswordForm = (props: Props) => {
                 )}
               />{" "}
               {state?.errors?.confirmPassword && (
-                <p className="text-red-400">{state.errors.confirmPassword}</p>
+                <p className="text-destructive">
+                  {state.errors.confirmPassword}
+                </p>
               )}
             </form>
           </Form>

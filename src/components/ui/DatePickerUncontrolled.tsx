@@ -45,7 +45,7 @@ const DatePickerUncontrolled = ({
             className={clsx(
               "data-[empty=true]:text-muted-foreground justify-start text-left font-normal",
               {
-                "!border-red-400": error,
+                "!border-destructive": error,
                 "w-[200px]": small,
                 "w-[280px]": !small,
               },

@@ -43,7 +43,7 @@ export default function AvatarUpload({
   return (
     <div
       className={cn("relative w-32 h-32 overflow-hidden rounded-lg", {
-        "border-2 border-red-400": error,
+        "border-2 border-destructive": error,
       })}
     >
       {value ?
@@ -59,7 +59,7 @@ export default function AvatarUpload({
       : <div
           className={cn(
             "absolute inset-0 bg-muted/50 flex items-center justify-center group-hover:opacity-100 transition-opacity duration-200 text-muted-foreground",
-            { "text-red-400": error },
+            { "text-destructive": error },
           )}
         >
           <UploadIcon className="w-8 h-8" />

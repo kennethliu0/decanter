@@ -77,7 +77,7 @@ const ProfileCardEdit = (props: Props) => {
             )}
           />
           {state?.errors?.name && (
-            <p className="text-red-400">{state.errors.name}</p>
+            <p className="text-destructive">{state.errors.name}</p>
           )}
           <FormField
             control={form.control}
@@ -99,7 +99,7 @@ const ProfileCardEdit = (props: Props) => {
             )}
           />{" "}
           {state?.errors?.education && (
-            <p className="text-red-400">{state.errors.education}</p>
+            <p className="text-destructive">{state.errors.education}</p>
           )}
           <FormField
             control={form.control}
@@ -122,7 +122,7 @@ const ProfileCardEdit = (props: Props) => {
             )}
           />
           {state?.errors?.bio && (
-            <p className="text-red-400">{state.errors.bio}</p>
+            <p className="text-destructive">{state.errors.bio}</p>
           )}
           <FormField
             control={form.control}
@@ -145,7 +145,7 @@ const ProfileCardEdit = (props: Props) => {
             )}
           />
           {state?.errors?.experience && (
-            <p className="text-red-400">{state.errors.experience}</p>
+            <p className="text-destructive">{state.errors.experience}</p>
           )}
           <FormField
             control={form.control}
@@ -164,7 +164,7 @@ const ProfileCardEdit = (props: Props) => {
             )}
           />
           {state?.errors?.preferencesB && (
-            <p className="text-red-400">{state.errors.preferencesB}</p>
+            <p className="text-destructive">{state.errors.preferencesB}</p>
           )}
           <FormField
             control={form.control}
@@ -183,7 +183,7 @@ const ProfileCardEdit = (props: Props) => {
             )}
           />
           {state?.errors?.preferencesC && (
-            <p className="text-red-400">{state.errors.preferencesC}</p>
+            <p className="text-destructive">{state.errors.preferencesC}</p>
           )}
           <div className="flex justify-end gap-2">
             <Button

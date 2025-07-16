@@ -191,7 +191,7 @@ const TournamentEdit = (props: Props) => {
                   </FormItem>
                 )}
               />
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
                 <FormField
                   control={form.control}
                   name="location"
@@ -251,7 +251,7 @@ const TournamentEdit = (props: Props) => {
                   />
                 </div>
               </div>
-              <div className="flex flex-wrap gap-4 items-start">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 items-start">
                 <FormField
                   control={form.control}
                   name="startDate"
@@ -303,7 +303,7 @@ const TournamentEdit = (props: Props) => {
                   )}
                 />
               </div>
-              <div className="flex flex-wrap gap-4 items-start">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 items-start">
                 <FormField
                   control={form.control}
                   name="applyDeadlineDate"
@@ -335,7 +335,7 @@ const TournamentEdit = (props: Props) => {
                           type="time"
                           step="60"
                           {...field}
-                          className="text-sm bg-background appearance-none py-2 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                          className="w-25 text-sm bg-background appearance-none py-2 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                         />
                       </FormControl>
                       <FormDescription className="sr-only">
@@ -391,8 +391,8 @@ const TournamentEdit = (props: Props) => {
                   </p>
                 </div>
                 {approved ?
-                  <Check />
-                : <Clock />}
+                  <Check color="green" />
+                : <Clock color="yellow" />}
               </div>
             </div>
           </div>

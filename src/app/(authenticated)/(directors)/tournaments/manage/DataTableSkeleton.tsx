@@ -12,8 +12,8 @@ export default function SkeletonTable() {
   const skeletonRows = Array.from({ length: 10 });
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border">
+    <div>
+      <div className="rounded-md border  overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

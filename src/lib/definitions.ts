@@ -160,13 +160,13 @@ export type UpdatePasswordState =
   | undefined;
 
 export const EditTournamentSchemaBase = z.object({
-  imageUrl: z.url(),
+  imageUrl: z.url("Invalid image"),
   websiteUrl: z.url(),
-  name: z.string().min(1, "Tournament Name cannot be empty").trim(),
+  name: z.string().min(1, "Required field").trim(),
   location: z
     .string()
     .refine((value) => value === "Online" || usStates.includes(value), {
-      message: "Tournament must be online or in a US state",
+      message: "Required field",
     }),
   division: z.enum(["B", "C"], "Choose a division"),
   closedEarly: z.boolean(),
@@ -204,6 +204,7 @@ export const EditTournamentSchemaServer = EditTournamentSchemaBase.extend({
   startDate: z.iso.date(),
   endDate: z.iso.date(),
   applyDeadline: z.iso.datetime({ offset: true }),
+  approved: z.boolean().optional(),
 })
   .refine((data) => data.endDate >= data.startDate, {
     message: "End date must be on or after start date",
@@ -226,6 +227,7 @@ export type EditTournamentServerState =
         endDate?: string[];
         applyDeadline?: string[];
         closedEarly?: string[];
+        approved?: string[];
         id?: string[];
       };
       message?: string;

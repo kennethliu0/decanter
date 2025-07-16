@@ -27,6 +27,8 @@ import {
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 import { upsertTournament } from "@/app/dal/tournaments/actions";
 import { parse, format } from "date-fns";
+import { Label } from "@/components/ui/label";
+import { Check, Clock } from "lucide-react";
 
 type Props = {
   tournamentPromise?: Promise<z.infer<typeof ServerSchema> | { error: string }>;
@@ -43,6 +45,7 @@ const TournamentEdit = (props: Props) => {
     endDate: endDateString,
     applyDeadline: applyDeadlineString,
     applicationFields,
+    approved,
     id,
     ...tournament
   } = promisedTournament || {
@@ -55,6 +58,7 @@ const TournamentEdit = (props: Props) => {
     applicationFields: [],
     startDate: "",
     endDate: "",
+    approved: false,
     applyDeadline: "",
   };
   const applyDeadlineDate =
@@ -144,7 +148,7 @@ const TournamentEdit = (props: Props) => {
                 </FormItem>
               )}
             />
-            <div className="space-y-2">
+            <div className="space-y-2 grow max-w-lg">
               <FormField
                 control={form.control}
                 name="name"
@@ -174,7 +178,7 @@ const TournamentEdit = (props: Props) => {
                     <FormLabel>Website URL</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="https://scilympiad.org/..."
+                        placeholder="https://scilympiad.org..."
                         {...field}
                       />
                     </FormControl>
@@ -334,43 +338,62 @@ const TournamentEdit = (props: Props) => {
                           className="text-sm bg-background appearance-none py-2 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                         />
                       </FormControl>
-                      <FormMessage />
                       <FormDescription className="sr-only">
                         Volunteer Application Deadline Time
                       </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="closedEarly"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Close application - manual override</FormLabel>
-                      <div className="h-9 flex items-center">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </div>
                       <FormMessage />
-                      {state?.errors?.closedEarly && (
+                      {state?.errors?.applyDeadline && (
                         <p className="text-sm text-destructive">
-                          {state.errors.closedEarly}
+                          {state.errors.applyDeadline}
                         </p>
                       )}
                     </FormItem>
                   )}
                 />
               </div>
-
-              {state?.errors?.applyDeadline && (
-                <p className="text-sm text-destructive">
-                  {state.errors.applyDeadline}
-                </p>
-              )}
+              <FormField
+                control={form.control}
+                name="closedEarly"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Close application</FormLabel>
+                      <FormDescription>
+                        {field.value ?
+                          "Application is not open."
+                        : "Application may be open depending on deadline."}
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {state?.errors?.closedEarly && (
+                      <p className="text-sm text-destructive">
+                        {state.errors.closedEarly}
+                      </p>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <Label>
+                    {approved ? "Tournament Approved" : "Approval Pending"}
+                  </Label>
+                  <p className="text-muted-foreground text-sm">
+                    {approved ?
+                      "Visible to volunteers."
+                    : "Not visible to volunteers."}
+                  </p>
+                </div>
+                {approved ?
+                  <Check />
+                : <Clock />}
+              </div>
             </div>
           </div>
           <h2 className="text-xl">Edit Volunteer Application</h2>

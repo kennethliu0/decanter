@@ -31,7 +31,9 @@ export async function upsertTournament(
     console.error(userError);
     return { message: "Unauthenticated", success: false };
   }
-  let { id, ...values } = validatedFields.data;
+  // dont allow user to update approved and check id to see if a new tournament
+  // should be created
+  let { id, approved, ...values } = validatedFields.data;
   const newTournament = !id;
   let created_by = null;
   if (newTournament) {
@@ -88,7 +90,7 @@ export async function getTournament(
   const { data, error } = await supabase
     .from("tournaments")
     .select(
-      "id, name, location, division, image_url, website_url, closed_early, start_date, end_date, apply_deadline, application_fields",
+      "id, name, location, division, image_url, website_url, closed_early, start_date, end_date, apply_deadline, application_fields, approved",
     )
     .eq("id", validatedFields.data)
     .maybeSingle();

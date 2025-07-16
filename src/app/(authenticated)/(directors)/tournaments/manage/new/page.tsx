@@ -10,7 +10,7 @@ import DataTableSkeleton from "../DataTableSkeleton";
 import { DataTable } from "../DataTable";
 export default function Home() {
   return (
-    <main className="px-4 max-w-4xl mx-auto space-y-4">
+    <main className="px-4 max-w-4xl w-full mx-auto space-y-4">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Manage Tournament</h1>
         <Link href="/tournaments/manage">
@@ -19,10 +19,9 @@ export default function Home() {
           </span>
         </Link>
       </div>
-      <TournamentEditSkeleton />
-      {/* <Suspense fallback={<TournamentEditSkeleton />}>
+      <Suspense fallback={<TournamentEditSkeleton />}>
         <TournamentEdit />
-      </Suspense> */}
+      </Suspense>
 
       <Separator />
       <h2 className="text-2xl">View Applications</h2>

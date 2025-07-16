@@ -21,7 +21,7 @@ const VolunteerField = forwardRef<HTMLLIElement, VolunteerFieldProps>(
     return (
       <li
         ref={ref}
-        className="grow space-y-2 border-accent border py-2 px-4 rounded-md bg-background"
+        className="max-w-128 grow space-y-2 border-accent border py-2 px-4 rounded-md bg-background"
       >
         <Textarea
           value={prompt}
@@ -29,7 +29,7 @@ const VolunteerField = forwardRef<HTMLLIElement, VolunteerFieldProps>(
             onPromptChange ? onPromptChange(e.target.value) : null
           }
           placeholder="Prompt text"
-          className={clsx("max-w-128 h-32 sm:h-9", {
+          className={clsx("h-9", {
             "border-destructive": !prompt,
           })}
         />

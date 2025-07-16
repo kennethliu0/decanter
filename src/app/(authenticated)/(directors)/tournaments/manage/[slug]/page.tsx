@@ -24,7 +24,7 @@ export default async function Home({
   const tournamentPromise = getTournament(slug);
 
   return (
-    <main className="px-4 max-w-4xl mx-auto space-y-4">
+    <main className="px-4 max-w-4xl w-full mx-auto space-y-4">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Manage Tournament</h1>
         <Link href="/tournaments/manage">

@@ -116,8 +116,8 @@ const TournamentEdit = (props: Props) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-4 w-full max-w-3xl">
-          <div className="flex flex-col sm:flex-row-reverse justify-between items-start">
+        <div className="space-y-4 w-full">
+          <div className="flex flex-col sm:flex-row-reverse gap-y-2 gap-x-4 justify-between items-start">
             <FormField
               control={form.control}
               name="imageUrl"
@@ -187,7 +187,7 @@ const TournamentEdit = (props: Props) => {
                   </FormItem>
                 )}
               />
-              <div className="flex flex-wrap gap-2 items-start">
+              <div className="flex flex-wrap gap-4">
                 <FormField
                   control={form.control}
                   name="location"
@@ -343,7 +343,7 @@ const TournamentEdit = (props: Props) => {
                   name="closedEarly"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Manually close application early</FormLabel>
+                      <FormLabel>Close application - manual override</FormLabel>
                       <div className="h-9 flex items-center">
                         <FormControl>
                           <Switch
@@ -381,6 +381,7 @@ const TournamentEdit = (props: Props) => {
               <li>- Past volunteer experience</li>
               <li>- First four event preferences</li>
             </ul>
+            <br />
             <p>
               Do not include information that would go in your onboarding form
               such as T-Shirt size. Use this form for additional info that you
@@ -388,7 +389,8 @@ const TournamentEdit = (props: Props) => {
               in-person tournaments, whether they are competing in the Division
               C tournament while applying for Division B, etc).
             </p>
-            <h3 className="text-xl pt-2">Fields</h3>
+            <br />
+            <h3 className="text-xl">Fields</h3>
           </div>
           <FormField
             control={form.control}

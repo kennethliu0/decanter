@@ -1,14 +1,13 @@
 import { volunteers } from "@/app/data";
-import TournamentEdit from "./TournamentEdit";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { DataTable } from "./DataTable";
-import { columns } from "./VolunteerColumns";
-import DataTableSkeleton from "./DataTableSkeleton";
 import { Suspense } from "react";
+import { columns } from "../VolunteerColumns";
 import { Button } from "@/components/ui/button";
-import TournamentEditSkeleton from "./TournamentEditSkeleton";
-
+import TournamentEdit from "../TournamentEdit";
+import TournamentEditSkeleton from "../TournamentEditSkeleton";
+import DataTableSkeleton from "../DataTableSkeleton";
+import { DataTable } from "../DataTable";
 export default function Home() {
   return (
     <main className="px-4 max-w-4xl mx-auto space-y-4">
@@ -20,9 +19,10 @@ export default function Home() {
           </span>
         </Link>
       </div>
-      <Suspense fallback={<TournamentEditSkeleton />}>
+      <TournamentEditSkeleton />
+      {/* <Suspense fallback={<TournamentEditSkeleton />}>
         <TournamentEdit />
-      </Suspense>
+      </Suspense> */}
 
       <Separator />
       <h2 className="text-2xl">View Applications</h2>

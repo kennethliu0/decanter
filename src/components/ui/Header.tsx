@@ -18,7 +18,7 @@ import {
 import { FlaskConical, Menu, User, XIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { logout } from "@/utils/auth";
+import { logout } from "@/app/dal/auth/actions";
 import { Separator } from "./separator";
 
 type Props = {};

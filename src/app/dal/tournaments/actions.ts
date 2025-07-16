@@ -5,9 +5,10 @@ import {
   EditTournamentServerState,
 } from "@/lib/definitions";
 import z from "zod/v4";
-import { createClient } from "./supabase/server";
+import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export async function upsertTournament(
   formState: EditTournamentServerState,
@@ -48,6 +49,7 @@ export async function upsertTournament(
     ...(created_by ? { created_by } : {}),
   });
   if (error) {
+    console.error(error);
     return { message: "Something went wrong", success: false };
   }
   if (newTournament) {
@@ -59,15 +61,18 @@ export async function upsertTournament(
       console.error(error);
       return { message: "Error setting admin privileges", success: false };
     }
+    redirect(`/tournaments/manage/${id}`);
   }
   return { success: true };
 }
 
-export async function getTournament(id: string) {
+export async function getTournament(
+  id: string,
+): Promise<z.infer<typeof EditTournamentSchemaServer> | { error: string }> {
   const validatedFields = z.uuid({ version: "v4" }).safeParse(id);
-
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   if (!validatedFields.success) {
-    return { error: true, message: "Invalid id" };
+    redirect("/tournaments/manage/new");
   }
 
   const supabase = await createClient();
@@ -77,31 +82,24 @@ export async function getTournament(id: string) {
     error: userError,
   } = await supabase.auth.getUser();
   if (!user?.id || userError) {
-    console.error(userError);
-    return { message: "Unauthenticated", success: false };
+    redirect("/login");
   }
 
   const { data, error } = await supabase
     .from("tournaments")
     .select(
-      "name, location, division, image_url, website_url, closed_early, start_date, end_date, apply_deadline, application_fields",
+      "id, name, location, division, image_url, website_url, closed_early, start_date, end_date, apply_deadline, application_fields",
     )
+    .eq("id", validatedFields.data)
     .maybeSingle();
 
   if (error || !data) {
     console.error(error);
-    return {
-      message: "Error occurred while accessing database",
-      success: false,
-    };
+    throw { error: "Error accessing database" };
   }
-  console.log(toCamel(data));
   const validatedData = EditTournamentSchemaServer.safeParse(toCamel(data));
   if (!validatedData.success) {
-    return {
-      errors: z.flattenError(validatedData.error).fieldErrors,
-      success: false,
-    };
+    return { error: "Validation error on database results" };
   }
   return validatedData.data;
 }

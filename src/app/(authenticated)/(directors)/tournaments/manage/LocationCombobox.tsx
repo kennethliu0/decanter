@@ -70,6 +70,7 @@ const LocationCombobox = ({ onChange, value, error }: Props) => {
                   value={state}
                   onSelect={(currentValue) => {
                     onChange(currentValue === value ? "" : currentValue);
+                    setOpen(false);
                   }}
                 >
                   <CheckIcon

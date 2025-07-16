@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import GroupedEventPreferencesInput from "./GroupedEventPreferencesInput";
 import { VolunteerProfileSchema as FormSchema } from "@/lib/definitions";
-import { upsertProfile } from "@/utils/volunteer_profile";
+import { upsertProfile } from "@/app/dal/volunteer-profiles/actions";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 

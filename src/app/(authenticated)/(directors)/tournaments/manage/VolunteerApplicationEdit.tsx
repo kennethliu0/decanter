@@ -23,7 +23,6 @@ import {
 import SortableItem from "./SortableItem";
 import VolunteerField from "./VolunteerField";
 import { v4 as uuidv4 } from "uuid";
-import { uuid } from "zod/v4";
 
 type InputType = "short" | "long";
 type Field = { prompt: string; type: InputType; id: string };

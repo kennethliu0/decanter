@@ -1,15 +1,28 @@
 import { volunteers } from "@/app/data";
-import TournamentEdit from "./TournamentEdit";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { DataTable } from "./DataTable";
-import { columns } from "./VolunteerColumns";
-import DataTableSkeleton from "./DataTableSkeleton";
 import { Suspense } from "react";
+import { columns } from "../VolunteerColumns";
 import { Button } from "@/components/ui/button";
-import TournamentEditSkeleton from "./TournamentEditSkeleton";
+import TournamentEdit from "../TournamentEdit";
+import TournamentEditSkeleton from "../TournamentEditSkeleton";
+import DataTableSkeleton from "../DataTableSkeleton";
+import { DataTable } from "../DataTable";
+import { getTournament } from "@/app/dal/tournaments/actions";
+import { z } from "zod/v4";
+import { redirect } from "next/navigation";
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const id = z.uuid({ version: "v4" }).safeParse(slug);
+  if (!id.success) {
+    redirect("/tournaments/manage/new");
+  }
+  const tournamentPromise = getTournament(slug);
 
-export default function Home() {
   return (
     <main className="px-4 max-w-4xl mx-auto space-y-4">
       <div className="space-y-2">
@@ -21,7 +34,7 @@ export default function Home() {
         </Link>
       </div>
       <Suspense fallback={<TournamentEditSkeleton />}>
-        <TournamentEdit />
+        <TournamentEdit tournamentPromise={tournamentPromise} />
       </Suspense>
 
       <Separator />

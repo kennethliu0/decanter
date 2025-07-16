@@ -22,7 +22,7 @@ export default function AvatarUpload({
       const formData = new FormData();
       formData.append("image", file);
 
-      const res = await fetch("/tournament-icons", {
+      const res = await fetch("/dal/tournament-icons", {
         method: "POST",
         body: formData,
       });

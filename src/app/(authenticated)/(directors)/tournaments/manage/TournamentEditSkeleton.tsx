@@ -4,7 +4,7 @@ import React from "react";
 
 const TournamentEditSkeleton = () => {
   return (
-    <div className="space-y-4 text-sm">
+    <div className="space-y-4 text-sm w-full max-w-3xl">
       <div className="flex flex-col sm:flex-row-reverse justify-between items-start">
         <div>
           <div className="mx-auto">Tournament Picture</div>

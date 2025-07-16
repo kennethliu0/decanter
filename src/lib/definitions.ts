@@ -168,7 +168,7 @@ export const EditTournamentSchemaBase = z.object({
     .refine((value) => value === "Online" || usStates.includes(value), {
       message: "Tournament must be online or in a US state",
     }),
-  division: z.enum(["B", "C"]),
+  division: z.enum(["B", "C"], "Choose a division"),
   closedEarly: z.boolean(),
   applicationFields: z
     .array(
@@ -185,9 +185,9 @@ export const EditTournamentSchemaBase = z.object({
 });
 
 export const EditTournamentSchemaClient = EditTournamentSchemaBase.extend({
-  startDate: z.date(),
-  endDate: z.date(),
-  applyDeadlineDate: z.date(),
+  startDate: z.date("Required field"),
+  endDate: z.date("Required field"),
+  applyDeadlineDate: z.date("Required field"),
   applyDeadlineTime: z.iso.time({ precision: -1 }),
 })
   .refine((data) => data.endDate >= data.startDate, {

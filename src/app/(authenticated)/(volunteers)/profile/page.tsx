@@ -1,6 +1,6 @@
 import { jay } from "@/app/data";
 import ProfileCardEdit from "./ProfileCardEdit";
-import { getProfile } from "@/utils/volunteer_profile";
+import { getProfile } from "@/app/dal/volunteer-profiles/actions";
 
 export default function Home() {
   const profilePromise = getProfile();

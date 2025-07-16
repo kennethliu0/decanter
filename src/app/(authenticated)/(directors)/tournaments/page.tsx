@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
 import TournamentAdminTable from "./TournamentAdminTable";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -8,6 +10,9 @@ export default function Home() {
       <TournamentAdminTable upcoming={true} />
       <h2 className="text-2xl">Past Tournaments</h2>
       <TournamentAdminTable upcoming={false} />
+      <Link href="/tournaments/manage/new">
+        <Button>New Tournament</Button>
+      </Link>
     </main>
   );
 }

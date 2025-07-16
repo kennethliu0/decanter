@@ -2,10 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import React from "react";
+import React, { startTransition, use, useActionState } from "react";
 import LocationCombobox from "./LocationCombobox";
 import { Button } from "@/components/ui/button";
-import * as z from "zod/v4";
+import z from "zod/v4";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AvatarUpload from "@/components/ui/AvatarUpload";
@@ -20,19 +20,76 @@ import {
   Form,
 } from "@/components/ui/form";
 import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
-import { EditTournamentSchemaClient as FormSchema } from "@/lib/definitions";
+import {
+  EditTournamentSchemaServer as ServerSchema,
+  EditTournamentSchemaClient as FormSchema,
+} from "@/lib/definitions";
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
+import { upsertTournament } from "@/app/dal/tournaments/actions";
+import { parse, format } from "date-fns";
 
-type Props = { tournament: z.infer<typeof FormSchema> };
-
-const today = new Date();
+type Props = {
+  tournamentPromise?: Promise<z.infer<typeof ServerSchema> | { error: string }>;
+};
 
 const TournamentEdit = (props: Props) => {
+  const promisedTournament =
+    props.tournamentPromise ? use(props.tournamentPromise) : undefined;
+  if (promisedTournament && "error" in promisedTournament) {
+    return <div>{promisedTournament.error}</div>;
+  }
+  const {
+    startDate: startDateString,
+    endDate: endDateString,
+    applyDeadline: applyDeadlineString,
+    applicationFields,
+    id,
+    ...tournament
+  } = promisedTournament || {
+    imageUrl: "",
+    websiteUrl: "",
+    name: "",
+    location: "",
+    division: undefined,
+    closedEarly: false,
+    applicationFields: [],
+    startDate: "",
+    endDate: "",
+    applyDeadline: "",
+  };
+  const applyDeadlineDate =
+    applyDeadlineString ? new Date(applyDeadlineString) : undefined;
+
+  const [state, action, pending] = useActionState(upsertTournament, undefined);
+  const today = new Date();
+  const defaultValues = React.useMemo(
+    () => ({
+      startDate:
+        startDateString ?
+          parse(startDateString, "yyyy-MM-dd", today)
+        : undefined,
+      endDate:
+        endDateString ? parse(endDateString, "yyyy-MM-dd", today) : undefined,
+      applyDeadlineDate,
+      applyDeadlineTime:
+        applyDeadlineDate ?
+          `${applyDeadlineDate.getHours()}:${applyDeadlineDate.getMinutes()}`
+        : "23:59",
+      ...tournament,
+      applicationFields,
+    }),
+    [
+      startDateString,
+      endDateString,
+      applyDeadlineDate,
+      tournament,
+      applicationFields,
+    ],
+  );
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      ...props.tournament,
-    },
+    defaultValues,
   });
   function onSubmit(values: z.infer<typeof FormSchema>) {
     const {
@@ -44,17 +101,22 @@ const TournamentEdit = (props: Props) => {
     } = values;
     const [hours, minutes] = applyDeadlineTime.split(":").map(Number);
     applyDeadline.setHours(hours, minutes, 59, 999);
-    console.log({
-      applyDeadline: applyDeadline.toISOString(),
-      startDate: startDate.toISOString().substring(0, 10),
-      endDate: endDate.toISOString().substring(0, 10),
-      ...formValues,
+    form.reset(values);
+    console.log(startDate, endDate, applyDeadlineDate, applyDeadlineTime);
+    startTransition(() => {
+      action({
+        id,
+        applyDeadline: applyDeadline.toISOString(),
+        startDate: format(startDate, "yyyy-MM-dd"),
+        endDate: format(endDate, "yyyy-MM-dd"),
+        ...formValues,
+      });
     });
   }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="space-y-4">
+        <div className="space-y-4 w-full max-w-3xl">
           <div className="flex flex-col sm:flex-row-reverse justify-between items-start">
             <FormField
               control={form.control}
@@ -74,6 +136,11 @@ const TournamentEdit = (props: Props) => {
                   <FormDescription className="sr-only">
                     Upload a new image
                   </FormDescription>
+                  {state?.errors?.imageUrl && (
+                    <p className="text-sm text-destructive">
+                      {state.errors.imageUrl}
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
@@ -91,7 +158,32 @@ const TournamentEdit = (props: Props) => {
                       />
                     </FormControl>
                     <FormMessage />
-                    <FormDescription className="sr-only">Name</FormDescription>
+                    {state?.errors?.name && (
+                      <p className="text-sm text-destructive">
+                        {state.errors.name}
+                      </p>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="websiteUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Website URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://scilympiad.org/..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {state?.errors?.websiteUrl && (
+                      <p className="text-sm text-destructive">
+                        {state.errors.websiteUrl}
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -106,9 +198,11 @@ const TournamentEdit = (props: Props) => {
                         <LocationCombobox {...field} />
                       </FormControl>
                       <FormMessage />
-                      <FormDescription className="sr-only">
-                        Location
-                      </FormDescription>
+                      {state?.errors?.location && (
+                        <p className="text-sm text-destructive">
+                          {state.errors.location}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -140,9 +234,11 @@ const TournamentEdit = (props: Props) => {
                           </RadioGroup>
                         </FormControl>
                         <FormMessage />
-                        <FormDescription className="sr-only">
-                          Division
-                        </FormDescription>
+                        {state?.errors?.division && (
+                          <p className="text-sm text-destructive">
+                            {state.errors.division}
+                          </p>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -157,7 +253,8 @@ const TournamentEdit = (props: Props) => {
                       <FormLabel>Tournament Start Date</FormLabel>
                       <FormControl>
                         <DatePickerUncontrolled
-                          {...field}
+                          value={field.value}
+                          onChange={field.onChange}
                           error={Boolean(fieldState.error)}
                           disablePast
                           disableOutOfSeason
@@ -165,9 +262,11 @@ const TournamentEdit = (props: Props) => {
                         />
                       </FormControl>
                       <FormMessage />
-                      <FormDescription className="sr-only">
-                        Tournament Start Date
-                      </FormDescription>
+                      {state?.errors?.startDate && (
+                        <p className="text-sm text-destructive">
+                          {state.errors.startDate}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -179,7 +278,8 @@ const TournamentEdit = (props: Props) => {
                       <FormLabel>Tournament End Date</FormLabel>
                       <FormControl>
                         <DatePickerUncontrolled
-                          {...field}
+                          value={field.value}
+                          onChange={field.onChange}
                           disablePast
                           disableOutOfSeason
                           error={Boolean(fieldState.error)}
@@ -187,9 +287,11 @@ const TournamentEdit = (props: Props) => {
                         />
                       </FormControl>
                       <FormMessage />
-                      <FormDescription className="sr-only">
-                        Tournament End Date
-                      </FormDescription>
+                      {state?.errors?.endDate && (
+                        <p className="text-sm text-destructive">
+                          {state.errors.endDate}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -203,7 +305,8 @@ const TournamentEdit = (props: Props) => {
                       <FormLabel>Volunteer Application Due Date</FormLabel>
                       <FormControl>
                         <DatePickerUncontrolled
-                          {...field}
+                          value={field.value}
+                          onChange={field.onChange}
                           disablePast
                           disableOutOfSeason
                           small
@@ -211,9 +314,6 @@ const TournamentEdit = (props: Props) => {
                         />
                       </FormControl>
                       <FormMessage />
-                      <FormDescription className="sr-only">
-                        Volunteer Application Due Date
-                      </FormDescription>
                     </FormItem>
                   )}
                 />
@@ -253,10 +353,21 @@ const TournamentEdit = (props: Props) => {
                         </FormControl>
                       </div>
                       <FormMessage />
+                      {state?.errors?.closedEarly && (
+                        <p className="text-sm text-destructive">
+                          {state.errors.closedEarly}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
               </div>
+
+              {state?.errors?.applyDeadline && (
+                <p className="text-sm text-destructive">
+                  {state.errors.applyDeadline}
+                </p>
+              )}
             </div>
           </div>
           <h2 className="text-xl">Edit Volunteer Application</h2>
@@ -282,12 +393,17 @@ const TournamentEdit = (props: Props) => {
           <FormField
             control={form.control}
             name="applicationFields"
-            render={({ field, fieldState }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel className="sr-only">
                   Edit Volunteer Application Fields
                 </FormLabel>
                 <FormMessage />
+                {state?.errors?.applicationFields && (
+                  <p className="text-sm text-destructive">
+                    {state.errors.applicationFields}
+                  </p>
+                )}
                 <VolunteerApplicationEdit {...field} />
               </FormItem>
             )}
@@ -305,7 +421,12 @@ const TournamentEdit = (props: Props) => {
               >
                 Discard
               </Button>
-              <Button type="submit">Save</Button>
+              <Button
+                type="submit"
+                disabled={pending}
+              >
+                Save
+              </Button>
             </div>
           )}
         </div>

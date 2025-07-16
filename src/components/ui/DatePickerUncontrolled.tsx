@@ -15,7 +15,7 @@ import {
 
 type Props = {
   value: Date;
-  onChange: (value: Date | undefined) => void;
+  onChange: (...event: any[]) => void;
   error?: boolean;
   disableOutOfSeason?: boolean;
   disablePast?: boolean;
@@ -48,6 +48,7 @@ const DatePickerUncontrolled = ({
                 "!border-destructive": error,
                 "w-[200px]": small,
                 "w-[280px]": !small,
+                "text-muted-foreground": !value,
               },
             )}
           >
@@ -68,7 +69,7 @@ const DatePickerUncontrolled = ({
             startMonth={calendarStartDate}
             endMonth={calendarEndDate}
             onSelect={(e) => {
-              onChange(e);
+              onChange(e ?? null);
               setOpen(false);
             }}
             captionLayout="dropdown"

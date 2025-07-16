@@ -191,11 +191,14 @@ const TournamentEdit = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="location"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>Location</FormLabel>
                       <FormControl>
-                        <LocationCombobox {...field} />
+                        <LocationCombobox
+                          {...field}
+                          error={Boolean(fieldState.error)}
+                        />
                       </FormControl>
                       <FormMessage />
                       {state?.errors?.location && (

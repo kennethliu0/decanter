@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { usStates } from "@/app/data";
+import clsx from "clsx";
 
 type Props = {
   onChange: (value: string | null) => void;
@@ -38,7 +39,10 @@ const LocationCombobox = ({ onChange, value, error }: Props) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={clsx("w-[200px] justify-between", {
+            "!border-destructive": error,
+            "text-muted-foreground": !value,
+          })}
         >
           {value.length > 0 ? value : "Select location..."}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />

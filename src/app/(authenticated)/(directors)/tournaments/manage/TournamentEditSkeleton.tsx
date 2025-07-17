@@ -31,12 +31,10 @@ const TournamentEditSkeleton = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="division-skeleton">Division</Label>
-              <div className="flex h-9 items-center gap-2">
-                <Skeleton className="rounded-full h-4 w-4" />
-                <Label>B</Label>
-                <Skeleton className="rounded-full h-4 w-4" />
-                <Label>C</Label>
-              </div>
+              <Skeleton
+                className="h-9 w-[58.033px] rounded-md"
+                id="division-skeleton"
+              />
             </div>
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-2">

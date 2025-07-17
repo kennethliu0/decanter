@@ -72,7 +72,7 @@ export async function upsertTournament(
   });
   if (error) {
     console.error(error);
-    return { message: "Something went wrong", success: false };
+    return { message: "Error updating database", success: false };
   }
   if (newTournament) {
     const { error } = await supabase.from("tournament_admins").insert({
@@ -81,7 +81,10 @@ export async function upsertTournament(
     });
     if (error) {
       console.error(error);
-      return { message: "Error setting admin privileges", success: false };
+      return {
+        message: "Error setting admin privileges, contact Decanter support",
+        success: false,
+      };
     }
     redirect(`/tournaments/manage/${slug}`);
   }

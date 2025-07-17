@@ -127,8 +127,8 @@ const TournamentEdit = (props: Props) => {
   useEffect(() => {
     if (state?.success) {
       toast.success("Tournament successfully updated");
-    } else if (state?.success === false) {
-      toast.error("Something went wrong");
+    } else if (state?.success === false && state.message) {
+      toast.error(state.message);
       form.reset();
     }
   }, [state]);

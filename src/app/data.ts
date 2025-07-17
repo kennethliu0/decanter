@@ -254,6 +254,7 @@ export const calendarStartDate = new Date(2025, 0, 1);
 export const calendarEndDate = new Date(2026, 11, 31);
 export const seasonStartDate = new Date(2025, 9, 1);
 export const seasonEndDate = new Date(2026, 5, 1);
+export const seasonYear = 2026;
 
 export const volunteers = [
   {

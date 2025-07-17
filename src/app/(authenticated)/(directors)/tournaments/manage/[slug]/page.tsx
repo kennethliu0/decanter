@@ -8,7 +8,7 @@ import TournamentEdit from "../TournamentEdit";
 import TournamentEditSkeleton from "../TournamentEditSkeleton";
 import DataTableSkeleton from "../DataTableSkeleton";
 import { DataTable } from "../DataTable";
-import { getTournament } from "@/app/dal/tournaments/actions";
+import { getTournamentFromSlug } from "@/app/dal/tournaments/actions";
 import { z } from "zod/v4";
 import { redirect } from "next/navigation";
 export default async function Home({
@@ -17,11 +17,11 @@ export default async function Home({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const id = z.uuid({ version: "v4" }).safeParse(slug);
-  if (!id.success) {
+  const slugParsed = z.string().safeParse(slug);
+  if (!slugParsed.success) {
     redirect("/tournaments/manage/new");
   }
-  const tournamentPromise = getTournament(slug);
+  const tournamentPromise = getTournamentFromSlug(slugParsed.data);
 
   return (
     <main className="px-4 max-w-4xl w-full mx-auto space-y-4">

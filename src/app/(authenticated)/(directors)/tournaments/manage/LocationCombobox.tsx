@@ -58,6 +58,7 @@ const LocationCombobox = ({ onChange, value, error }: Props) => {
                 value="Online"
                 onSelect={(currentValue) => {
                   onChange(currentValue === value ? "" : currentValue);
+                  setOpen(false);
                 }}
               >
                 <CheckIcon

@@ -106,7 +106,6 @@ const TournamentEdit = (props: Props) => {
     const [hours, minutes] = applyDeadlineTime.split(":").map(Number);
     applyDeadline.setHours(hours, minutes, 59, 999);
     form.reset(values);
-    console.log(startDate, endDate, applyDeadlineDate, applyDeadlineTime);
     startTransition(() => {
       action({
         id,

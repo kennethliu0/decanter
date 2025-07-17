@@ -6,7 +6,7 @@ import {
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { redirect } from "next/navigation";
 

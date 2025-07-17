@@ -56,18 +56,18 @@ export async function upsertProfile(
     return { message: "Unauthenticated", success: false };
   }
 
-  const { error } = await supabase.from("volunteer_profiles").upsert(
-    {
-      user_id: user.id,
-      email: user.email,
-      name: validatedFields.data.name,
-      education: validatedFields.data.education,
-      bio: validatedFields.data.bio,
-      experience: validatedFields.data.experience,
-      preferences_b: validatedFields.data.preferencesB,
-      preferences_c: validatedFields.data.preferencesC,
-    },
-    { onConflict: "user_id" },
-  );
+  const { error } = await supabase.from("volunteer_profiles").upsert({
+    id: user.id,
+    email: user.email,
+    name: validatedFields.data.name,
+    education: validatedFields.data.education,
+    bio: validatedFields.data.bio,
+    experience: validatedFields.data.experience,
+    preferences_b: validatedFields.data.preferencesB,
+    preferences_c: validatedFields.data.preferencesC,
+  });
+  if (error) {
+    console.error(error);
+  }
   return { success: !error };
 }

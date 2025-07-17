@@ -100,25 +100,51 @@ const noEmptyGaps = (arr: string[]) => {
   return true;
 };
 
+const noDuplicatesIgnoringEmpty = (arr: string[]) => {
+  const seen = new Set();
+  for (const str of arr) {
+    if (str === "") continue;
+    if (seen.has(str)) return false;
+    seen.add(str);
+  }
+  return true;
+};
+
 export const VolunteerProfileSchema = z.object({
   name: z
     .string()
     .refine((val) => val.split(" ").length >= 2, "Include first and last name")
     .trim(),
-  education: z.string().min(1, "Education cannot be empty"),
-  bio: z.string().min(1, "Bio cannot be empty"),
-  experience: z.string().min(1, "Experience cannot be empty"),
+  education: z.string().min(1, "Education cannot be empty").trim(),
+  bio: z.string().min(1, "Bio cannot be empty").trim(),
+  experience: z.string().min(1, "Experience cannot be empty").trim(),
   preferencesB: z
-    .array(z.string().refine((val) => val === "" || events.B.includes(val)))
+    .array(
+      z
+        .string()
+        .refine((val) => val === "" || events.B.includes(val))
+        .trim(),
+    )
     .length(4)
     .refine(noEmptyGaps, {
       message: "Empty slots must come after all selected events",
+    })
+    .refine(noDuplicatesIgnoringEmpty, {
+      message: "Duplicates are not allowed",
     }),
   preferencesC: z
-    .array(z.string().refine((val) => val === "" || events.C.includes(val)))
+    .array(
+      z
+        .string()
+        .refine((val) => val === "" || events.C.includes(val))
+        .trim(),
+    )
     .length(4)
     .refine(noEmptyGaps, {
       message: "Empty slots must come after all selected events",
+    })
+    .refine(noDuplicatesIgnoringEmpty, {
+      message: "Duplicates are not allowed",
     }),
 });
 

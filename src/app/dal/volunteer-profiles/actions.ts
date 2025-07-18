@@ -1,6 +1,12 @@
 "use server";
 
-import { VolunteerProfileSchema, UpdateProfileState } from "@/lib/definitions";
+import {
+  VolunteerProfileSchema,
+  UpdateProfileState,
+  EventPreferences,
+  EventPreferencesB,
+  EventPreferencesC,
+} from "@/lib/definitions";
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod/v4";
 
@@ -70,4 +76,39 @@ export async function upsertProfile(
     console.error(error);
   }
   return { success: !error };
+}
+
+export async function getEventPreferences(): Promise<{
+  data?: { preferencesB: string[]; preferencesC: string[] };
+  error?: Error;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (!user?.id || authError) {
+    return { error: new Error("Unauthenticated") };
+  }
+
+  const { data, error } = await supabase
+    .from("volunteer_profiles")
+    .select("preferences_b, preferences_c")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error || !data?.preferences_b || !data?.preferences_c) {
+    return { error: new Error("Couldn't locate profile or preferences") };
+  }
+  const validatedB = EventPreferencesB.safeParse(data.preferences_b);
+  const validatedC = EventPreferencesC.safeParse(data.preferences_c);
+
+  if (!validatedB.success || !validatedC.success) {
+    return { error: new Error("Returned events could not be validated") };
+  }
+
+  return {
+    data: { preferencesB: validatedB.data, preferencesC: validatedC.data },
+  };
 }

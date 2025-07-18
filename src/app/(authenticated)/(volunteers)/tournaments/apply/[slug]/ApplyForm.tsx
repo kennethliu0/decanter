@@ -24,10 +24,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { getEventPreferences } from "@/app/dal/volunteer-profiles/actions";
 
 type Props = {
   applicationPromise: Promise<{
     data?: z.infer<typeof TournamentApplicationInfoSchema>;
+    error?: Error;
+  }>;
+  preferencesPromise: Promise<{
+    data?: { preferencesB: string[]; preferencesC: string[] };
     error?: Error;
   }>;
 };
@@ -40,6 +45,16 @@ const ApplyForm = (props: Props) => {
 
   const { id, ...tournament } = data;
 
+  const { data: preferencesData, error: preferencesError } = use(
+    props.preferencesPromise,
+  );
+  if (preferencesError || !preferencesData) {
+    return (
+      <div>{preferencesError?.message || "An unknown error occurred"}</div>
+    );
+  }
+  const preferences = preferencesData[`preferences${tournament.division}`];
+
   const [state, action, pending] = useActionState(
     insertTournamentApplication,
     undefined,
@@ -49,7 +64,7 @@ const ApplyForm = (props: Props) => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       tournamentId: id,
-      preferences: ["", "", "", ""],
+      preferences,
       responses: tournament.applicationFields.map(({ id }) => ({
         fieldId: id,
         response: "",

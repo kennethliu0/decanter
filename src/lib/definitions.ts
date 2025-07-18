@@ -110,6 +110,50 @@ const noDuplicatesIgnoringEmpty = (arr: string[]) => {
   return true;
 };
 
+export const EventPreferences = z
+  .array(
+    z
+      .string()
+      .refine(
+        (val) => val === "" || events.B.includes(val) || events.C.includes(val),
+      )
+      .trim(),
+  )
+  .length(4)
+  .refine(noEmptyGaps, {
+    message: "Empty slots must come after all selected events",
+  })
+  .refine(noDuplicatesIgnoringEmpty, {
+    message: "Duplicates are not allowed",
+  });
+export const EventPreferencesB = z
+  .array(
+    z
+      .string()
+      .refine((val) => val === "" || events.B.includes(val))
+      .trim(),
+  )
+  .length(4)
+  .refine(noEmptyGaps, {
+    message: "Empty slots must come after all selected events",
+  })
+  .refine(noDuplicatesIgnoringEmpty, {
+    message: "Duplicates are not allowed",
+  });
+export const EventPreferencesC = z
+  .array(
+    z
+      .string()
+      .refine((val) => val === "" || events.C.includes(val))
+      .trim(),
+  )
+  .length(4)
+  .refine(noEmptyGaps, {
+    message: "Empty slots must come after all selected events",
+  })
+  .refine(noDuplicatesIgnoringEmpty, {
+    message: "Duplicates are not allowed",
+  });
 export const VolunteerProfileSchema = z.object({
   name: z
     .string()
@@ -118,34 +162,8 @@ export const VolunteerProfileSchema = z.object({
   education: z.string().min(1, "Education cannot be empty").trim(),
   bio: z.string().min(1, "Bio cannot be empty").trim(),
   experience: z.string().min(1, "Experience cannot be empty").trim(),
-  preferencesB: z
-    .array(
-      z
-        .string()
-        .refine((val) => val === "" || events.B.includes(val))
-        .trim(),
-    )
-    .length(4)
-    .refine(noEmptyGaps, {
-      message: "Empty slots must come after all selected events",
-    })
-    .refine(noDuplicatesIgnoringEmpty, {
-      message: "Duplicates are not allowed",
-    }),
-  preferencesC: z
-    .array(
-      z
-        .string()
-        .refine((val) => val === "" || events.C.includes(val))
-        .trim(),
-    )
-    .length(4)
-    .refine(noEmptyGaps, {
-      message: "Empty slots must come after all selected events",
-    })
-    .refine(noDuplicatesIgnoringEmpty, {
-      message: "Duplicates are not allowed",
-    }),
+  preferencesB: EventPreferencesB,
+  preferencesC: EventPreferencesC,
 });
 
 export type UpdateProfileState =

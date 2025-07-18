@@ -260,3 +260,48 @@ export type EditTournamentServerState =
       success?: boolean;
     }
   | undefined;
+
+export const TournamentApplicationInfoSchema = EditTournamentSchemaServer.omit({
+  closedEarly: true,
+  approved: true,
+}).extend({ id: z.uuid({ version: "v4" }) });
+
+export const InsertTournamentApplicationSchema = z.object({
+  tournamentId: z.uuid({ version: "v4" }),
+  preferences: z
+    .array(
+      z
+        .string()
+        .refine(
+          (val) =>
+            val === "" || events.B.includes(val) || events.C.includes(val),
+        )
+        .trim(),
+    )
+    .length(4)
+    .refine(noEmptyGaps, {
+      message: "Empty slots must come after all selected events",
+    })
+    .refine(noDuplicatesIgnoringEmpty, {
+      message: "Duplicates are not allowed",
+    })
+    .refine((data) => data[0], { message: "You must select at least 1 event" }),
+  responses: z.array(
+    z.object({
+      fieldId: z.uuid({ version: "v4" }),
+      response: z.string().min(1, "Field required, otherwise put N/A").trim(),
+    }),
+  ),
+});
+
+export type InsertTournamentApplicationState =
+  | {
+      errors?: {
+        tournamentId?: string[];
+        preferences?: string[];
+        responses?: string[];
+      };
+      message?: string;
+      success?: boolean;
+    }
+  | undefined;

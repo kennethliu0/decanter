@@ -3,6 +3,9 @@
 import {
   EditTournamentSchemaServer,
   EditTournamentServerState,
+  InsertTournamentApplicationState,
+  TournamentApplicationInfoSchema,
+  InsertTournamentApplicationSchema,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
@@ -91,7 +94,7 @@ export async function upsertTournament(
   return { success: true };
 }
 
-export async function getTournamentFromSlug(
+export async function getTournamentManagementFromSlug(
   slug: string,
 ): Promise<z.infer<typeof EditTournamentSchemaServer> | { error: string }> {
   const validatedFields = z.string().safeParse(slug);
@@ -117,4 +120,87 @@ export async function getTournamentFromSlug(
     return { error: "Validation error on database results" };
   }
   return validatedData.data;
+}
+
+export async function getTournamentApplicationInfo(slug: string): Promise<{
+  data?: z.infer<typeof TournamentApplicationInfoSchema>;
+  error?: Error;
+}> {
+  const validatedFields = z.string().safeParse(slug);
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  if (!validatedFields.success) {
+    redirect("/tournaments/manage/new");
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("tournaments")
+    .select(
+      "id, name, location, division, image_url, website_url, start_date, end_date, apply_deadline, application_fields",
+    )
+    .eq("slug", validatedFields.data)
+    .eq("closed_early", false)
+    .eq("approved", true)
+    .maybeSingle();
+
+  if (error || !data) {
+    return {
+      error: new Error(
+        "Tournament could not be found, or the application already closed",
+      ),
+    };
+  }
+  const validatedData = TournamentApplicationInfoSchema.safeParse(
+    toCamel(data),
+  );
+  if (!validatedData.success) {
+    return { error: new Error("Validation error on database results") };
+  }
+  return { data: validatedData.data };
+}
+
+export async function insertTournamentApplication(
+  formState: InsertTournamentApplicationState,
+  formData: z.infer<typeof InsertTournamentApplicationSchema>,
+) {
+  const validatedFields = InsertTournamentApplicationSchema.safeParse(formData);
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+      success: false,
+    };
+  }
+
+  const { tournamentId, preferences, responses } = validatedFields.data;
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (!user?.id || !user?.email || authError) {
+    console.error(authError);
+    return { message: "Authentication failed", success: false };
+  }
+  const { error } = await supabase.from("tournament_applications").insert({
+    user_id: user.id,
+    email: user.email,
+    tournament_id: tournamentId,
+    preferences,
+    responses,
+  });
+  if (error) {
+    if (error.code === "23505") {
+      return {
+        message: "You have already applied for this tournament",
+        success: false,
+      };
+    } else {
+      console.error(error);
+      return { message: "Something went wrong", success: false };
+    }
+  }
+  return { success: true };
 }

@@ -12,7 +12,7 @@ import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4, validate } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import { seasonYear } from "@/app/data";
+import { events, seasonYear } from "@/app/data";
 const slugify = require("slugify");
 
 export async function upsertTournament(
@@ -174,6 +174,36 @@ export async function insertTournamentApplication(
   const { tournamentId, preferences, responses } = validatedFields.data;
 
   const supabase = await createClient();
+
+  const { data: divisionData, error: divisionError } = await supabase
+    .from("tournaments")
+    .select("division")
+    .eq("id", tournamentId)
+    .single();
+
+  if (divisionError) {
+    if (divisionError.code === "PGRST116") {
+      return { message: "No such tournament found", success: false };
+    } else {
+      console.error(divisionError);
+      return { message: "Error checking tournament", success: false };
+    }
+  }
+
+  const division = z.enum(["B", "C"]).safeParse(divisionData.division);
+  if (!division.success) {
+    console.error("Division returned from database was not B or C");
+    return { message: "Error checking tournament", success: false };
+  }
+
+  for (const event of preferences) {
+    if (!events[division.data].includes(event)) {
+      return {
+        errors: { preferences: ["Event does not exist in this division"] },
+        success: false,
+      };
+    }
+  }
 
   const {
     data: { user },

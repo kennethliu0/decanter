@@ -21,6 +21,7 @@ import { VolunteerProfileSchema as FormSchema } from "@/lib/definitions";
 import { upsertProfile } from "@/app/dal/volunteer-profiles/actions";
 import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
+import LoadingButton from "@/components/ui/LoadingButton";
 
 type Props = {
   profilePromise: Promise<z.infer<typeof FormSchema> | undefined>;
@@ -196,16 +197,14 @@ const ProfileCardEdit = (props: Props) => {
             >
               Reset
             </Button>
-            <Button
+            <LoadingButton
               type="submit"
-              disabled={!form.formState.isDirty || pending}
+              disabled={!form.formState.isDirty}
+              pending={pending}
               className="relative"
             >
-              {pending && (
-                <LoaderCircle className="mx-auto animate-spin absolute m-auto h-5 w-4" />
-              )}
-              <span className={pending ? "invisible" : "visible"}>Submit</span>
-            </Button>
+              Submit
+            </LoadingButton>
           </div>
         </div>
       </form>

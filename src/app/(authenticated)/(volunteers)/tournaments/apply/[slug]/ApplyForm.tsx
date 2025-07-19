@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { ERROR_CODES, AppError } from "@/lib/errors";
 import { contactEmail } from "@/app/data";
 import Link from "next/link";
+import LoadingButton from "@/components/ui/LoadingButton";
 
 type Props = {
   applicationPromise: Promise<{
@@ -120,6 +121,7 @@ const ApplyForm = (props: Props) => {
     values: z.infer<typeof FormSchema>,
     mode: "save" | "submit",
   ) => {
+    form.reset(values);
     startTransition(() => {
       action({
         mode,
@@ -202,10 +204,6 @@ const ApplyForm = (props: Props) => {
                     {state.errors.preferences}
                   </p>
                 )}
-                <FormDescription>
-                  {/* Not yet implemented */}
-                  Pulled from your volunteer profile
-                </FormDescription>
               </FormItem>
             )}
           />
@@ -260,21 +258,23 @@ const ApplyForm = (props: Props) => {
             )}
           />
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
+            <LoadingButton
+              type="submit"
               variant="outline"
-              disabled={pending}
+              pending={pending && submitMode === "save"}
+              disabled={!form.formState.isDirty}
               onClick={() => setSubmitMode("save")}
             >
-              Save for later
-            </Button>
-            <Button
+              Save Draft
+            </LoadingButton>
+            <LoadingButton
               type="submit"
-              disabled={pending}
+              pending={pending && submitMode === "submit"}
+              disabled={!form.formState.isDirty}
               onClick={() => setSubmitMode("submit")}
             >
               Submit
-            </Button>
+            </LoadingButton>
           </div>
         </form>
       </Form>

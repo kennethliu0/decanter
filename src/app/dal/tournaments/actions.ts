@@ -6,13 +6,15 @@ import {
   InsertTournamentApplicationState,
   TournamentApplicationInfoSchema,
   InsertTournamentApplicationSchema,
+  Result,
 } from "@/lib/definitions";
-import z from "zod/v4";
+import z, { ZodError } from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4, validate } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { events, seasonYear } from "@/app/data";
+import { ERROR_CODES, AppError, toAppError } from "@/lib/errors";
 const slugify = require("slugify");
 
 export async function upsertTournament(
@@ -159,7 +161,7 @@ export async function getTournamentApplicationInfo(slug: string): Promise<{
   return { data: validatedData.data };
 }
 
-export async function insertTournamentApplication(
+export async function upsertTournamentApplication(
   formState: InsertTournamentApplicationState,
   formData: z.infer<typeof InsertTournamentApplicationSchema>,
 ) {
@@ -171,10 +173,11 @@ export async function insertTournamentApplication(
     };
   }
 
-  const { tournamentId, preferences, responses } = validatedFields.data;
+  const { tournamentId, preferences, responses, mode } = validatedFields.data;
 
   const supabase = await createClient();
 
+  // check that events are within the correct division
   const { data: divisionData, error: divisionError } = await supabase
     .from("tournaments")
     .select("division")
@@ -195,9 +198,8 @@ export async function insertTournamentApplication(
     console.error("Division returned from database was not B or C");
     return { message: "Error checking tournament", success: false };
   }
-
   for (const event of preferences) {
-    if (!events[division.data].includes(event)) {
+    if (event !== "" && !events[division.data].includes(event)) {
       return {
         errors: { preferences: ["Event does not exist in this division"] },
         success: false,
@@ -214,23 +216,118 @@ export async function insertTournamentApplication(
     console.error(authError);
     return { message: "Authentication failed", success: false };
   }
-  const { error } = await supabase.from("tournament_applications").insert({
+  // check if an application was submitted already
+  const { data: existingData, error: existingError } = await supabase
+    .from("tournament_applications")
+    .select("submitted")
+    .eq("tournament_id", tournamentId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existingError) {
+    console.error(existingError);
+    return { message: "Error contacting database", success: false };
+  }
+  if (existingData?.submitted) {
+    return {
+      message: "You have already applied for this tournament",
+      success: false,
+    };
+  }
+  const { error } = await supabase.from("tournament_applications").upsert({
     user_id: user.id,
     email: user.email,
     tournament_id: tournamentId,
     preferences,
     responses,
+    submitted: mode === "submit",
   });
   if (error) {
-    if (error.code === "23505") {
-      return {
-        message: "You have already applied for this tournament",
-        success: false,
-      };
-    } else {
-      console.error(error);
-      return { message: "Something went wrong", success: false };
-    }
+    console.error(error);
+    return { message: "Something went wrong", success: false };
   }
   return { success: true };
+}
+
+export async function getSavedTournamentApplication(
+  slugRaw: string,
+): Promise<
+  Result<{ application: z.infer<typeof InsertTournamentApplicationSchema> }>
+> {
+  const validatedData = z.string().safeParse(slugRaw);
+
+  if (!validatedData.success) {
+    return { error: toAppError(validatedData.error) };
+  }
+
+  const slug = validatedData.data;
+
+  const supabase = await createClient();
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  if (!tournamentData?.id || tournamentError) {
+    return { error: toAppError(tournamentError) };
+  }
+  const validatedTournament = z
+    .uuid({ version: "v4" })
+    .safeParse(tournamentData.id);
+  if (!validatedTournament.success) {
+    return { error: toAppError(validatedTournament.error) };
+  }
+  const tournamentId = validatedTournament.data;
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (!user?.id || authError) {
+    return { error: toAppError(authError) };
+  }
+
+  const { data, error } = await supabase
+    .from("tournament_applications")
+    .select("preferences, responses, submitted")
+    .eq("tournament_id", tournamentId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return { error: toAppError(error) };
+  }
+
+  if (!data) {
+    return {};
+  }
+  if (data.submitted) {
+    return {
+      error: {
+        message: "Application already submitted",
+        code: ERROR_CODES.ALREADY_SUBMITTED,
+        status: 409,
+      },
+    };
+  }
+
+  const validatedApplication = InsertTournamentApplicationSchema.safeParse({
+    mode: "save",
+    preferences: data.preferences,
+    responses: data.responses,
+    tournamentId,
+  });
+
+  if (!validatedApplication.success) {
+    console.error(validatedApplication.error);
+    return { error: toAppError(validatedApplication.error) };
+  }
+
+  return {
+    data: { application: validatedApplication.data },
+  };
 }

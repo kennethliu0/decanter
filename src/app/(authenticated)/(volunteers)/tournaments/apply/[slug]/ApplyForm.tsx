@@ -1,11 +1,21 @@
 "use client";
 
-import { insertTournamentApplication } from "@/app/dal/tournaments/actions";
+import { upsertTournamentApplication } from "@/app/dal/tournaments/actions";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { TournamentApplicationInfoSchema } from "@/lib/definitions";
+import {
+  InsertTournamentApplicationSchema,
+  Result,
+  TournamentApplicationInfoSchema,
+} from "@/lib/definitions";
 import { format } from "date-fns";
 import { FlaskConical } from "lucide-react";
-import React, { startTransition, use, useActionState, useEffect } from "react";
+import React, {
+  startTransition,
+  use,
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
 import z from "zod/v4";
 import { InsertTournamentApplicationSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
@@ -24,7 +34,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { getEventPreferences } from "@/app/dal/volunteer-profiles/actions";
+import { ERROR_CODES, AppError } from "@/lib/errors";
+import { contactEmail } from "@/app/data";
+import Link from "next/link";
 
 type Props = {
   applicationPromise: Promise<{
@@ -35,9 +47,18 @@ type Props = {
     data?: { preferencesB: string[]; preferencesC: string[] };
     error?: Error;
   }>;
+  savedApplicationPromise: Promise<
+    Result<{
+      application: z.infer<typeof InsertTournamentApplicationSchema>;
+    }>
+  >;
 };
 
 const ApplyForm = (props: Props) => {
+  const [submitMode, setSubmitMode] = useState<"save" | "submit">("submit");
+  const [hasToastedSuccess, setHasToastedSuccess] = React.useState(false);
+  const [hasToastedError, setHasToastedError] = React.useState(false);
+
   const { data, error } = use(props.applicationPromise);
   if (error || !data) {
     return <div>{error?.message || "An unknown error occurred"}</div>;
@@ -53,27 +74,55 @@ const ApplyForm = (props: Props) => {
       <div>{preferencesError?.message || "An unknown error occurred"}</div>
     );
   }
-  const preferences = preferencesData[`preferences${tournament.division}`];
+  const profilePreferences =
+    preferencesData[`preferences${tournament.division}`];
+
+  const { data: savedData, error: savedError } = use(
+    props.savedApplicationPromise,
+  );
+  if (savedError) {
+    if (savedError.code === ERROR_CODES.ALREADY_SUBMITTED) {
+      return (
+        <SubmittedApplicationNotice
+          tournamentName={`${tournament.name} (Division ${tournament.division})`}
+        />
+      );
+    }
+  }
+  const validatedSave =
+    savedData?.application ?
+      InsertTournamentApplicationSchema.safeParse(savedData.application)
+    : null;
+
+  const savedApplication = validatedSave?.success ? validatedSave.data : null;
 
   const [state, action, pending] = useActionState(
-    insertTournamentApplication,
+    upsertTournamentApplication,
     undefined,
   );
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      mode: "save",
       tournamentId: id,
-      preferences,
-      responses: tournament.applicationFields.map(({ id }) => ({
-        fieldId: id,
-        response: "",
-      })),
+      preferences: savedApplication?.preferences
+        || profilePreferences || ["", "", "", ""],
+      responses:
+        savedApplication?.responses
+        || tournament.applicationFields.map(({ id }) => ({
+          fieldId: id,
+          response: "",
+        })),
     },
   });
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
+  const onSubmit = (
+    values: z.infer<typeof FormSchema>,
+    mode: "save" | "submit",
+  ) => {
     startTransition(() => {
       action({
+        mode,
         tournamentId: id,
         preferences: values.preferences,
         responses: values.responses,
@@ -88,6 +137,22 @@ const ApplyForm = (props: Props) => {
       toast.error(state.message);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (savedApplication && !hasToastedSuccess) {
+      console.log(toast.success("Successfully loaded saved application."));
+      setHasToastedSuccess(true);
+    } else if ((savedError || !validatedSave?.success) && !hasToastedError) {
+      toast.error("Could not retrieve saved application.");
+      setHasToastedError(true);
+    }
+  }, [
+    savedError,
+    savedApplication,
+    validatedSave,
+    hasToastedSuccess,
+    hasToastedError,
+  ]);
 
   return (
     <div className="max-w-2xl w-full mx-auto space-y-2 px-4">
@@ -117,7 +182,7 @@ const ApplyForm = (props: Props) => {
       </div>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit((values) => onSubmit(values, submitMode))}
           className="space-y-2"
         >
           <FormField
@@ -199,18 +264,42 @@ const ApplyForm = (props: Props) => {
               type="button"
               variant="outline"
               disabled={pending}
+              onClick={() => setSubmitMode("save")}
             >
               Save for later
             </Button>
             <Button
               type="submit"
               disabled={pending}
+              onClick={() => setSubmitMode("submit")}
             >
               Submit
             </Button>
           </div>
         </form>
       </Form>
+    </div>
+  );
+};
+
+const SubmittedApplicationNotice = ({
+  tournamentName,
+}: {
+  tournamentName: string;
+}) => {
+  return (
+    <div className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
+      <h2 className="text-xl font-semibold">Application Already Submitted</h2>
+      <p className="text-muted-foreground">
+        You’ve already submitted an application for{" "}
+        <strong>{tournamentName}</strong>. If you think this is a mistake,
+        contact us at {contactEmail}.
+      </p>
+      <div className="flex justify-center gap-2 mt-4">
+        <Link href="/tournaments/search">
+          <Button variant="secondary">Back to Search</Button>
+        </Link>
+      </div>
     </div>
   );
 };

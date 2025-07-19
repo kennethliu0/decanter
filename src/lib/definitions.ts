@@ -1,5 +1,8 @@
 import { events, usStates } from "@/app/data";
 import * as z from "zod/v4";
+import { AppError } from "./errors";
+
+export type Result<T> = { data?: T; error?: AppError };
 
 const password = z
   .string()
@@ -286,6 +289,7 @@ export const TournamentApplicationInfoSchema = EditTournamentSchemaServer.omit({
 
 export const InsertTournamentApplicationSchema = z.object({
   tournamentId: z.uuid({ version: "v4" }),
+  mode: z.enum(["save", "submit"]),
   preferences: z
     .array(
       z
@@ -315,6 +319,7 @@ export const InsertTournamentApplicationSchema = z.object({
 export type InsertTournamentApplicationState =
   | {
       errors?: {
+        mode?: string[];
         tournamentId?: string[];
         preferences?: string[];
         responses?: string[];

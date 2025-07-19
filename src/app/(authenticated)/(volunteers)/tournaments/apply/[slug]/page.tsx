@@ -1,4 +1,7 @@
-import { getTournamentApplicationInfo } from "@/app/dal/tournaments/actions";
+import {
+  getSavedTournamentApplication,
+  getTournamentApplicationInfo,
+} from "@/app/dal/tournaments/actions";
 import ApplyForm from "./ApplyForm";
 import { getEventPreferences } from "@/app/dal/volunteer-profiles/actions";
 
@@ -9,6 +12,7 @@ export default async function Home({
 }) {
   const { slug } = await params;
   const applicationPromise = getTournamentApplicationInfo(slug);
+  const savedApplicationPromise = getSavedTournamentApplication(slug);
   const preferencesPromise = getEventPreferences();
 
   return (
@@ -16,6 +20,7 @@ export default async function Home({
       <ApplyForm
         applicationPromise={applicationPromise}
         preferencesPromise={preferencesPromise}
+        savedApplicationPromise={savedApplicationPromise}
       />
     </main>
   );

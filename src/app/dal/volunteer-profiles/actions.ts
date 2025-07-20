@@ -6,7 +6,9 @@ import {
   EventPreferences,
   EventPreferencesB,
   EventPreferencesC,
+  Result,
 } from "@/lib/definitions";
+import { ERROR_CODES, toAppError } from "@/lib/errors";
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod/v4";
 
@@ -78,10 +80,9 @@ export async function upsertProfile(
   return { success: !error };
 }
 
-export async function getEventPreferences(): Promise<{
-  data?: { preferencesB: string[]; preferencesC: string[] };
-  error?: Error;
-}> {
+export async function getEventPreferences(): Promise<
+  Result<{ preferencesB: string[]; preferencesC: string[] }>
+> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -89,23 +90,40 @@ export async function getEventPreferences(): Promise<{
   } = await supabase.auth.getUser();
 
   if (!user?.id || authError) {
-    return { error: new Error("Unauthenticated") };
+    return {
+      error:
+        authError ?
+          toAppError(authError)
+        : {
+            message: "Unauthorized.",
+            code: ERROR_CODES.UNAUTHORIZED,
+            status: 401,
+            name: "AuthApiError",
+          },
+    };
   }
 
   const { data, error } = await supabase
     .from("volunteer_profiles")
     .select("preferences_b, preferences_c")
     .eq("id", user.id)
-    .maybeSingle();
+    .single();
 
   if (error || !data?.preferences_b || !data?.preferences_c) {
-    return { error: new Error("Couldn't locate profile or preferences") };
+    return { error: toAppError(error) };
   }
   const validatedB = EventPreferencesB.safeParse(data.preferences_b);
   const validatedC = EventPreferencesC.safeParse(data.preferences_c);
 
   if (!validatedB.success || !validatedC.success) {
-    return { error: new Error("Returned events could not be validated") };
+    console.error(validatedB.error || validatedC.error);
+    return {
+      error: {
+        message: "Invalid output from database.",
+        code: ERROR_CODES.INVALID_REFERENCE,
+        status: 400,
+      },
+    };
   }
 
   return {

@@ -45,10 +45,9 @@ type Props = {
     data?: z.infer<typeof TournamentApplicationInfoSchema>;
     error?: Error;
   }>;
-  preferencesPromise: Promise<{
-    data?: { preferencesB: string[]; preferencesC: string[] };
-    error?: Error;
-  }>;
+  preferencesPromise: Promise<
+    Result<{ preferencesB: string[]; preferencesC: string[] }>
+  >;
   savedApplicationPromise: Promise<
     Result<{
       application: z.infer<typeof InsertTournamentApplicationSchema>;

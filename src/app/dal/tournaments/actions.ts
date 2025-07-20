@@ -14,7 +14,7 @@ import { v4 as uuidv4, validate } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { events, seasonYear } from "@/app/data";
-import { ERROR_CODES, AppError, toAppError } from "@/lib/errors";
+import { ERROR_CODES, toAppError } from "@/lib/errors";
 const slugify = require("slugify");
 
 export async function upsertTournament(

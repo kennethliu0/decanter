@@ -149,7 +149,10 @@ const ApplyForm = (props: Props) => {
     if (savedApplication && !hasToastedSuccess) {
       console.log(toast.success("Successfully loaded saved application."));
       setHasToastedSuccess(true);
-    } else if ((savedError || !validatedSave?.success) && !hasToastedError) {
+    } else if (
+      (savedError || (!validatedSave?.success && savedData))
+      && !hasToastedError
+    ) {
       toast.error("Could not retrieve saved application.");
       setHasToastedError(true);
     }

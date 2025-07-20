@@ -3,7 +3,6 @@
 import {
   VolunteerProfileSchema,
   UpdateProfileState,
-  EventPreferences,
   EventPreferencesB,
   EventPreferencesC,
   Result,
@@ -12,7 +11,9 @@ import { ERROR_CODES, toAppError } from "@/lib/errors";
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod/v4";
 
-export async function getProfile() {
+export async function getProfile(): Promise<
+  Result<{ profile: z.infer<typeof VolunteerProfileSchema> }>
+> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -22,10 +23,10 @@ export async function getProfile() {
 
   if (error) {
     console.error(error);
-    throw new Error("Failed to load profile");
+    return { error: toAppError(error) };
   }
   if (!data) {
-    return undefined;
+    return {};
   }
   const { name, education, bio, experience } = data;
   const validatedFields = VolunteerProfileSchema.safeParse({
@@ -37,9 +38,9 @@ export async function getProfile() {
     preferencesC: data.preferences_c,
   });
   if (!validatedFields.success) {
-    return undefined;
+    return { error: toAppError(validatedFields.error) };
   } else {
-    return validatedFields.data;
+    return { data: { profile: validatedFields.data } };
   }
 }
 

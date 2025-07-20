@@ -11,11 +11,9 @@ export default function Page() {
           from tournament directors directly if you are selected to volunteer
           for this tournament.
         </p>
-        <div className="flex justify-center gap-2 mt-4">
-          <Link href="/tournaments/search">
-            <Button variant="secondary">Back to Search</Button>
-          </Link>
-        </div>
+        <Link href="/tournaments/search">
+          <Button variant="secondary">Back to Search</Button>
+        </Link>
       </div>
     </main>
   );

@@ -158,6 +158,7 @@ const ApplyForm = (props: Props) => {
     }
   }, [
     savedError,
+    savedData,
     savedApplication,
     validatedSave,
     hasToastedSuccess,
@@ -303,11 +304,9 @@ const SubmittedApplicationNotice = ({
         <strong>{tournamentName}</strong>. If you think this is a mistake,
         contact us at {contactEmail}.
       </p>
-      <div className="flex justify-center gap-2 mt-4">
-        <Link href="/tournaments/search">
-          <Button variant="secondary">Back to Search</Button>
-        </Link>
-      </div>
+      <Link href="/tournaments/search">
+        <Button variant="secondary">Back to Search</Button>
+      </Link>
     </div>
   );
 };

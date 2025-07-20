@@ -38,6 +38,7 @@ import { ERROR_CODES, AppError } from "@/lib/errors";
 import { contactEmail } from "@/app/data";
 import Link from "next/link";
 import LoadingButton from "@/components/ui/LoadingButton";
+import { useRouter } from "next/navigation";
 
 type Props = {
   applicationPromise: Promise<{
@@ -56,6 +57,7 @@ type Props = {
 };
 
 const ApplyForm = (props: Props) => {
+  const router = useRouter();
   const [submitMode, setSubmitMode] = useState<"save" | "submit">("submit");
   const [hasToastedSuccess, setHasToastedSuccess] = React.useState(false);
   const [hasToastedError, setHasToastedError] = React.useState(false);
@@ -134,7 +136,11 @@ const ApplyForm = (props: Props) => {
 
   useEffect(() => {
     if (state?.success) {
-      toast.success("Application successfully submitted/saved");
+      if (submitMode === "save") {
+        toast.success("Application successfully saved");
+      } else if (submitMode === "submit") {
+        router.push("/tournaments/apply/confirmation");
+      }
     } else if (state?.success === false && state.message) {
       toast.error(state.message);
     }

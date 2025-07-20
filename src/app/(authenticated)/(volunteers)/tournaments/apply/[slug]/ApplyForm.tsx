@@ -41,10 +41,11 @@ import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  applicationPromise: Promise<{
-    data?: z.infer<typeof TournamentApplicationInfoSchema>;
-    error?: Error;
-  }>;
+  applicationPromise: Promise<
+    Result<{
+      application: z.infer<typeof TournamentApplicationInfoSchema>;
+    }>
+  >;
   preferencesPromise: Promise<
     Result<{ preferencesB: string[]; preferencesC: string[] }>
   >;
@@ -62,11 +63,11 @@ const ApplyForm = (props: Props) => {
   const [hasToastedError, setHasToastedError] = React.useState(false);
 
   const { data, error } = use(props.applicationPromise);
-  if (error || !data) {
+  if (error || !data?.application) {
     return <div>{error?.message || "An unknown error occurred"}</div>;
   }
 
-  const { id, ...tournament } = data;
+  const { id, ...tournament } = data.application;
 
   const { data: preferencesData, error: preferencesError } = use(
     props.preferencesPromise,

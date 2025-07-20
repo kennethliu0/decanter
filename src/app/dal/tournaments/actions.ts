@@ -8,14 +8,14 @@ import {
   InsertTournamentApplicationSchema,
   Result,
 } from "@/lib/definitions";
-import z, { ZodError } from "zod/v4";
+import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
-import { v4 as uuidv4, validate } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { events, seasonYear } from "@/app/data";
 import { ERROR_CODES, toAppError } from "@/lib/errors";
-const slugify = require("slugify");
+import slugify from "slugify";
 
 export async function upsertTournament(
   formState: EditTournamentServerState,
@@ -96,13 +96,13 @@ export async function upsertTournament(
   return { success: true };
 }
 
-export async function getTournamentManagementFromSlug(
+export async function getTournamentManagement(
   slug: string,
-): Promise<z.infer<typeof EditTournamentSchemaServer> | { error: string }> {
+): Promise<Result<{ tournament: z.infer<typeof EditTournamentSchemaServer> }>> {
   const validatedFields = z.string().safeParse(slug);
   await new Promise((resolve) => setTimeout(resolve, 3000));
   if (!validatedFields.success) {
-    redirect("/tournaments/manage/new");
+    notFound();
   }
 
   const supabase = await createClient();
@@ -113,25 +113,28 @@ export async function getTournamentManagementFromSlug(
     )
     .eq("slug", validatedFields.data)
     .maybeSingle();
-
-  if (error || !data) {
-    redirect("/tournaments/manage/new");
+  if (error) {
+    return { error: toAppError(error) };
+  }
+  if (!data) {
+    notFound();
   }
   const validatedData = EditTournamentSchemaServer.safeParse(toCamel(data));
   if (!validatedData.success) {
-    return { error: "Validation error on database results" };
+    return { error: toAppError(validatedData.error) };
   }
-  return validatedData.data;
+  return { data: { tournament: validatedData.data } };
 }
 
-export async function getTournamentApplicationInfo(slug: string): Promise<{
-  data?: z.infer<typeof TournamentApplicationInfoSchema>;
-  error?: Error;
-}> {
+export async function getTournamentApplicationInfo(slug: string): Promise<
+  Result<{
+    application: z.infer<typeof TournamentApplicationInfoSchema>;
+  }>
+> {
   const validatedFields = z.string().safeParse(slug);
   await new Promise((resolve) => setTimeout(resolve, 3000));
   if (!validatedFields.success) {
-    redirect("/tournaments/manage/new");
+    notFound();
   }
 
   const supabase = await createClient();
@@ -144,21 +147,19 @@ export async function getTournamentApplicationInfo(slug: string): Promise<{
     .eq("closed_early", false)
     .eq("approved", true)
     .maybeSingle();
-
-  if (error || !data) {
-    return {
-      error: new Error(
-        "Tournament could not be found, or the application already closed",
-      ),
-    };
+  if (error) {
+    return { error: toAppError(error) };
+  }
+  if (!data) {
+    notFound();
   }
   const validatedData = TournamentApplicationInfoSchema.safeParse(
     toCamel(data),
   );
   if (!validatedData.success) {
-    return { error: new Error("Validation error on database results") };
+    return { error: toAppError(validatedData.error) };
   }
-  return { data: validatedData.data };
+  return { data: { application: validatedData.data } };
 }
 
 export async function upsertTournamentApplication(

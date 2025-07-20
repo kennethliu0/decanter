@@ -22,6 +22,7 @@ import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
 import {
   EditTournamentSchemaServer as ServerSchema,
   EditTournamentSchemaClient as FormSchema,
+  Result,
 } from "@/lib/definitions";
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 import { upsertTournament } from "@/app/dal/tournaments/actions";
@@ -36,16 +37,19 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import LoadingButton from "@/components/ui/LoadingButton";
 
 type Props = {
-  tournamentPromise?: Promise<z.infer<typeof ServerSchema> | { error: string }>;
+  tournamentPromise?: Promise<
+    Result<{ tournament: z.infer<typeof ServerSchema> }>
+  >;
 };
 
 const TournamentEdit = (props: Props) => {
   const promisedTournament =
     props.tournamentPromise ? use(props.tournamentPromise) : undefined;
-  if (promisedTournament && "error" in promisedTournament) {
-    return <div>{promisedTournament.error}</div>;
+  if (promisedTournament && promisedTournament.error) {
+    return <div>{promisedTournament.error.message}</div>;
   }
   const {
     startDate: startDateString,
@@ -55,7 +59,7 @@ const TournamentEdit = (props: Props) => {
     approved,
     id,
     ...tournament
-  } = promisedTournament || {
+  } = promisedTournament?.data?.tournament || {
     imageUrl: "",
     websiteUrl: "",
     name: "",
@@ -448,7 +452,7 @@ const TournamentEdit = (props: Props) => {
             )}
           />
 
-          {form.formState.isDirty && (
+          {(form.formState.isDirty || pending) && (
             <div className="flex items-center gap-2 sticky bottom-4 justify-end bg-card/80 p-2 border-2 rounded-md">
               <p className="text-sm">Unsaved Changes </p>
               <Button
@@ -460,12 +464,12 @@ const TournamentEdit = (props: Props) => {
               >
                 Discard
               </Button>
-              <Button
+              <LoadingButton
                 type="submit"
-                disabled={pending}
+                pending={pending}
               >
                 Save
-              </Button>
+              </LoadingButton>
             </div>
           )}
         </div>

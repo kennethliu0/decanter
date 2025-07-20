@@ -9,8 +9,6 @@ import TournamentEditSkeleton from "../TournamentEditSkeleton";
 import DataTableSkeleton from "../DataTableSkeleton";
 import { DataTable } from "../DataTable";
 import { getTournamentManagement } from "@/app/dal/tournaments/actions";
-import { z } from "zod/v4";
-import { redirect } from "next/navigation";
 export default async function Home({
   params,
 }: {

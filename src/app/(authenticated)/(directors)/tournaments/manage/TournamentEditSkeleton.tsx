@@ -97,7 +97,6 @@ const TournamentEditSkeleton = () => {
         <br />
         <h3 className="text-xl">Fields</h3>
       </div>
-      <Skeleton className="h-9 w-[108.533px]" />
     </div>
   );
 };

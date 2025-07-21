@@ -1,14 +1,15 @@
-import { volunteers } from "@/app/data";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Suspense } from "react";
-import { columns } from "../VolunteerColumns";
 import { Button } from "@/components/ui/button";
 import TournamentEdit from "../TournamentEdit";
 import TournamentEditSkeleton from "../TournamentEditSkeleton";
-import DataTableSkeleton from "../DataTableSkeleton";
-import { DataTable } from "../DataTable";
-import { getTournamentManagement } from "@/app/dal/tournaments/actions";
+import DataTableSkeleton from "../VolunteerTableSkeleton";
+import {
+  getTournamentApplicationsSummary,
+  getTournamentManagement,
+} from "@/app/dal/tournaments/actions";
+import AsyncTable from "../AsyncVolunteerTable";
 export default async function Home({
   params,
 }: {
@@ -16,6 +17,7 @@ export default async function Home({
 }) {
   const { slug } = await params;
   const tournamentPromise = getTournamentManagement(slug);
+  const applicationsPromise = getTournamentApplicationsSummary(slug);
 
   return (
     <main className="px-4 max-w-4xl w-full mx-auto space-y-4">
@@ -35,10 +37,7 @@ export default async function Home({
       <h2 className="text-2xl">View Applications</h2>
       <Button>Export Applications</Button>
       <Suspense fallback={<DataTableSkeleton />}>
-        <DataTable
-          data={volunteers}
-          columns={columns}
-        />
+        <AsyncTable applicationsPromise={applicationsPromise} />
       </Suspense>
     </main>
   );

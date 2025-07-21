@@ -8,7 +8,7 @@ import {
   InsertTournamentApplicationSchema,
   Result,
 } from "@/lib/definitions";
-import z from "zod/v4";
+import z, { email } from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
@@ -16,6 +16,49 @@ import { notFound, redirect } from "next/navigation";
 import { events, seasonYear } from "@/app/data";
 import { ERROR_CODES, toAppError } from "@/lib/errors";
 import slugify from "slugify";
+
+export async function getTournamentId(
+  slugRaw: string,
+): Promise<Result<{ id: string }>> {
+  const validatedData = z.string().safeParse(slugRaw);
+
+  if (!validatedData.success) {
+    return { error: toAppError(validatedData.error) };
+  }
+
+  const slug = validatedData.data;
+
+  const supabase = await createClient();
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  if (tournamentError) {
+    return { error: toAppError(tournamentError) };
+  }
+  if (!tournamentData?.id) {
+    return {
+      error: {
+        message: "Tournament ID not found",
+        code: ERROR_CODES.NOT_FOUND,
+        status: 404,
+        name: "PostgrestError",
+      },
+    };
+  }
+
+  const validatedTournament = z
+    .uuid({ version: "v4" })
+    .safeParse(tournamentData.id);
+  if (!validatedTournament.success) {
+    return { error: toAppError(validatedTournament.error) };
+  }
+  const tournamentId = validatedTournament.data;
+  return { data: { id: tournamentId } };
+}
 
 export async function upsertTournament(
   formState: EditTournamentServerState,
@@ -100,7 +143,6 @@ export async function getTournamentManagement(
   slug: string,
 ): Promise<Result<{ tournament: z.infer<typeof EditTournamentSchemaServer> }>> {
   const validatedFields = z.string().safeParse(slug);
-  await new Promise((resolve) => setTimeout(resolve, 3000));
   if (!validatedFields.success) {
     notFound();
   }
@@ -132,7 +174,6 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
   }>
 > {
   const validatedFields = z.string().safeParse(slug);
-  await new Promise((resolve) => setTimeout(resolve, 3000));
   if (!validatedFields.success) {
     notFound();
   }
@@ -255,32 +296,25 @@ export async function getSavedTournamentApplication(
 ): Promise<
   Result<{ application: z.infer<typeof InsertTournamentApplicationSchema> }>
 > {
-  const validatedData = z.string().safeParse(slugRaw);
+  const { data: tournamentIdData, error: tournamentIdError } =
+    await getTournamentId(slugRaw);
 
-  if (!validatedData.success) {
-    return { error: toAppError(validatedData.error) };
+  if (tournamentIdError) {
+    return { error: tournamentIdError };
   }
-
-  const slug = validatedData.data;
+  if (!tournamentIdData?.id) {
+    return {
+      error: {
+        message: "Tournament ID not found",
+        code: ERROR_CODES.NOT_FOUND,
+        status: 404,
+        name: "PostgrestError",
+      },
+    };
+  }
+  const tournamentId = tournamentIdData?.id;
 
   const supabase = await createClient();
-
-  const { data: tournamentData, error: tournamentError } = await supabase
-    .from("tournaments")
-    .select("id")
-    .eq("slug", slug)
-    .single();
-
-  if (!tournamentData?.id || tournamentError) {
-    return { error: toAppError(tournamentError) };
-  }
-  const validatedTournament = z
-    .uuid({ version: "v4" })
-    .safeParse(tournamentData.id);
-  if (!validatedTournament.success) {
-    return { error: toAppError(validatedTournament.error) };
-  }
-  const tournamentId = validatedTournament.data;
 
   const {
     data: { user },
@@ -330,5 +364,121 @@ export async function getSavedTournamentApplication(
 
   return {
     data: { application: validatedApplication.data },
+  };
+}
+
+type VolunteerProfile = {
+  name: string;
+  education: string;
+};
+
+type TournamentApplication = {
+  user_id: string;
+  email: string;
+  volunteer_profiles: VolunteerProfile | null;
+};
+
+function toApplications(data: any[] | null): TournamentApplication[] {
+  if (!Array.isArray(data)) return [];
+
+  return data.filter(
+    (d): d is TournamentApplication => !!d?.volunteer_profiles,
+  );
+}
+
+export async function getTournamentApplicationsSummary(
+  slugRaw: string,
+): Promise<
+  Result<{
+    applications: {
+      id: string;
+      name: string;
+      email: string;
+      education: string;
+    }[];
+  }>
+> {
+  const { data: tournamentIdData, error: tournamentIdError } =
+    await getTournamentId(slugRaw);
+
+  if (tournamentIdError) {
+    return { error: tournamentIdError };
+  }
+  if (!tournamentIdData?.id) {
+    return {
+      error: {
+        message: "Tournament ID not found",
+        code: ERROR_CODES.NOT_FOUND,
+        status: 404,
+        name: "PostgrestError",
+      },
+    };
+  }
+  const tournamentId = tournamentIdData?.id;
+
+  const supabase = await createClient();
+
+  // check user authorizaton
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user?.id) {
+    redirect("/login");
+  }
+
+  const { data: adminData, error: adminError } = await supabase
+    .from("tournament_admins")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .eq("tournament_id", tournamentId)
+    .single();
+
+  if (adminError || !adminData) {
+    return {
+      error: {
+        message: "Unauthorized access",
+        code: ERROR_CODES.UNAUTHORIZED,
+        status: 401,
+      },
+    };
+  }
+
+  // return up to 100 applications for performance
+
+  const { data, error } = await supabase
+    .from("tournament_applications")
+    .select(
+      `user_id, email, 
+        volunteer_profiles (
+          name,
+          education
+        )
+      `,
+    )
+    .eq("tournament_id", tournamentId)
+    .eq("submitted", true)
+    .order("updated_at", { ascending: true })
+    .limit(100);
+  if (error) {
+    console.error(error);
+    return { error: toAppError(error) };
+  }
+  if (!data) {
+    return { data: { applications: [] } };
+  }
+  return {
+    data: {
+      applications: toApplications(data)
+        .filter((val) => val.volunteer_profiles != null)
+        .map((val) => ({
+          id: val.user_id,
+          email: val.email,
+          name: val.volunteer_profiles?.name ?? "Unknown",
+          education: val.volunteer_profiles?.education ?? "Unknown",
+        })),
+    },
   };
 }

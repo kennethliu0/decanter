@@ -1,12 +1,15 @@
 import React from "react";
 import { FlaskConical, Globe } from "lucide-react";
-import VolunteerEventRankingDialog from "@/app/(authenticated)/(volunteers)/tournaments/search/VolunteerEventRankingDialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { format } from "date-fns";
+import { TournamentCardInfo } from "@/lib/definitions";
+import { Button } from "@/components/ui/button";
+import z from "zod/v4";
 
 type Props = {
-  tournament: TournamentInfo;
+  tournament: z.infer<typeof TournamentCardInfo>;
 };
 
 const TournamentApplyCard = (props: Props) => {
@@ -49,36 +52,24 @@ const TournamentApplyCard = (props: Props) => {
       <div className="flex justify-between items-end">
         <div>
           <p className="text-sm">
-            {new Date(props.tournament.startDate).toLocaleDateString()} -{" "}
-            {new Date(props.tournament.endDate).toLocaleDateString()}
+            {format(props.tournament.startDate, "P")}-{" "}
+            {format(props.tournament.endDate, "P")}
           </p>
           <p className="text-sm">
-            {"\n"}Apply By{" "}
-            {new Date(props.tournament.applyDeadline).toLocaleDateString()}
+            {"\n"}Apply By {format(props.tournament.applyDeadline, "Pp")}
           </p>
         </div>
         <div className="flex gap-1 items-center">
           <Link href={props.tournament.websiteUrl}>
             <Globe width="1.5em" />
           </Link>
-          <VolunteerEventRankingDialog division={props.tournament.division} />
+          <Link href={`/tournaments/apply/${props.tournament.slug}`}>
+            <Button>Apply</Button>
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-type TournamentInfo = {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  applyDeadline: Date;
-  location: string;
-  websiteUrl: string;
-  division: "B" | "C";
-  imageUrl: string;
-  closedEarly: boolean;
-};
-
 export { TournamentApplyCard };
-export type { TournamentInfo };

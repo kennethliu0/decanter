@@ -7,13 +7,14 @@ import {
   TournamentApplicationInfoSchema,
   InsertTournamentApplicationSchema,
   Result,
+  TournamentCards,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { notFound, redirect } from "next/navigation";
-import { events, seasonYear } from "@/app/data";
+import { events, seasonYear, tournaments } from "@/app/data";
 import { ERROR_CODES, toAppError } from "@/lib/errors";
 import slugify from "slugify";
 
@@ -496,5 +497,33 @@ export async function getTournamentApplicationsSummary(
           education: val.volunteer_profiles?.education ?? "Unknown",
         })),
     },
+  };
+}
+
+export async function getTournaments(): Promise<
+  Result<z.infer<typeof TournamentCards>>
+> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("tournaments")
+    .select(
+      "id, image_url, website_url, name, location, division, start_date, end_date, apply_deadline, slug",
+    )
+    .eq("approved", true)
+    .eq("closed_early", false);
+  if (error) {
+    return { error: toAppError(error) };
+  }
+  const validatedFields = TournamentCards.safeParse(
+    data.map((entry) => toCamel(entry)),
+  );
+  if (!validatedFields.success) {
+    console.error(validatedFields.error);
+    return { error: toAppError(validatedFields.error) };
+  }
+
+  return {
+    data: validatedFields.data,
   };
 }

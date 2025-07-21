@@ -11,6 +11,7 @@ import { AlertCircleIcon } from "lucide-react";
 // import { CreateInvoice } from "@/app/ui/invoices/buttons";
 // import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
+import { getTournaments } from "@/app/dal/tournaments/actions";
 
 type Props = {
   searchParams?: Promise<{
@@ -85,10 +86,7 @@ const Page = async (props: Props) => {
         <Suspense fallback={<TournamentTableSkeleton />}>
           <TournamentTable
             query={query}
-            location={location}
-            division={division}
-            startDateAfter={startDateAfter}
-            startDateBefore={startDateBefore}
+            filters={{ location, division, startDateAfter, startDateBefore }}
             currentPage={currentPage}
           />
         </Suspense>

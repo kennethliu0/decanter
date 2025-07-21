@@ -328,3 +328,10 @@ export type InsertTournamentApplicationState =
       success?: boolean;
     }
   | undefined;
+
+export const TournamentCardInfo = TournamentApplicationInfoSchema.omit({
+  applicationFields: true,
+}).extend({
+  slug: z.string(),
+});
+export const TournamentCards = z.array(TournamentCardInfo);

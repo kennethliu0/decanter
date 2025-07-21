@@ -39,10 +39,8 @@ const Navigation = (props: Props) => {
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
       <div className="hidden sm:flex items-center">
-        <Link href="/dashboard">
-          <Button variant="ghost">
-            <FlaskConical color="white" />
-          </Button>
+        <Link href="/">
+            <img src='/favicon_2_rd.svg' alt = "logo" className="w-6 h-6 mr-3 hover:scale-110 transition-transform duration-150"/>
         </Link>
         <NavigationMenu viewport={false}>
           <NavigationMenuList>

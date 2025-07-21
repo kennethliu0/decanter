@@ -1,10 +1,19 @@
 "use server";
 
-import { VolunteerProfileSchema, UpdateProfileState } from "@/lib/definitions";
+import {
+  VolunteerProfileSchema,
+  UpdateProfileState,
+  EventPreferencesB,
+  EventPreferencesC,
+  Result,
+} from "@/lib/definitions";
+import { ERROR_CODES, toAppError } from "@/lib/errors";
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod/v4";
 
-export async function getProfile() {
+export async function getProfile(): Promise<
+  Result<{ profile: z.infer<typeof VolunteerProfileSchema> }>
+> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -14,10 +23,10 @@ export async function getProfile() {
 
   if (error) {
     console.error(error);
-    throw new Error("Failed to load profile");
+    return { error: toAppError(error) };
   }
   if (!data) {
-    return undefined;
+    return {};
   }
   const { name, education, bio, experience } = data;
   const validatedFields = VolunteerProfileSchema.safeParse({
@@ -29,9 +38,9 @@ export async function getProfile() {
     preferencesC: data.preferences_c,
   });
   if (!validatedFields.success) {
-    return undefined;
+    return { error: toAppError(validatedFields.error) };
   } else {
-    return validatedFields.data;
+    return { data: { profile: validatedFields.data } };
   }
 }
 
@@ -56,18 +65,69 @@ export async function upsertProfile(
     return { message: "Unauthenticated", success: false };
   }
 
-  const { error } = await supabase.from("volunteer_profiles").upsert(
-    {
-      user_id: user.id,
-      email: user.email,
-      name: validatedFields.data.name,
-      education: validatedFields.data.education,
-      bio: validatedFields.data.bio,
-      experience: validatedFields.data.experience,
-      preferences_b: validatedFields.data.preferencesB,
-      preferences_c: validatedFields.data.preferencesC,
-    },
-    { onConflict: "user_id" },
-  );
+  const { error } = await supabase.from("volunteer_profiles").upsert({
+    id: user.id,
+    email: user.email,
+    name: validatedFields.data.name,
+    education: validatedFields.data.education,
+    bio: validatedFields.data.bio,
+    experience: validatedFields.data.experience,
+    preferences_b: validatedFields.data.preferencesB,
+    preferences_c: validatedFields.data.preferencesC,
+  });
+  if (error) {
+    console.error(error);
+  }
   return { success: !error };
+}
+
+export async function getEventPreferences(): Promise<
+  Result<{ preferencesB: string[]; preferencesC: string[] }>
+> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (!user?.id || authError) {
+    return {
+      error:
+        authError ?
+          toAppError(authError)
+        : {
+            message: "Unauthorized.",
+            code: ERROR_CODES.UNAUTHORIZED,
+            status: 401,
+            name: "AuthApiError",
+          },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from("volunteer_profiles")
+    .select("preferences_b, preferences_c")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !data?.preferences_b || !data?.preferences_c) {
+    return { error: toAppError(error) };
+  }
+  const validatedB = EventPreferencesB.safeParse(data.preferences_b);
+  const validatedC = EventPreferencesC.safeParse(data.preferences_c);
+
+  if (!validatedB.success || !validatedC.success) {
+    console.error(validatedB.error || validatedC.error);
+    return {
+      error: {
+        message: "Invalid output from database.",
+        code: ERROR_CODES.INVALID_REFERENCE,
+        status: 400,
+      },
+    };
+  }
+
+  return {
+    data: { preferencesB: validatedB.data, preferencesC: validatedC.data },
+  };
 }

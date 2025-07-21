@@ -1,9 +1,12 @@
-import React, { ChangeEvent } from "react";
-import { UploadIcon, TrashIcon, FlaskConical } from "lucide-react";
+"use client";
+
+import React, { ChangeEvent, useState } from "react";
+import { UploadIcon, TrashIcon, FlaskConical, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import clsx from "clsx";
+import { toast } from "sonner";
 
 type AvatarUploadProps = {
   value: string | null;
@@ -16,26 +19,35 @@ export default function AvatarUpload({
   onChange,
   error,
 }: AvatarUploadProps) {
+  const [loading, setLoading] = useState(false);
+
   const handleAvatarUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setLoading(true);
       const formData = new FormData();
       formData.append("image", file);
 
-      const res = await fetch("/dal/tournament-icons", {
-        method: "POST",
-        body: formData,
-      });
-      if (res.ok) {
-        const data = await res.json();
-        onChange(data.url);
-      } else {
-        alert(
-          "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
-        );
+      try {
+        const res = await fetch("/dal/tournament-icons", {
+          method: "POST",
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          onChange(data.url);
+        } else {
+          alert(
+            "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
+          );
+        }
+      } finally {
+        setLoading(false);
+        toast.success("Image upload successful");
       }
     }
   };
+
   const handleAvatarDelete = () => {
     onChange(null);
   };
@@ -68,7 +80,9 @@ export default function AvatarUpload({
 
       <label
         htmlFor="avatar-upload"
-        className="absolute inset-0 cursor-pointer group"
+        className={cn("absolute inset-0 cursor-pointer group", {
+          "pointer-events-none": loading,
+        })}
       >
         <input
           id="avatar-upload"
@@ -76,8 +90,14 @@ export default function AvatarUpload({
           accept="image/*"
           className="sr-only"
           onChange={handleAvatarUpload}
+          disabled={loading}
         />
-        {value && (
+        {loading && (
+          <div className="absolute inset-0 bg-muted/70 flex items-center justify-center z-10">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        {value && !loading && (
           <div className="absolute inset-0 bg-muted/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <Button
               type="button"

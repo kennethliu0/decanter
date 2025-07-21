@@ -1,8 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import React, { startTransition, use, useActionState } from "react";
+import React, { startTransition, use, useActionState, useEffect } from "react";
 import LocationCombobox from "./LocationCombobox";
 import { Button } from "@/components/ui/button";
 import z from "zod/v4";
@@ -23,22 +22,34 @@ import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
 import {
   EditTournamentSchemaServer as ServerSchema,
   EditTournamentSchemaClient as FormSchema,
+  Result,
 } from "@/lib/definitions";
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 import { upsertTournament } from "@/app/dal/tournaments/actions";
 import { parse, format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import { Check, Clock } from "lucide-react";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import LoadingButton from "@/components/ui/LoadingButton";
 
 type Props = {
-  tournamentPromise?: Promise<z.infer<typeof ServerSchema> | { error: string }>;
+  tournamentPromise?: Promise<
+    Result<{ tournament: z.infer<typeof ServerSchema> }>
+  >;
 };
 
 const TournamentEdit = (props: Props) => {
   const promisedTournament =
     props.tournamentPromise ? use(props.tournamentPromise) : undefined;
-  if (promisedTournament && "error" in promisedTournament) {
-    return <div>{promisedTournament.error}</div>;
+  if (promisedTournament && promisedTournament.error) {
+    return <div>{promisedTournament.error.message}</div>;
   }
   const {
     startDate: startDateString,
@@ -48,7 +59,7 @@ const TournamentEdit = (props: Props) => {
     approved,
     id,
     ...tournament
-  } = promisedTournament || {
+  } = promisedTournament?.data?.tournament || {
     imageUrl: "",
     websiteUrl: "",
     name: "",
@@ -106,7 +117,6 @@ const TournamentEdit = (props: Props) => {
     const [hours, minutes] = applyDeadlineTime.split(":").map(Number);
     applyDeadline.setHours(hours, minutes, 59, 999);
     form.reset(values);
-    console.log(startDate, endDate, applyDeadlineDate, applyDeadlineTime);
     startTransition(() => {
       action({
         id,
@@ -117,6 +127,15 @@ const TournamentEdit = (props: Props) => {
       });
     });
   }
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success("Tournament successfully updated");
+    } else if (state?.success === false && state.message) {
+      toast.error(state.message);
+      form.reset();
+    }
+  }, [state]);
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -213,43 +232,35 @@ const TournamentEdit = (props: Props) => {
                     </FormItem>
                   )}
                 />
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="division"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Division</FormLabel>
+                <FormField
+                  control={form.control}
+                  name="division"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Division*</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="flex h-9 items-center"
-                          >
-                            <FormItem className="flex gap-2">
-                              <FormControl>
-                                <RadioGroupItem value="B" />
-                              </FormControl>
-                              <FormLabel className="font-normal">B</FormLabel>
-                            </FormItem>
-                            <FormItem className="flex gap-2">
-                              <FormControl>
-                                <RadioGroupItem value="C" />
-                              </FormControl>
-                              <FormLabel className="font-normal">C</FormLabel>
-                            </FormItem>
-                          </RadioGroup>
+                          <SelectTrigger className="w-28">
+                            <SelectValue placeholder="Division..." />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                        {state?.errors?.division && (
-                          <p className="text-sm text-destructive">
-                            {state.errors.division}
-                          </p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                        <SelectContent>
+                          <SelectItem value="B">Division B</SelectItem>
+                          <SelectItem value="C">Division C</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                      {state?.errors?.division && (
+                        <p className="text-sm text-destructive">
+                          {state.errors.division}
+                        </p>
+                      )}
+                    </FormItem>
+                  )}
+                />
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-2 items-start">
                 <FormField
@@ -351,6 +362,10 @@ const TournamentEdit = (props: Props) => {
                   )}
                 />
               </div>
+              <p className="text-sm">
+                *We discourage changing the division after creating a tournament
+                because the URL won’t update, which may cause confusion.
+              </p>
               <FormField
                 control={form.control}
                 name="closedEarly"
@@ -437,7 +452,7 @@ const TournamentEdit = (props: Props) => {
             )}
           />
 
-          {form.formState.isDirty && (
+          {(form.formState.isDirty || pending) && (
             <div className="flex items-center gap-2 sticky bottom-4 justify-end bg-card/80 p-2 border-2 rounded-md">
               <p className="text-sm">Unsaved Changes </p>
               <Button
@@ -449,12 +464,12 @@ const TournamentEdit = (props: Props) => {
               >
                 Discard
               </Button>
-              <Button
+              <LoadingButton
                 type="submit"
-                disabled={pending}
+                pending={pending}
               >
                 Save
-              </Button>
+              </LoadingButton>
             </div>
           )}
         </div>

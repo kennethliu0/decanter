@@ -8,20 +8,14 @@ import TournamentEdit from "../TournamentEdit";
 import TournamentEditSkeleton from "../TournamentEditSkeleton";
 import DataTableSkeleton from "../DataTableSkeleton";
 import { DataTable } from "../DataTable";
-import { getTournament } from "@/app/dal/tournaments/actions";
-import { z } from "zod/v4";
-import { redirect } from "next/navigation";
+import { getTournamentManagement } from "@/app/dal/tournaments/actions";
 export default async function Home({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const id = z.uuid({ version: "v4" }).safeParse(slug);
-  if (!id.success) {
-    redirect("/tournaments/manage/new");
-  }
-  const tournamentPromise = getTournament(slug);
+  const tournamentPromise = getTournamentManagement(slug);
 
   return (
     <main className="px-4 max-w-4xl w-full mx-auto space-y-4">

@@ -1,5 +1,8 @@
 import { events, usStates } from "@/app/data";
 import * as z from "zod/v4";
+import { AppError } from "./errors";
+
+export type Result<T> = { data?: T; error?: AppError };
 
 const password = z
   .string()
@@ -100,26 +103,70 @@ const noEmptyGaps = (arr: string[]) => {
   return true;
 };
 
+const noDuplicatesIgnoringEmpty = (arr: string[]) => {
+  const seen = new Set();
+  for (const str of arr) {
+    if (str === "") continue;
+    if (seen.has(str)) return false;
+    seen.add(str);
+  }
+  return true;
+};
+
+export const EventPreferences = z
+  .array(
+    z
+      .string()
+      .refine(
+        (val) => val === "" || events.B.includes(val) || events.C.includes(val),
+      )
+      .trim(),
+  )
+  .length(4)
+  .refine(noEmptyGaps, {
+    message: "Empty slots must come after all selected events",
+  })
+  .refine(noDuplicatesIgnoringEmpty, {
+    message: "Duplicates are not allowed",
+  });
+export const EventPreferencesB = z
+  .array(
+    z
+      .string()
+      .refine((val) => val === "" || events.B.includes(val))
+      .trim(),
+  )
+  .length(4)
+  .refine(noEmptyGaps, {
+    message: "Empty slots must come after all selected events",
+  })
+  .refine(noDuplicatesIgnoringEmpty, {
+    message: "Duplicates are not allowed",
+  });
+export const EventPreferencesC = z
+  .array(
+    z
+      .string()
+      .refine((val) => val === "" || events.C.includes(val))
+      .trim(),
+  )
+  .length(4)
+  .refine(noEmptyGaps, {
+    message: "Empty slots must come after all selected events",
+  })
+  .refine(noDuplicatesIgnoringEmpty, {
+    message: "Duplicates are not allowed",
+  });
 export const VolunteerProfileSchema = z.object({
   name: z
     .string()
     .refine((val) => val.split(" ").length >= 2, "Include first and last name")
     .trim(),
-  education: z.string().min(1, "Education cannot be empty"),
-  bio: z.string().min(1, "Bio cannot be empty"),
-  experience: z.string().min(1, "Experience cannot be empty"),
-  preferencesB: z
-    .array(z.string().refine((val) => val === "" || events.B.includes(val)))
-    .length(4)
-    .refine(noEmptyGaps, {
-      message: "Empty slots must come after all selected events",
-    }),
-  preferencesC: z
-    .array(z.string().refine((val) => val === "" || events.C.includes(val)))
-    .length(4)
-    .refine(noEmptyGaps, {
-      message: "Empty slots must come after all selected events",
-    }),
+  education: z.string().min(1, "Education cannot be empty").trim(),
+  bio: z.string().min(1, "Bio cannot be empty").trim(),
+  experience: z.string().min(1, "Experience cannot be empty").trim(),
+  preferencesB: EventPreferencesB,
+  preferencesC: EventPreferencesC,
 });
 
 export type UpdateProfileState =
@@ -229,6 +276,53 @@ export type EditTournamentServerState =
         closedEarly?: string[];
         approved?: string[];
         id?: string[];
+      };
+      message?: string;
+      success?: boolean;
+    }
+  | undefined;
+
+export const TournamentApplicationInfoSchema = EditTournamentSchemaServer.omit({
+  closedEarly: true,
+  approved: true,
+}).extend({ id: z.uuid({ version: "v4" }) });
+
+export const InsertTournamentApplicationSchema = z.object({
+  tournamentId: z.uuid({ version: "v4" }),
+  mode: z.enum(["save", "submit"]),
+  preferences: z
+    .array(
+      z
+        .string()
+        .refine(
+          (val) =>
+            val === "" || events.B.includes(val) || events.C.includes(val),
+        )
+        .trim(),
+    )
+    .length(4)
+    .refine(noEmptyGaps, {
+      message: "Empty slots must come after all selected events",
+    })
+    .refine(noDuplicatesIgnoringEmpty, {
+      message: "Duplicates are not allowed",
+    })
+    .refine((data) => data[0], { message: "You must select at least 1 event" }),
+  responses: z.array(
+    z.object({
+      fieldId: z.uuid({ version: "v4" }),
+      response: z.string().min(1, "Field required, otherwise put N/A").trim(),
+    }),
+  ),
+});
+
+export type InsertTournamentApplicationState =
+  | {
+      errors?: {
+        mode?: string[];
+        tournamentId?: string[];
+        preferences?: string[];
+        responses?: string[];
       };
       message?: string;
       success?: boolean;

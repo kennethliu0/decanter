@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import Header from "@/components/ui/Header";
-import { getProfile } from "@/app/dal/volunteer-profiles/actions";
 import Link from "next/link";
 
 export default function Home() {

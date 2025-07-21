@@ -9,6 +9,7 @@ import {
 } from "@/lib/definitions";
 import { ERROR_CODES, toAppError } from "@/lib/errors";
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import { z } from "zod/v4";
 
 export async function getProfile(): Promise<
@@ -16,9 +17,18 @@ export async function getProfile(): Promise<
 > {
   const supabase = await createClient();
 
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user?.id) {
+    redirect("/login");
+  }
+
   const { data, error } = await supabase
     .from("volunteer_profiles")
     .select("name, education, bio, experience, preferences_b, preferences_c")
+    .eq("id", user.id)
     .maybeSingle();
 
   if (error) {
@@ -91,27 +101,26 @@ export async function getEventPreferences(): Promise<
   } = await supabase.auth.getUser();
 
   if (!user?.id || authError) {
-    return {
-      error:
-        authError ?
-          toAppError(authError)
-        : {
-            message: "Unauthorized.",
-            code: ERROR_CODES.UNAUTHORIZED,
-            status: 401,
-            name: "AuthApiError",
-          },
-    };
+    redirect("/login");
   }
 
   const { data, error } = await supabase
     .from("volunteer_profiles")
     .select("preferences_b, preferences_c")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (error || !data?.preferences_b || !data?.preferences_c) {
+  if (error) {
     return { error: toAppError(error) };
+  }
+  if (!data?.preferences_b || !data?.preferences_c) {
+    return {
+      error: {
+        message: "Please create a volunteer profile before applying.",
+        code: ERROR_CODES.VOLUNTEER_PROFILE_NOT_FOUND,
+        status: 404,
+      },
+    };
   }
   const validatedB = EventPreferencesB.safeParse(data.preferences_b);
   const validatedC = EventPreferencesC.safeParse(data.preferences_c);

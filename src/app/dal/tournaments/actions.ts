@@ -8,7 +8,7 @@ import {
   InsertTournamentApplicationSchema,
   Result,
 } from "@/lib/definitions";
-import z, { email } from "zod/v4";
+import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
@@ -258,6 +258,22 @@ export async function upsertTournamentApplication(
     console.error(authError);
     return { message: "Authentication failed", success: false };
   }
+  const { data: profileData, error: profileError } = await supabase
+    .from("volunteer_profiles")
+    .select("name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    return { message: "Error checking profile", success: false };
+  }
+  if (!profileData) {
+    return {
+      message: "You must create a volunteer profile first",
+      success: false,
+    };
+  }
+
   // check if an application was submitted already
   const { data: existingData, error: existingError } = await supabase
     .from("tournament_applications")

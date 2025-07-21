@@ -21,6 +21,7 @@ import React from "react";
 import { logout } from "@/app/dal/auth/actions";
 import { Separator } from "./separator";
 
+
 type Props = {};
 
 const Header = (props: Props) => {
@@ -28,9 +29,7 @@ const Header = (props: Props) => {
     <header className="bg-background sticky top-0 z-50 w-full px-2 sm:px-8 py-2">
       <div className="flex items-center justify-between">
         <Link href="/">
-          <Button variant="ghost">
-            <FlaskConical color="white" />
-          </Button>
+            <img src='/favicon_2_rd.svg' alt = "logo" className="w-8 h-8 hover:scale-110 transition-transform duration-150"/>
         </Link>
         <NavigationMenu viewport={false}>
           <NavigationMenuList>

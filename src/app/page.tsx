@@ -8,16 +8,15 @@ export default function Home() {
     <>
       <Header />
       <main className="w-full grow flex flex-col items-center">
-        <div className="w-full max-w-2xl p-4 flex-col gap-8 items-start">
-          <div>
-            <h1 className="text-4xl">Decanter</h1>
+        <div className="w-full">
+
+          <div className="px-20 py-3 ">
+            <h1 className="text-4xl font-bold text-center break-words py-2">Join the Perfect Tournament.</h1>
+            <p className="text-1xl text-center break-words">An open source tool for volunteers to seamlessly find and one-click apply to tournaments.</p>
           </div>
-          <div className="flex gap-4">
-            <Link href="/login">
-              <Button>Sign In</Button>
-            </Link>
+          <div className="w-full flex gap-4 place-content-center-safe">
             <Link href="/signup">
-              <Button>Sign Up</Button>
+              <Button>Sign Up Today</Button>
             </Link>
           </div>
         </div>

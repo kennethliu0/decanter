@@ -2,61 +2,66 @@ import MobileTournamentFilters from "@/app/(authenticated)/(volunteers)/tourname
 import { Pagination } from "@/components/ui/pagination";
 import Search from "@/components/ui/Search";
 import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFilters";
-import TournamentSortSelect from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentSortSelect";
 import TournamentTable from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentTable";
 import TournamentTableSkeleton from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentTableSkeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
-// import Table from "@/app/ui/invoices/table";
-// import { CreateInvoice } from "@/app/ui/invoices/buttons";
-// import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
-import { getTournaments } from "@/app/dal/tournaments/actions";
 
 type Props = {
-  searchParams?: Promise<{
+  searchParams: Promise<{
     query?: string;
     page?: number;
     location?: string[] | string;
-    division?: ("b" | "c")[] | "b" | "c";
+    division?: ("B" | "C")[] | "B" | "C";
     startDateAfterISO?: string;
     startDateBeforeISO?: string;
     applyDateAfterISO?: string;
+    sort?: string;
   }>;
 };
 
+const clearTime = (date: Date) => {
+  date.setUTCHours(0, 0, 0, 0);
+  return date;
+};
+
+const MAX_DATE = new Date(8640000000000000);
+
+const retrieveDate = (
+  searchParams: any,
+  param: string,
+  fallback: Date,
+): Date => {
+  return searchParams[param] ?
+      clearTime(new Date(searchParams[param]))
+    : fallback;
+};
+
 const Page = async (props: Props) => {
-  const clearTime = (date: Date) => {
-    date.setHours(0, 0, 0, 0);
-    return date;
-  };
   const today = clearTime(new Date());
-  const retrieveDate = (searchParams: any, param: string, fallback?: Date) => {
-    return (
-      searchParams ?
-        searchParams[param] ?
-          clearTime(new Date(searchParams[param]))
-        : fallback
-      : fallback
-    );
-  };
 
   const searchParams = await props.searchParams;
-  const query = searchParams?.query;
-  const currentPage = searchParams?.page || 1;
-  const location = searchParams?.location;
-  const division = searchParams?.division;
-  const startDateAfter = retrieveDate(searchParams, "startDateAfterISO", today);
-  const startDateBefore = retrieveDate(searchParams, "startDateBeforeISO");
-  const applyDateAfter = retrieveDate(searchParams, "applyDateAfterISO", today);
+  const startDateAfter = retrieveDate(searchParams, "startDateAfter", today);
+  const startDateBefore = retrieveDate(
+    searchParams,
+    "startDateBefore",
+    MAX_DATE,
+  );
+  const applyDateAfter = retrieveDate(
+    searchParams,
+    "applyDeadlineAfter",
+    today,
+  );
+  const sort = searchParams?.sort;
   return (
-    <div className="flex p-4 gap-4 justify-center">
+    <main className="flex p-4 gap-4 justify-center grow">
       {/* for desktop layouts */}
       <TournamentFilters
         type="multiple"
         className="min-w-[280px] shrink-0 hidden md:block"
       />
-      <div className="max-w-5xl shrink flex flex-col gap-2">
+      <div className="max-w-5xl w-full shrink flex flex-col gap-2">
         <div className="flex">
           {/* For mobile layouts*/}
           <MobileTournamentFilters />
@@ -64,12 +69,6 @@ const Page = async (props: Props) => {
             className="grow m-auto"
             placeholder="Search tournaments..."
           />
-        </div>
-        <div className="grid columns-3 items-center">
-          <div className="col-[2] justify-self-center">6 tournaments</div>
-          <div className="col-[3] justify-self-end">
-            <TournamentSortSelect />
-          </div>
         </div>
         {startDateAfter
           && startDateBefore
@@ -85,17 +84,20 @@ const Page = async (props: Props) => {
           )}
         <Suspense fallback={<TournamentTableSkeleton />}>
           <TournamentTable
-            query={query}
-            filters={{ location, division, startDateAfter, startDateBefore }}
-            currentPage={currentPage}
+            query={searchParams?.query}
+            filters={{
+              location: searchParams?.location,
+              division: searchParams?.division,
+              startDateAfter,
+              startDateBefore,
+              applyDeadlineAfter: applyDateAfter,
+            }}
+            currentPage={searchParams?.page || 1}
+            sort={sort}
           />
         </Suspense>
-        <Pagination
-          totalPages={8}
-          className="mt-5 flex w-full justify-center"
-        />
       </div>
-    </div>
+    </main>
   );
 };
 

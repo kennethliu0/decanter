@@ -12,8 +12,8 @@ type Props = {};
 
 const TournamentSortSelect = (props: Props) => {
   const sortOptions = [
-    { label: "Tournament Start Date", param: "startdate" },
-    { label: "Application Due Date", param: "applydate" },
+    { label: "Tournament Start Date", param: "startDate" },
+    { label: "Application Due Date", param: "applyDeadline" },
   ];
   const searchParams = useSearchParams();
   const pathname = usePathname();

@@ -329,9 +329,21 @@ export type InsertTournamentApplicationState =
     }
   | undefined;
 
+// used for passing tournameent info from server action to the search tournaments table
 export const TournamentCardInfo = TournamentApplicationInfoSchema.omit({
   applicationFields: true,
 }).extend({
   slug: z.string(),
 });
 export const TournamentCards = z.array(TournamentCardInfo);
+
+// used for passing tournament info from the search tournaments table to the tournament apply card
+export const TournamentCardDisplay = TournamentCardInfo.omit({
+  startDate: true,
+  endDate: true,
+  applyDeadline: true,
+}).extend({
+  startDate: z.date(),
+  endDate: z.date(),
+  applyDeadline: z.date(),
+});

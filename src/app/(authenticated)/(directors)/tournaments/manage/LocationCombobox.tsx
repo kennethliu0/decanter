@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { usStates } from "@/app/data";
+import { US_STATES } from "@/lib/config";
 import clsx from "clsx";
 
 type Props = {
@@ -69,7 +69,7 @@ const LocationCombobox = ({ onChange, value, error }: Props) => {
                 />
                 Online
               </CommandItem>
-              {usStates.map((state, index) => (
+              {US_STATES.map((state, index) => (
                 <CommandItem
                   key={index}
                   value={state}

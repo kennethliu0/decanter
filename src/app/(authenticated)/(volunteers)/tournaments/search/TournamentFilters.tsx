@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import React, { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { usStates } from "@/app/data";
+import { US_STATES } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/DatePickerWithParams";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -135,7 +135,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
       <AccordionItem value="item-4">
         <AccordionTrigger>Location</AccordionTrigger>
         <AccordionContent className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
-          {["Online", ...usStates].map((state, index) => (
+          {["Online", ...US_STATES].map((state, index) => (
             <AccordionOption
               key={index}
               id={state}

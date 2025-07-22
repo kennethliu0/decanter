@@ -24,7 +24,7 @@ import {
 import { upsertProfile } from "@/app/dal/volunteer-profiles/actions";
 import { toast } from "sonner";
 import LoadingButton from "@/components/ui/LoadingButton";
-import { contactEmail } from "@/app/data";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 type Props = {
   profilePromise: Promise<Result<{ profile: z.infer<typeof FormSchema> }>>;
@@ -227,7 +227,7 @@ const ProfileError = () => {
       <h2 className="text-xl font-semibold">Something went wrong</h2>
       <p className="text-muted-foreground">
         Your profile could not be retrieved. Please try again. If the issue
-        persists, clear your browser cache or contact us at {contactEmail}.
+        persists, clear your browser cache or contact us at {CONTACT_EMAIL}.
       </p>
     </div>
   );

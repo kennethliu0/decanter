@@ -14,7 +14,7 @@ import { createClient } from "../../../utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { notFound, redirect } from "next/navigation";
-import { events, seasonYear, tournaments } from "@/app/data";
+import { EVENTS, SEASON_YEAR } from "@/lib/config";
 import { ERROR_CODES, toAppError } from "@/lib/errors";
 import slugify from "slugify";
 
@@ -92,7 +92,7 @@ export async function upsertTournament(
     id = uuidv4();
     created_by = user.id;
     slug = slugify(
-      `${values.name.substring(0, 15)}-div${values.division}-${seasonYear}-${id.substring(0, 8)}`,
+      `${values.name.substring(0, 15)}-div${values.division}-${SEASON_YEAR}-${id.substring(0, 8)}`,
       {
         lower: true,
         strict: true,
@@ -242,7 +242,7 @@ export async function upsertTournamentApplication(
     return { message: "Error checking tournament", success: false };
   }
   for (const event of preferences) {
-    if (event !== "" && !events[division.data].includes(event)) {
+    if (event !== "" && !EVENTS[division.data].includes(event)) {
       return {
         errors: { preferences: ["Event does not exist in this division"] },
         success: false,

@@ -13,11 +13,11 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import {
-  calendarEndDate,
-  calendarStartDate,
-  seasonEndDate,
-  seasonStartDate,
-} from "@/app/data";
+  CALENDAR_END_DATE,
+  CALENDAR_START_DATE,
+  SEASON_END_DATE,
+  SEASON_START_DATE,
+} from "@/lib/config";
 
 type Props = {
   label: string;
@@ -77,11 +77,11 @@ const DatePicker = (props: Props) => {
             defaultMonth={date}
             {...(props.disableOutOfSeason && {
               disabled: (date) =>
-                date < (props.disablePast ? today : seasonStartDate)
-                || date > seasonEndDate,
+                date < (props.disablePast ? today : SEASON_START_DATE)
+                || date > SEASON_END_DATE,
             })}
-            startMonth={calendarStartDate}
-            endMonth={calendarEndDate}
+            startMonth={CALENDAR_START_DATE}
+            endMonth={CALENDAR_END_DATE}
             onSelect={(e) => handleSetDate(e)}
             required={false}
             captionLayout="dropdown"

@@ -1,5 +1,3 @@
-import { volunteers } from "@/app/data";
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Suspense } from "react";
 import TournamentEdit from "../TournamentEdit";

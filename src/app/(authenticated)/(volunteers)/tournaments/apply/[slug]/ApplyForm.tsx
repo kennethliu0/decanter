@@ -34,8 +34,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ERROR_CODES, AppError } from "@/lib/errors";
-import { contactEmail } from "@/app/data";
+import { ERROR_CODES } from "@/lib/errors";
+import { CONTACT_EMAIL } from "@/lib/config";
 import Link from "next/link";
 import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from "next/navigation";
@@ -303,7 +303,7 @@ const SubmittedApplicationNotice = ({
       <p className="text-muted-foreground">
         You’ve already submitted an application for{" "}
         <strong>{tournamentName}</strong>. If you think this is a mistake,
-        contact us at {contactEmail}.
+        contact us at {CONTACT_EMAIL}.
       </p>
       <Link href="/tournaments/search">
         <Button variant="secondary">Back to Search</Button>

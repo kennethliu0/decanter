@@ -14,17 +14,23 @@ type Props = {
     page?: number;
     location?: string[] | string;
     division?: ("B" | "C")[] | "B" | "C";
-    startDateAfterISO?: string;
-    startDateBeforeISO?: string;
-    applyDateAfterISO?: string;
+    startDateAfter?: string;
+    startDateBefore?: string;
+    applyDeadlineAfter?: string;
     sort?: string;
   }>;
 };
 
-const clearTime = (date: Date) => {
+const clearUTCTime = (date: Date) => {
   date.setUTCHours(0, 0, 0, 0);
   return date;
 };
+
+function toLocalEndOfDay(dateStr: string): Date {
+  const [year, month, day] = dateStr.split("-").map(Number);
+
+  return new Date(year, month - 1, day, 23, 59, 59, 999);
+}
 
 const MAX_DATE = new Date(8640000000000000);
 
@@ -34,12 +40,12 @@ const retrieveDate = (
   fallback: Date,
 ): Date => {
   return searchParams[param] ?
-      clearTime(new Date(searchParams[param]))
+      clearUTCTime(new Date(searchParams[param]))
     : fallback;
 };
 
 const Page = async (props: Props) => {
-  const today = clearTime(new Date());
+  const today = clearUTCTime(new Date());
 
   const searchParams = await props.searchParams;
   const startDateAfter = retrieveDate(searchParams, "startDateAfter", today);
@@ -48,12 +54,10 @@ const Page = async (props: Props) => {
     "startDateBefore",
     MAX_DATE,
   );
-  const applyDateAfter = retrieveDate(
-    searchParams,
-    "applyDeadlineAfter",
-    today,
-  );
-  const sort = searchParams?.sort;
+  const applyDeadlineAfter =
+    searchParams["applyDeadlineAfter"] ?
+      toLocalEndOfDay(searchParams["applyDeadlineAfter"])
+    : today;
   return (
     <main className="flex p-4 gap-4 justify-center grow">
       {/* for desktop layouts */}
@@ -90,10 +94,10 @@ const Page = async (props: Props) => {
               division: searchParams?.division,
               startDateAfter,
               startDateBefore,
-              applyDeadlineAfter: applyDateAfter,
+              applyDeadlineAfter,
             }}
             currentPage={searchParams?.page || 1}
-            sort={sort}
+            sort={searchParams?.sort}
           />
         </Suspense>
       </div>

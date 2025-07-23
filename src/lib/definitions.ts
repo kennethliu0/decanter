@@ -347,3 +347,13 @@ export const TournamentCardDisplay = TournamentCardInfo.omit({
   endDate: z.date(),
   applyDeadline: z.date(),
 });
+
+export const TournamentAdminCardInfo = TournamentCardInfo.extend({
+  applicationCount: z.number(),
+});
+
+export const TournamentAdminCards = z.array(TournamentAdminCardInfo);
+
+export const TournamentCardAdminDisplay = TournamentCardDisplay.extend({
+  applicationCount: z.number(),
+});

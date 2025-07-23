@@ -8,6 +8,7 @@ import {
   InsertTournamentApplicationSchema,
   Result,
   TournamentCards,
+  TournamentAdminCards,
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
@@ -523,6 +524,52 @@ export async function getTournaments(): Promise<
     return { error: toAppError(validatedFields.error) };
   }
 
+  return {
+    data: validatedFields.data,
+  };
+}
+
+export async function getTournamentsManagedByUser(): Promise<
+  Result<z.infer<typeof TournamentAdminCards>>
+> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user?.id) {
+    redirect("/login");
+  }
+
+  const { data, error } = await supabase
+    .from("tournament_admins")
+    .select(
+      `tournaments (
+        id, image_url, website_url, name, location, division, start_date, end_date, apply_deadline, slug, tournament_applications(count)
+      )`,
+    )
+    .eq("user_id", user?.id);
+  if (error) {
+    console.error(error);
+    return { error: toAppError(error) };
+  }
+  if (!data) {
+    return { data: [] };
+  }
+
+  const validatedFields = TournamentAdminCards.safeParse(
+    data
+      .flatMap((admin) => admin.tournaments || [])
+      .map((tournament) => ({
+        ...toCamel<Record<string, string>>({ ...tournament }),
+        applicationCount: tournament.tournament_applications?.[0]?.count || 0,
+      })),
+  );
+  if (!validatedFields.success) {
+    console.error(validatedFields.error);
+    return { error: toAppError(validatedFields.error) };
+  }
   return {
     data: validatedFields.data,
   };

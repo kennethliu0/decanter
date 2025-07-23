@@ -170,13 +170,9 @@ export async function updatePassword(
   const password = validatedFields.data.password;
   const supabase = await createClient();
 
-  const {
-    data: { user },
-    error: sessionError,
-  } = await supabase.auth.getUser();
-
-  if (!user || sessionError) {
-    return { message: "User not authenticated" };
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
   }
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {

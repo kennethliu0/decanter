@@ -15,12 +15,9 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { FlaskConical, Menu, User, XIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { logout } from "@/app/dal/auth/actions";
-import { Separator } from "./separator";
-
+import DecanterIcon from "./DecanterIcon";
 
 type Props = {};
 
@@ -29,7 +26,12 @@ const Header = (props: Props) => {
     <header className="bg-background sticky top-0 z-50 w-full px-2 sm:px-8 py-2">
       <div className="flex items-center justify-between">
         <Link href="/">
-            <img src='/favicon_2_rd.svg' alt = "logo" className="w-8 h-8 hover:scale-110 transition-transform duration-150"/>
+          <Button
+            variant="ghost"
+            size="icon"
+          >
+            <DecanterIcon />
+          </Button>
         </Link>
         <NavigationMenu viewport={false}>
           <NavigationMenuList>

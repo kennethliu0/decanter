@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 import { Separator } from "./separator";
+import DecanterIcon from "./DecanterIcon";
 
 type Props = {};
 
@@ -40,7 +41,12 @@ const Navigation = (props: Props) => {
     <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
       <div className="hidden sm:flex items-center">
         <Link href="/">
-            <img src='/favicon_2_rd.svg' alt = "logo" className="w-6 h-6 mr-3 hover:scale-110 transition-transform duration-150"/>
+          <Button
+            variant="ghost"
+            size="icon"
+          >
+            <DecanterIcon />
+          </Button>
         </Link>
         <NavigationMenu viewport={false}>
           <NavigationMenuList>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "../components/ui/theme-provider";
 import Footer from "@/components/ui/Footer";
 import { Toaster } from "sonner";
+import { ModeToggle } from "@/components/ui/DarkModeToggle";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -42,6 +43,9 @@ export default function RootLayout({
           <Toaster />
           {children}
           <Footer />
+          <div className="fixed bottom-4 right-4 z-50">
+            <ModeToggle />
+          </div>
         </ThemeProvider>
       </body>
     </html>

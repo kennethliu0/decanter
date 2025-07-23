@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { FlaskConical } from "lucide-react";
 import LoginForm from "./LoginForm";
 
 export default function LoginPage() {

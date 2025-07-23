@@ -8,7 +8,6 @@ import {
   TournamentApplicationInfoSchema,
 } from "@/lib/definitions";
 import { format } from "date-fns";
-import { FlaskConical } from "lucide-react";
 import React, {
   startTransition,
   use,
@@ -39,6 +38,7 @@ import { CONTACT_EMAIL } from "@/lib/config";
 import Link from "next/link";
 import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from "next/navigation";
+import DecanterIcon from "@/components/ui/DecanterIcon";
 
 type Props = {
   applicationPromise: Promise<
@@ -188,7 +188,7 @@ const ApplyForm = (props: Props) => {
             alt={`${tournament.name} tournament icon`}
           />
           <AvatarFallback>
-            <FlaskConical />
+            <DecanterIcon />
           </AvatarFallback>
         </Avatar>
       </div>

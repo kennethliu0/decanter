@@ -1,5 +1,5 @@
 import React from "react";
-import { FlaskConical, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { TournamentCardDisplay } from "@/lib/definitions";
 import { Button } from "@/components/ui/button";
 import z from "zod/v4";
 import { formatToUTCDate } from "@/lib/utils";
+import DecanterIcon from "@/components/ui/DecanterIcon";
 
 type Props = {
   tournament: z.infer<typeof TournamentCardDisplay>;
@@ -35,7 +36,7 @@ const TournamentApplyCard = (props: Props) => {
             alt={props.tournament.name}
           />
           <AvatarFallback>
-            <FlaskConical />
+            <DecanterIcon />
           </AvatarFallback>
         </Avatar>
         <div className="grow text-sm">

@@ -3,8 +3,8 @@ import React from "react";
 type IconProps = React.SVGProps<SVGSVGElement>;
 
 const DecanterIcon: React.FC<IconProps> = ({
-  width = 48,
-  height = 48,
+  width = 24,
+  height = 24,
   ...props
 }) => (
   <svg

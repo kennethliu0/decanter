@@ -7,8 +7,9 @@ export default function Home() {
     <>
       <Header />
       <main className="w-full grow flex flex-col items-center">
+        
         <div className="w-full">
-
+          <img src='/hero_header.svg' alt = "logo" className="max-w-6xl w-full mx-auto py-5"/>
           <div className="px-20 py-3 ">
             <h1 className="text-4xl font-bold text-center break-words py-2">Join the Perfect Tournament.</h1>
             <p className="text-1xl text-center break-words">An open source tool for volunteers to seamlessly find and one-click apply to tournaments.</p>

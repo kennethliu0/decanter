@@ -10,6 +10,7 @@ import {
   getTournamentManagement,
 } from "@/app/dal/tournaments/actions";
 import AsyncTable from "../AsyncVolunteerTable";
+import ApplicationsDownloadButton from "../ApplicationsDownloadButton";
 export default async function Home({
   params,
 }: {
@@ -35,7 +36,7 @@ export default async function Home({
 
       <Separator />
       <h2 className="text-2xl">View Applications</h2>
-      <Button>Export Applications</Button>
+      <ApplicationsDownloadButton slug={slug} />
       <Suspense fallback={<DataTableSkeleton />}>
         <AsyncTable applicationsPromise={applicationsPromise} />
       </Suspense>

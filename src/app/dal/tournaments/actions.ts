@@ -12,7 +12,7 @@ import {
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4, validate } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { notFound, redirect } from "next/navigation";
 import { EVENTS, SEASON_YEAR } from "@/lib/config";
@@ -453,6 +453,123 @@ export async function getTournamentApplicationsSummary(
           };
         }),
     },
+  };
+}
+
+export async function generateApplicationsCSV(
+  slugRaw: string,
+): Promise<Result<string>> {
+  const validatedFields = z.string().safeParse(slugRaw);
+  if (!validatedFields.success) {
+    notFound();
+  }
+  const supabase = await createClient();
+
+  const slug = validatedFields.data;
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id, application_fields")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (tournamentError) {
+    return { error: toAppError(tournamentError) };
+  }
+
+  if (!tournamentData?.id) {
+    notFound();
+  }
+  const tournamentId = tournamentData.id;
+
+  // check user authorizaton
+
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
+  }
+
+  const { data: adminData, error: adminError } = await supabase
+    .from("tournament_admins")
+    .select("user_id")
+    .eq("user_id", authData.claims.sub)
+    .eq("tournament_id", tournamentId)
+    .single();
+
+  if (adminError || !adminData) {
+    return {
+      error: {
+        message: "Unauthorized access",
+        code: ERROR_CODES.UNAUTHORIZED,
+        status: 401,
+      },
+    };
+  }
+  const { data, error } = await supabase
+    .from("tournament_applications")
+    .select(
+      "user_id, preferences, updated_at, responses, volunteer_profiles(name, email, education, bio, experience)",
+    )
+    .eq("tournament_id", tournamentId)
+    .eq("submitted", true)
+    .order("updated_at", { ascending: true });
+
+  if (error) {
+    return { error: toAppError(error) };
+  }
+  const applicationFields = tournamentData.application_fields as {
+    id: string;
+    type: string;
+    prompt: string;
+  }[];
+  const applicationMap = new Map();
+  const csv = [
+    [
+      "Timestamp",
+      "Email",
+      "Name",
+      "Education",
+      "Bio",
+      "First Preference",
+      "Second Preference",
+      "Third Preference",
+      "Fourth Preference",
+      "Experience",
+      ...applicationFields.map((field) => field.prompt),
+    ],
+    ...data
+      .filter((application) => application.volunteer_profiles != null)
+      .map((application) => {
+        const volunteerProfile = application.volunteer_profiles as {
+          bio?: string;
+          name?: string;
+          email?: string;
+          education?: string;
+          experience?: string;
+        };
+        const responses = application.responses as {
+          fieldId?: string;
+          response?: string;
+        }[];
+        const timestamp = new Date(application.updated_at);
+        return [
+          timestamp.toLocaleString("en-US", { timeZoneName: "short" }),
+          volunteerProfile.email ?? "",
+          volunteerProfile.name ?? "",
+          volunteerProfile.education ?? "",
+          volunteerProfile.bio ?? "",
+          ...application.preferences,
+          volunteerProfile.experience,
+          ...applicationFields.map(
+            (field) =>
+              responses.find((response) => response.fieldId === field.id)
+                ?.response ?? "",
+          ),
+        ];
+      }),
+  ];
+  return {
+    data: csv.map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n"),
   };
 }
 

@@ -234,56 +234,31 @@ const ApplyForm = (props: Props) => {
               </FormItem>
             )}
           />
-          <FormField
-            name="responses"
-            render={({ field }) => (
-              <FormItem>
-                {tournament.applicationFields.map(({ type, prompt }, index) => (
-                  <FormItem key={index}>
-                    <FormLabel>{prompt}</FormLabel>
-                    <FormControl>
-                      {type === "long" ?
-                        <Textarea
-                          className="resize-none"
-                          placeholder="Long response"
-                          value={field.value[index].response}
-                          onChange={(e) => {
-                            let newFields = [...field.value];
-                            newFields[index].response = e.target.value;
-                            field.onChange(newFields);
-                          }}
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          name={field.name}
-                        />
-                      : <Input
-                          placeholder="Short response"
-                          value={field.value[index].response}
-                          onChange={(e) => {
-                            let newFields = [...field.value];
-                            newFields[index].response = e.target.value;
-                            field.onChange(newFields);
-                          }}
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          name={field.name}
-                        />
-                      }
-                    </FormControl>
-                  </FormItem>
-                ))}
-                <FormMessage />
-                {state?.errors?.responses && (
-                  <p className="text-sm text-destructive">
-                    {state.errors.responses}
-                  </p>
-                )}
-                <FormDescription className="sr-only">
-                  Other fields created by the tournament directors
-                </FormDescription>
-              </FormItem>
-            )}
-          />
+          {tournament.applicationFields.map(({ type, prompt, id }, index) => (
+            <FormField
+              key={id}
+              name={`responses.${index}.response`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{prompt}</FormLabel>
+                  <FormControl>
+                    {type === "long" ?
+                      <Textarea
+                        className="resize-none"
+                        placeholder="Long response"
+                        {...field}
+                      />
+                    : <Input
+                        placeholder="Short response"
+                        {...field}
+                      />
+                    }
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
           <div className="flex justify-end gap-2">
             <LoadingButton
               type="submit"

@@ -568,8 +568,14 @@ export async function generateApplicationsCSV(
         ];
       }),
   ];
+  const escapeCSVCell = (cell: string) => {
+    const str = String(cell ?? ""); // handle null/undefined
+    const escaped = str.replace(/"/g, '""'); // escape quotes
+    return `"${escaped}"`;
+  };
+
   return {
-    data: csv.map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n"),
+    data: csv.map((row) => row.map(escapeCSVCell).join(",")).join("\n"),
   };
 }
 

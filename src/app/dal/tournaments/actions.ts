@@ -25,12 +25,16 @@ export async function getTournamentId(
   const validatedData = z.string().safeParse(slugRaw);
 
   if (!validatedData.success) {
-    return { error: toAppError(validatedData.error) };
+    notFound();
   }
 
   const slug = validatedData.data;
 
   const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
+  }
 
   const { data: tournamentData, error: tournamentError } = await supabase
     .from("tournaments")
@@ -39,17 +43,11 @@ export async function getTournamentId(
     .single();
 
   if (tournamentError) {
+    console.error(tournamentError);
     return { error: toAppError(tournamentError) };
   }
   if (!tournamentData?.id) {
-    return {
-      error: {
-        message: "Tournament ID not found",
-        code: ERROR_CODES.NOT_FOUND,
-        status: 404,
-        name: "PostgrestError",
-      },
-    };
+    notFound();
   }
 
   const validatedTournament = z
@@ -101,7 +99,7 @@ export async function upsertTournament(
       .from("tournament_admins")
       .select("tournament_id")
       .eq("tournament_id", id)
-      .eq("user_id", id);
+      .eq("user_id", authData.claims.sub);
     if (error || !data) {
       return {
         message: "Unauthorized or tournament does not exist",
@@ -146,6 +144,10 @@ export async function getTournamentManagement(
   }
 
   const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
+  }
   const { data, error } = await supabase
     .from("tournaments")
     .select(
@@ -177,6 +179,10 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
   }
 
   const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
+  }
   const { data, error } = await supabase
     .from("tournaments")
     .select(
@@ -312,14 +318,7 @@ export async function getSavedTournamentApplication(
     return { error: tournamentIdError };
   }
   if (!tournamentIdData?.id) {
-    return {
-      error: {
-        message: "Tournament ID not found",
-        code: ERROR_CODES.NOT_FOUND,
-        status: 404,
-        name: "PostgrestError",
-      },
-    };
+    notFound();
   }
   const tournamentId = tournamentIdData?.id;
 
@@ -371,26 +370,6 @@ export async function getSavedTournamentApplication(
     data: { application: validatedApplication.data },
   };
 }
-
-type VolunteerProfile = {
-  name: string;
-  education: string;
-};
-
-type TournamentApplication = {
-  user_id: string;
-  email: string;
-  volunteer_profiles: VolunteerProfile | null;
-};
-
-function toApplications(data: any[] | null): TournamentApplication[] {
-  if (!Array.isArray(data)) return [];
-
-  return data.filter(
-    (d): d is TournamentApplication => !!d?.volunteer_profiles,
-  );
-}
-
 export async function getTournamentApplicationsSummary(
   slugRaw: string,
 ): Promise<
@@ -410,14 +389,7 @@ export async function getTournamentApplicationsSummary(
     return { error: tournamentIdError };
   }
   if (!tournamentIdData?.id) {
-    return {
-      error: {
-        message: "Tournament ID not found",
-        code: ERROR_CODES.NOT_FOUND,
-        status: 404,
-        name: "PostgrestError",
-      },
-    };
+    notFound();
   }
   const tournamentId = tournamentIdData?.id;
 
@@ -451,14 +423,7 @@ export async function getTournamentApplicationsSummary(
 
   const { data, error } = await supabase
     .from("tournament_applications")
-    .select(
-      `user_id, email, 
-        volunteer_profiles (
-          name,
-          education
-        )
-      `,
-    )
+    .select("user_id, email, volunteer_profiles(name, education)")
     .eq("tournament_id", tournamentId)
     .eq("submitted", true)
     .order("updated_at", { ascending: true })
@@ -472,14 +437,21 @@ export async function getTournamentApplicationsSummary(
   }
   return {
     data: {
-      applications: toApplications(data)
+      applications: data
         .filter((val) => val.volunteer_profiles != null)
-        .map((val) => ({
-          id: val.user_id,
-          email: val.email,
-          name: val.volunteer_profiles?.name ?? "Unknown",
-          education: val.volunteer_profiles?.education ?? "Unknown",
-        })),
+        .map((val) => {
+          // force treat volunteer_profiles as an object, not an array
+          const profile = val.volunteer_profiles as {
+            name?: string;
+            education?: string;
+          };
+          return {
+            id: val.user_id,
+            email: val.email,
+            name: profile?.name || "Unknown",
+            education: profile?.education || "Unknown",
+          };
+        }),
     },
   };
 }
@@ -488,6 +460,11 @@ export async function getTournaments(): Promise<
   Result<z.infer<typeof TournamentCards>>
 > {
   const supabase = await createClient();
+
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
+  }
 
   const { data, error } = await supabase
     .from("tournaments")

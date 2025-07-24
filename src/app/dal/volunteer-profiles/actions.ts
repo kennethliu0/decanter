@@ -79,8 +79,9 @@ export async function upsertProfile(
   });
   if (error) {
     console.error(error);
+    return { messsage: toAppError(error).message, success: false };
   }
-  return { success: !error };
+  return { success: true };
 }
 
 export async function getEventPreferences(): Promise<
@@ -99,6 +100,7 @@ export async function getEventPreferences(): Promise<
     .maybeSingle();
 
   if (error) {
+    console.error(error);
     return { error: toAppError(error) };
   }
   if (!data?.preferences_b || !data?.preferences_c) {

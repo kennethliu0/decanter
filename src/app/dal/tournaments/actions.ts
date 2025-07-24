@@ -40,7 +40,7 @@ export async function getTournamentId(
     .from("tournaments")
     .select("id")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   if (tournamentError) {
     console.error(tournamentError);
@@ -148,12 +148,46 @@ export async function getTournamentManagement(
   if (authError || !authData?.claims) {
     redirect("/login");
   }
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (tournamentError) {
+    console.error(tournamentError);
+    return { error: toAppError(tournamentError) };
+  }
+  if (!tournamentData?.id) {
+    notFound();
+  }
+
+  const { data: adminData, error: adminError } = await supabase
+    .from("tournament_admins")
+    .select("tournament_id")
+    .eq("tournament_id", tournamentData.id)
+    .eq("user_id", authData.claims.sub)
+    .maybeSingle();
+  if (adminError) {
+    return { error: toAppError(adminError) };
+  }
+
+  if (!adminData) {
+    return {
+      error: {
+        message: "You are not authorized to manage this tournament",
+        code: ERROR_CODES.FORBIDDEN,
+        status: 403,
+      },
+    };
+  }
   const { data, error } = await supabase
     .from("tournaments")
     .select(
       "id, name, location, division, image_url, website_url, closed_early, start_date, end_date, apply_deadline, application_fields, approved",
     )
-    .eq("slug", validatedFields.data)
+    .eq("id", tournamentData.id)
     .maybeSingle();
   if (error) {
     return { error: toAppError(error) };
@@ -186,10 +220,9 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
   const { data, error } = await supabase
     .from("tournaments")
     .select(
-      "id, name, location, division, image_url, website_url, start_date, end_date, apply_deadline, application_fields",
+      "id, name, location, division, image_url, website_url, start_date, end_date, apply_deadline, application_fields, closed_early",
     )
     .eq("slug", validatedFields.data)
-    .eq("closed_early", false)
     .eq("approved", true)
     .maybeSingle();
   if (error) {
@@ -198,12 +231,23 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
   if (!data) {
     notFound();
   }
+  if (new Date(data.apply_deadline) < new Date() || data.closed_early) {
+    return {
+      error: {
+        message: "Application deadline for this tournament has already passed",
+        code: ERROR_CODES.DEADLINE_PASSED,
+        status: 422,
+      },
+    };
+  }
   const validatedData = TournamentApplicationInfoSchema.safeParse(
     toCamel(data),
   );
   if (!validatedData.success) {
+    console.error(error);
     return { error: toAppError(validatedData.error) };
   }
+
   return { data: { application: validatedData.data } };
 }
 

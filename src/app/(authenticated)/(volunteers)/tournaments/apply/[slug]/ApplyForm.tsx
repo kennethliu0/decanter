@@ -39,6 +39,7 @@ import Link from "next/link";
 import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from "next/navigation";
 import DecanterIcon from "@/components/ui/DecanterIcon";
+import ErrorComponent from "@/components/ui/ErrorComponent";
 
 type Props = {
   applicationPromise: Promise<
@@ -64,7 +65,17 @@ const ApplyForm = (props: Props) => {
 
   const { data, error } = use(props.applicationPromise);
   if (error || !data?.application) {
-    return <div>{error?.message || "An unknown error occurred"}</div>;
+    return (
+      <ErrorComponent
+        error={
+          error || {
+            message: "Error retrieving application",
+            code: ERROR_CODES.SERVER_ERROR,
+          }
+        }
+        link={{ href: "/tournaments/search", label: "Back to Search" }}
+      />
+    );
   }
 
   const { id, ...tournament } = data.application;
@@ -72,25 +83,26 @@ const ApplyForm = (props: Props) => {
   const { data: preferencesData, error: preferencesError } = use(
     props.preferencesPromise,
   );
-  if (preferencesError || !preferencesData) {
+  if (preferencesError?.code === ERROR_CODES.VOLUNTEER_PROFILE_NOT_FOUND) {
     return (
-      <div>{preferencesError?.message || "An unknown error occurred"}</div>
+      <ErrorComponent
+        error={preferencesError}
+        link={{ href: "/profile", label: "Create Volunteer Profile" }}
+      />
     );
   }
   const profilePreferences =
-    preferencesData[`preferences${tournament.division}`];
+    preferencesData?.[`preferences${tournament.division}`];
 
   const { data: savedData, error: savedError } = use(
     props.savedApplicationPromise,
   );
-  if (savedError) {
-    if (savedError.code === ERROR_CODES.ALREADY_SUBMITTED) {
-      return (
-        <SubmittedApplicationNotice
-          tournamentName={`${tournament.name} (Division ${tournament.division})`}
-        />
-      );
-    }
+  if (savedError?.code === ERROR_CODES.ALREADY_SUBMITTED) {
+    return (
+      <SubmittedApplicationNotice
+        tournamentName={`${tournament.name} (Division ${tournament.division})`}
+      />
+    );
   }
   const validatedSave =
     savedData?.application ?
@@ -147,14 +159,16 @@ const ApplyForm = (props: Props) => {
   }, [state]);
 
   useEffect(() => {
-    if (savedApplication && !hasToastedSuccess) {
-      console.log(toast.success("Successfully loaded saved application."));
+    if (hasToastedSuccess || hasToastedError) return;
+
+    if (savedApplication) {
+      toast.success("Successfully loaded saved application.");
       setHasToastedSuccess(true);
-    } else if (
-      (savedError || (!validatedSave?.success && savedData))
-      && !hasToastedError
-    ) {
+    } else if (savedError || (!validatedSave?.success && savedData)) {
       toast.error("Could not retrieve saved application.");
+      setHasToastedError(true);
+    } else if (preferencesError || !profilePreferences) {
+      toast.error("Could not retrieve event preferences");
       setHasToastedError(true);
     }
   }, [
@@ -162,6 +176,8 @@ const ApplyForm = (props: Props) => {
     savedData,
     savedApplication,
     validatedSave,
+    preferencesError,
+    profilePreferences,
     hasToastedSuccess,
     hasToastedError,
   ]);
@@ -196,6 +212,7 @@ const ApplyForm = (props: Props) => {
         <form
           onSubmit={form.handleSubmit((values) => onSubmit(values, submitMode))}
           className="space-y-2"
+          autoComplete="off"
         >
           <FormField
             name="preferences"

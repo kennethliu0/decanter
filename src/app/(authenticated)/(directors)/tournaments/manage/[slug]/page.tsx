@@ -1,7 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import TournamentEdit from "../TournamentEdit";
 import TournamentEditSkeleton from "../TournamentEditSkeleton";
 import DataTableSkeleton from "../VolunteerTableSkeleton";
@@ -17,6 +16,7 @@ export default async function Home({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
   const tournamentPromise = getTournamentManagement(slug);
   const applicationsPromise = getTournamentApplicationsSummary(slug);
 

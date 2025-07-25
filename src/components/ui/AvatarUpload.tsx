@@ -1,12 +1,13 @@
 "use client";
 
 import React, { ChangeEvent, useState } from "react";
-import { UploadIcon, TrashIcon, FlaskConical, Loader2 } from "lucide-react";
+import { UploadIcon, TrashIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import clsx from "clsx";
 import { toast } from "sonner";
+import DecanterIcon from "./DecanterIcon";
 
 type AvatarUploadProps = {
   value: string | null;
@@ -65,7 +66,7 @@ export default function AvatarUpload({
             alt="User Avatar"
           />
           <AvatarFallback className="rounded-lg">
-            <FlaskConical />
+            <DecanterIcon />
           </AvatarFallback>
         </Avatar>
       : <div

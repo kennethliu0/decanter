@@ -31,3 +31,30 @@ export function toSnake<T extends Record<string, any>>(
   }
   return result;
 }
+
+export function matchesFilter<T>(
+  filter: T | T[] | null | undefined,
+  value: T,
+): boolean {
+  if (filter == null) return true; // null or undefined
+  if (Array.isArray(filter)) return filter.includes(value);
+  return filter === value;
+}
+
+export function formatToUTCDate(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${month}/${day}/${year}`;
+}
+
+export function fuzzyMatch(query: string, target: string): boolean {
+  query = query.toLowerCase();
+  target = target.toLowerCase();
+  let i = 0;
+  for (const char of target) {
+    if (char === query[i]) i++;
+    if (i === query.length) return true;
+  }
+  return false;
+}

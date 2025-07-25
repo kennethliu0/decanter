@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { events } from "@/app/data";
+import { EVENTS } from "@/lib/config";
 import {
   Popover,
   PopoverContent,
@@ -71,7 +71,7 @@ const EventSelectionDropdown = (props: Props) => {
           <CommandList>
             <CommandEmpty>No events found.</CommandEmpty>
             <CommandGroup>
-              {events[props.division].map((event: string) => (
+              {EVENTS[props.division].map((event: string) => (
                 <CommandItem
                   key={event}
                   value={event}

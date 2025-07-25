@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import React from "react";
+import React, { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { usStates } from "@/app/data";
+import { US_STATES } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/DatePickerWithParams";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 
@@ -20,8 +21,21 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+
+  const [sortValue, selectedDivisions, selectedLocations] = useMemo(
+    () => [
+      searchParams.get("sort") ?? "startDate",
+      searchParams.getAll("division"),
+      searchParams.getAll("location"),
+    ],
+    [searchParams],
+  );
+  const today = useMemo(() => {
+    const date = new Date();
+    date.setUTCHours(0, 0, 0, 0);
+    return date;
+  }, []);
+
   const handleCheckedChange = (
     property: string,
     value: string,
@@ -29,40 +43,76 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   ) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", "1");
-    if (params.getAll(property)?.includes(value) && !checked) {
-      params.delete(property, value);
-    } else if (checked && checked !== "indeterminate") {
-      params.append(property, value);
+    const currentValues = new Set(params.getAll(property));
+    if (checked === true) {
+      currentValues.add(value);
+    } else {
+      currentValues.delete(value);
     }
+    params.delete(property); // remove all
+    currentValues.forEach((val) => params.append(property, val));
+
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const getCheckboxHandler = (category: string, value: string) => {
+    return (checked: boolean | "indeterminate") =>
+      handleCheckedChange(category, value, checked);
+  };
+
+  const handleSortChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", "1");
+    params.set("sort", value);
     replace(`${pathname}?${params.toString()}`);
   };
 
   return (
     <Accordion {...props}>
       <AccordionItem value="item-1">
+        <AccordionTrigger>Sort By</AccordionTrigger>
+        <AccordionContent className="space-y-4">
+          <RadioGroup
+            value={sortValue}
+            onValueChange={handleSortChange}
+          >
+            <div className="flex gap-3">
+              <RadioGroupItem
+                value="startDate"
+                id="startDate"
+              />
+              <Label htmlFor="startDate">Tournament Start Date</Label>
+            </div>
+            <div className="flex gap-3">
+              <RadioGroupItem
+                value="applyDeadline"
+                id="applyDeadline"
+              />
+              <Label htmlFor="applyDeadline">Application Deadline</Label>
+            </div>
+          </RadioGroup>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
         <AccordionTrigger>Division</AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-4 text-balance">
+        <AccordionContent className="space-y-4">
           <AccordionOption
             id="division-b"
             text="Division B (Middle School)"
-            onCheckedChange={(checked: boolean | "indeterminate") =>
-              handleCheckedChange("division", "b", checked)
-            }
-            defaultChecked={searchParams.getAll("division").includes("b")}
+            onCheckedChange={getCheckboxHandler("division", "B")}
+            checked={selectedDivisions.includes("B")}
           />
           <AccordionOption
             id="division-c"
             text="Division C (High School)"
-            onCheckedChange={(checked: boolean | "indeterminate") =>
-              handleCheckedChange("division", "c", checked)
-            }
-            defaultChecked={searchParams.getAll("division").includes("c")}
+            onCheckedChange={getCheckboxHandler("division", "C")}
+            checked={selectedDivisions.includes("C")}
           />
         </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="item-2">
+      <AccordionItem value="item-3">
         <AccordionTrigger>Date</AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-4 text-balance">
+        <AccordionContent className="space-y-4">
           <DatePicker
             label="Start Date After"
             param="startDateAfter"
@@ -76,33 +126,22 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           />
           <DatePicker
             label="Application Deadline After"
-            param="applyDateAfter"
+            param="applyDeadlineAfter"
             buttonId="apply-date-after-button"
             defaultDate={today}
           />
         </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="item-3">
+      <AccordionItem value="item-4">
         <AccordionTrigger>Location</AccordionTrigger>
-        <AccordionContent className="columns-2 xs:columns-3 sm:columns-2">
-          <AccordionOption
-            id="online"
-            text="Online"
-            onCheckedChange={(checked: boolean | "indeterminate") =>
-              handleCheckedChange("location", "Online", checked)
-            }
-            defaultChecked={searchParams.getAll("location").includes("Online")}
-          />
-          {usStates.map((state, index) => (
+        <AccordionContent className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
+          {["Online", ...US_STATES].map((state, index) => (
             <AccordionOption
               key={index}
               id={state}
               text={state}
-              onCheckedChange={(checked: boolean | "indeterminate") =>
-                handleCheckedChange("location", state, checked)
-              }
-              defaultChecked={searchParams.getAll("location").includes(state)}
-              className="mt-4"
+              onCheckedChange={getCheckboxHandler("location", state)}
+              checked={selectedLocations.includes(state)}
             />
           ))}
         </AccordionContent>
@@ -116,7 +155,7 @@ const AccordionOption = (
     text: string;
   } & React.ComponentProps<typeof Checkbox>,
 ) => {
-  const { text, property, id, className, ...otherProps } = props;
+  const { text, id, className, ...otherProps } = props;
   return (
     <div className={cn("flex items-center gap-3", className)}>
       <Checkbox

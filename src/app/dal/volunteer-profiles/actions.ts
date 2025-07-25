@@ -17,18 +17,14 @@ export async function getProfile(): Promise<
 > {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-  if (authError || !user?.id) {
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
     redirect("/login");
   }
-
   const { data, error } = await supabase
     .from("volunteer_profiles")
     .select("name, education, bio, experience, preferences_b, preferences_c")
-    .eq("id", user.id)
+    .eq("id", authData.claims.sub)
     .maybeSingle();
 
   if (error) {
@@ -66,18 +62,14 @@ export async function upsertProfile(
     };
   }
   const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (!user?.id || !user?.email || userError) {
-    console.error(userError);
-    return { message: "Unauthenticated", success: false };
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    redirect("/login");
   }
 
   const { error } = await supabase.from("volunteer_profiles").upsert({
-    id: user.id,
-    email: user.email,
+    id: authData.claims.sub,
+    email: authData.claims.email,
     name: validatedFields.data.name,
     education: validatedFields.data.education,
     bio: validatedFields.data.bio,
@@ -87,30 +79,28 @@ export async function upsertProfile(
   });
   if (error) {
     console.error(error);
+    return { messsage: toAppError(error).message, success: false };
   }
-  return { success: !error };
+  return { success: true };
 }
 
 export async function getEventPreferences(): Promise<
   Result<{ preferencesB: string[]; preferencesC: string[] }>
 > {
   const supabase = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (!user?.id || authError) {
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
     redirect("/login");
   }
 
   const { data, error } = await supabase
     .from("volunteer_profiles")
     .select("preferences_b, preferences_c")
-    .eq("id", user.id)
+    .eq("id", authData.claims.sub)
     .maybeSingle();
 
   if (error) {
+    console.error(error);
     return { error: toAppError(error) };
   }
   if (!data?.preferences_b || !data?.preferences_c) {

@@ -7,11 +7,11 @@ import { Calendar } from "./calendar";
 import { format } from "date-fns";
 import clsx from "clsx";
 import {
-  calendarEndDate,
-  calendarStartDate,
-  seasonEndDate,
-  seasonStartDate,
-} from "@/app/data";
+  CALENDAR_END_DATE,
+  CALENDAR_START_DATE,
+  SEASON_END_DATE,
+  SEASON_START_DATE,
+} from "@/lib/config";
 
 type Props = {
   value: Date;
@@ -63,11 +63,11 @@ const DatePickerUncontrolled = ({
             defaultMonth={value}
             {...(disableOutOfSeason && {
               disabled: (date) =>
-                date < (disablePast ? today : seasonStartDate)
-                || date > seasonEndDate,
+                date < (disablePast ? today : SEASON_START_DATE)
+                || date > SEASON_END_DATE,
             })}
-            startMonth={calendarStartDate}
-            endMonth={calendarEndDate}
+            startMonth={CALENDAR_START_DATE}
+            endMonth={CALENDAR_END_DATE}
             onSelect={(e) => {
               onChange(e ?? null);
               setOpen(false);

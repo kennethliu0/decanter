@@ -5,7 +5,7 @@ type Props = {};
 
 const TournamentApplyCardSkeleton = (props: Props) => {
   return (
-    <div className="min-w-[312px] max-w-[400px] border p-4 rounded-lg bg-card space-y-1">
+    <div className="min-w-[312px] max-w-[400px] w-full border p-4 rounded-lg bg-card space-y-1">
       <div className="flex gap-2">
         <Skeleton className="w-[60px] h-[60px] rounded-sm" />
         <div className="space-y-1">

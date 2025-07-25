@@ -1,4 +1,4 @@
-import { events, usStates } from "@/app/data";
+import { EVENTS, US_STATES } from "@/lib/config";
 import * as z from "zod/v4";
 import { AppError } from "./errors";
 
@@ -118,7 +118,7 @@ export const EventPreferences = z
     z
       .string()
       .refine(
-        (val) => val === "" || events.B.includes(val) || events.C.includes(val),
+        (val) => val === "" || EVENTS.B.includes(val) || EVENTS.C.includes(val),
       )
       .trim(),
   )
@@ -133,7 +133,7 @@ export const EventPreferencesB = z
   .array(
     z
       .string()
-      .refine((val) => val === "" || events.B.includes(val))
+      .refine((val) => val === "" || EVENTS.B.includes(val))
       .trim(),
   )
   .length(4)
@@ -147,7 +147,7 @@ export const EventPreferencesC = z
   .array(
     z
       .string()
-      .refine((val) => val === "" || events.C.includes(val))
+      .refine((val) => val === "" || EVENTS.C.includes(val))
       .trim(),
   )
   .length(4)
@@ -212,7 +212,7 @@ export const EditTournamentSchemaBase = z.object({
   name: z.string().min(1, "Required field").trim(),
   location: z
     .string()
-    .refine((value) => value === "Online" || usStates.includes(value), {
+    .refine((value) => value === "Online" || US_STATES.includes(value), {
       message: "Required field",
     }),
   division: z.enum(["B", "C"], "Choose a division"),
@@ -296,7 +296,7 @@ export const InsertTournamentApplicationSchema = z.object({
         .string()
         .refine(
           (val) =>
-            val === "" || events.B.includes(val) || events.C.includes(val),
+            val === "" || EVENTS.B.includes(val) || EVENTS.C.includes(val),
         )
         .trim(),
     )
@@ -329,9 +329,31 @@ export type InsertTournamentApplicationState =
     }
   | undefined;
 
+// used for passing tournameent info from server action to the search tournaments table
 export const TournamentCardInfo = TournamentApplicationInfoSchema.omit({
   applicationFields: true,
 }).extend({
   slug: z.string(),
 });
 export const TournamentCards = z.array(TournamentCardInfo);
+
+// used for passing tournament info from the search tournaments table to the tournament apply card
+export const TournamentCardDisplay = TournamentCardInfo.omit({
+  startDate: true,
+  endDate: true,
+  applyDeadline: true,
+}).extend({
+  startDate: z.date(),
+  endDate: z.date(),
+  applyDeadline: z.date(),
+});
+
+export const TournamentAdminCardInfo = TournamentCardInfo.extend({
+  applicationCount: z.number(),
+});
+
+export const TournamentAdminCards = z.array(TournamentAdminCardInfo);
+
+export const TournamentCardAdminDisplay = TournamentCardDisplay.extend({
+  applicationCount: z.number(),
+});

@@ -1,29 +1,30 @@
 import React from "react";
-import { FlaskConical, Globe, Pencil } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { TournamentInfo } from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentApplyCard";
 import { Button } from "@/components/ui/button";
-import { parse } from "date-fns";
+import { TournamentCardAdminDisplay } from "@/lib/definitions";
+import z from "zod/v4";
+import { formatToUTCDate } from "@/lib/utils";
+import DecanterIcon from "@/components/ui/DecanterIcon";
 
 type Props = {
-  tournament: TournamentInfo;
-  applicationCount: number;
+  tournament: z.infer<typeof TournamentCardAdminDisplay>;
+};
+const truncate = (str: string, maxLength = 69, ellipsis = "...") => {
+  if (str.length <= maxLength) return str;
+
+  const truncatedLength = maxLength - ellipsis.length;
+
+  if (truncatedLength <= 0) {
+    return ellipsis.slice(0, maxLength);
+  }
+
+  return str.slice(0, truncatedLength) + ellipsis;
 };
 
 const TournamentAdminCard = (props: Props) => {
-  const truncate = (str: string, maxLength = 69, ellipsis = "...") => {
-    if (str.length <= maxLength) return str;
-
-    const truncatedLength = maxLength - ellipsis.length;
-
-    if (truncatedLength <= 0) {
-      return ellipsis.slice(0, maxLength);
-    }
-
-    return str.slice(0, truncatedLength) + ellipsis;
-  };
+  // console.log(props.tournament);
 
   return (
     <div className="min-w-[312px] max-w-[413px] border p-4 rounded-lg bg-card">
@@ -34,7 +35,7 @@ const TournamentAdminCard = (props: Props) => {
             alt={props.tournament.name}
           />
           <AvatarFallback>
-            <FlaskConical />
+            <DecanterIcon />
           </AvatarFallback>
         </Avatar>
         <div className="grow text-sm">
@@ -51,13 +52,13 @@ const TournamentAdminCard = (props: Props) => {
       </div>
       <div className="flex justify-between items-end">
         <div>
-          <p>{props.applicationCount} applications</p>
+          <p>{props.tournament.applicationCount} applications</p>
           <p className="text-sm">
-            {props.tournament.startDate.toLocaleDateString()} -{" "}
-            {props.tournament.endDate.toLocaleDateString()}
+            {formatToUTCDate(props.tournament.startDate)} -{" "}
+            {formatToUTCDate(props.tournament.endDate)}
           </p>
         </div>
-        <Link href="/tournaments/manage">
+        <Link href={`/tournaments/manage/${props.tournament.slug}`}>
           <Button>Manage Tournament</Button>
         </Link>
       </div>

@@ -1,15 +1,17 @@
 import React from "react";
-import { FlaskConical, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { format } from "date-fns";
-import { TournamentCardInfo } from "@/lib/definitions";
+import { TournamentCardDisplay } from "@/lib/definitions";
 import { Button } from "@/components/ui/button";
 import z from "zod/v4";
+import { formatToUTCDate } from "@/lib/utils";
+import DecanterIcon from "@/components/ui/DecanterIcon";
 
 type Props = {
-  tournament: z.infer<typeof TournamentCardInfo>;
+  tournament: z.infer<typeof TournamentCardDisplay>;
 };
 
 const TournamentApplyCard = (props: Props) => {
@@ -26,7 +28,7 @@ const TournamentApplyCard = (props: Props) => {
   };
 
   return (
-    <div className="min-w-[312px] max-w-[413px] border p-4 rounded-lg bg-card">
+    <div className="min-w-[312px] w-full max-w-[413px] border p-4 rounded-lg bg-card justify-self-start self-start">
       <div className="flex gap-2">
         <Avatar className="w-[60px] h-[60px]">
           <AvatarImage
@@ -34,7 +36,7 @@ const TournamentApplyCard = (props: Props) => {
             alt={props.tournament.name}
           />
           <AvatarFallback>
-            <FlaskConical />
+            <DecanterIcon />
           </AvatarFallback>
         </Avatar>
         <div className="grow text-sm">
@@ -52,8 +54,8 @@ const TournamentApplyCard = (props: Props) => {
       <div className="flex justify-between items-end">
         <div>
           <p className="text-sm">
-            {format(props.tournament.startDate, "P")}-{" "}
-            {format(props.tournament.endDate, "P")}
+            {formatToUTCDate(props.tournament.startDate)}-{" "}
+            {formatToUTCDate(props.tournament.endDate)}
           </p>
           <p className="text-sm">
             {"\n"}Apply By {format(props.tournament.applyDeadline, "Pp")}

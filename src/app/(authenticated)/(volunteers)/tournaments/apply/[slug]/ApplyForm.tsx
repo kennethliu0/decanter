@@ -8,7 +8,6 @@ import {
   TournamentApplicationInfoSchema,
 } from "@/lib/definitions";
 import { format } from "date-fns";
-import { FlaskConical } from "lucide-react";
 import React, {
   startTransition,
   use,
@@ -34,11 +33,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ERROR_CODES, AppError } from "@/lib/errors";
-import { contactEmail } from "@/app/data";
+import { ERROR_CODES } from "@/lib/errors";
+import { CONTACT_EMAIL } from "@/lib/config";
 import Link from "next/link";
 import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from "next/navigation";
+import DecanterIcon from "@/components/ui/DecanterIcon";
+import ErrorComponent from "@/components/ui/ErrorComponent";
 
 type Props = {
   applicationPromise: Promise<
@@ -64,7 +65,17 @@ const ApplyForm = (props: Props) => {
 
   const { data, error } = use(props.applicationPromise);
   if (error || !data?.application) {
-    return <div>{error?.message || "An unknown error occurred"}</div>;
+    return (
+      <ErrorComponent
+        error={
+          error || {
+            message: "Error retrieving application",
+            code: ERROR_CODES.SERVER_ERROR,
+          }
+        }
+        link={{ href: "/tournaments/search", label: "Back to Search" }}
+      />
+    );
   }
 
   const { id, ...tournament } = data.application;
@@ -72,25 +83,26 @@ const ApplyForm = (props: Props) => {
   const { data: preferencesData, error: preferencesError } = use(
     props.preferencesPromise,
   );
-  if (preferencesError || !preferencesData) {
+  if (preferencesError?.code === ERROR_CODES.VOLUNTEER_PROFILE_NOT_FOUND) {
     return (
-      <div>{preferencesError?.message || "An unknown error occurred"}</div>
+      <ErrorComponent
+        error={preferencesError}
+        link={{ href: "/profile", label: "Create Volunteer Profile" }}
+      />
     );
   }
   const profilePreferences =
-    preferencesData[`preferences${tournament.division}`];
+    preferencesData?.[`preferences${tournament.division}`];
 
   const { data: savedData, error: savedError } = use(
     props.savedApplicationPromise,
   );
-  if (savedError) {
-    if (savedError.code === ERROR_CODES.ALREADY_SUBMITTED) {
-      return (
-        <SubmittedApplicationNotice
-          tournamentName={`${tournament.name} (Division ${tournament.division})`}
-        />
-      );
-    }
+  if (savedError?.code === ERROR_CODES.ALREADY_SUBMITTED) {
+    return (
+      <SubmittedApplicationNotice
+        tournamentName={`${tournament.name} (Division ${tournament.division})`}
+      />
+    );
   }
   const validatedSave =
     savedData?.application ?
@@ -147,14 +159,16 @@ const ApplyForm = (props: Props) => {
   }, [state]);
 
   useEffect(() => {
-    if (savedApplication && !hasToastedSuccess) {
-      console.log(toast.success("Successfully loaded saved application."));
+    if (hasToastedSuccess || hasToastedError) return;
+
+    if (savedApplication) {
+      toast.success("Successfully loaded saved application.");
       setHasToastedSuccess(true);
-    } else if (
-      (savedError || (!validatedSave?.success && savedData))
-      && !hasToastedError
-    ) {
+    } else if (savedError || (!validatedSave?.success && savedData)) {
       toast.error("Could not retrieve saved application.");
+      setHasToastedError(true);
+    } else if (preferencesError || !profilePreferences) {
+      toast.error("Could not retrieve event preferences");
       setHasToastedError(true);
     }
   }, [
@@ -162,6 +176,8 @@ const ApplyForm = (props: Props) => {
     savedData,
     savedApplication,
     validatedSave,
+    preferencesError,
+    profilePreferences,
     hasToastedSuccess,
     hasToastedError,
   ]);
@@ -188,7 +204,7 @@ const ApplyForm = (props: Props) => {
             alt={`${tournament.name} tournament icon`}
           />
           <AvatarFallback>
-            <FlaskConical />
+            <DecanterIcon />
           </AvatarFallback>
         </Avatar>
       </div>
@@ -196,6 +212,7 @@ const ApplyForm = (props: Props) => {
         <form
           onSubmit={form.handleSubmit((values) => onSubmit(values, submitMode))}
           className="space-y-2"
+          autoComplete="off"
         >
           <FormField
             name="preferences"
@@ -217,56 +234,31 @@ const ApplyForm = (props: Props) => {
               </FormItem>
             )}
           />
-          <FormField
-            name="responses"
-            render={({ field }) => (
-              <FormItem>
-                {tournament.applicationFields.map(({ type, prompt }, index) => (
-                  <FormItem key={index}>
-                    <FormLabel>{prompt}</FormLabel>
-                    <FormControl>
-                      {type === "long" ?
-                        <Textarea
-                          className="resize-none"
-                          placeholder="Long response"
-                          value={field.value[index].response}
-                          onChange={(e) => {
-                            let newFields = [...field.value];
-                            newFields[index].response = e.target.value;
-                            field.onChange(newFields);
-                          }}
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          name={field.name}
-                        />
-                      : <Input
-                          placeholder="Short response"
-                          value={field.value[index].response}
-                          onChange={(e) => {
-                            let newFields = [...field.value];
-                            newFields[index].response = e.target.value;
-                            field.onChange(newFields);
-                          }}
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          name={field.name}
-                        />
-                      }
-                    </FormControl>
-                  </FormItem>
-                ))}
-                <FormMessage />
-                {state?.errors?.responses && (
-                  <p className="text-sm text-destructive">
-                    {state.errors.responses}
-                  </p>
-                )}
-                <FormDescription className="sr-only">
-                  Other fields created by the tournament directors
-                </FormDescription>
-              </FormItem>
-            )}
-          />
+          {tournament.applicationFields.map(({ type, prompt, id }, index) => (
+            <FormField
+              key={id}
+              name={`responses.${index}.response`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{prompt}</FormLabel>
+                  <FormControl>
+                    {type === "long" ?
+                      <Textarea
+                        className="resize-none"
+                        placeholder="Long response"
+                        {...field}
+                      />
+                    : <Input
+                        placeholder="Short response"
+                        {...field}
+                      />
+                    }
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
           <div className="flex justify-end gap-2">
             <LoadingButton
               type="submit"
@@ -303,7 +295,7 @@ const SubmittedApplicationNotice = ({
       <p className="text-muted-foreground">
         You’ve already submitted an application for{" "}
         <strong>{tournamentName}</strong>. If you think this is a mistake,
-        contact us at {contactEmail}.
+        contact us at {CONTACT_EMAIL}.
       </p>
       <Link href="/tournaments/search">
         <Button variant="secondary">Back to Search</Button>

@@ -12,7 +12,7 @@ import {
 } from "@/lib/definitions";
 import z from "zod/v4";
 import { createClient } from "../../../utils/supabase/server";
-import { v4 as uuidv4, validate } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { toCamel, toSnake } from "@/lib/utils";
 import { notFound, redirect } from "next/navigation";
 import { EVENTS, SEASON_YEAR } from "@/lib/config";
@@ -296,7 +296,6 @@ export async function upsertTournamentApplication(
   }
   const { error } = await supabase.from("tournament_applications").upsert({
     user_id: authData.claims.sub,
-    email: authData.claims.email,
     tournament_id: tournamentId,
     preferences,
     responses,
@@ -444,7 +443,7 @@ export async function getTournamentApplicationsSummary(
 
   const { data, error } = await supabase
     .from("tournament_applications")
-    .select("user_id, email, volunteer_profiles(name, education)")
+    .select("user_id, volunteer_profiles(name, email, education)")
     .eq("tournament_id", tournamentId)
     .eq("submitted", true)
     .order("updated_at", { ascending: true })
@@ -465,10 +464,11 @@ export async function getTournamentApplicationsSummary(
           const profile = val.volunteer_profiles as {
             name?: string;
             education?: string;
+            email?: string;
           };
           return {
             id: val.user_id,
-            email: val.email,
+            email: profile?.email || "Unknown",
             name: profile?.name || "Unknown",
             education: profile?.education || "Unknown",
           };
@@ -543,7 +543,6 @@ export async function generateApplicationsCSV(
     type: string;
     prompt: string;
   }[];
-  const applicationMap = new Map();
   const csv = [
     [
       "Timestamp",

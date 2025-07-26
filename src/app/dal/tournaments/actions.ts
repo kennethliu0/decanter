@@ -19,47 +19,6 @@ import { EVENTS, SEASON_YEAR } from "@/lib/config";
 import { ERROR_CODES, toAppError } from "@/lib/errors";
 import slugify from "slugify";
 
-export async function getTournamentId(
-  slugRaw: string,
-): Promise<Result<{ id: string }>> {
-  const validatedData = z.string().safeParse(slugRaw);
-
-  if (!validatedData.success) {
-    notFound();
-  }
-
-  const slug = validatedData.data;
-
-  const supabase = await createClient();
-  const { data: authData, error: authError } = await supabase.auth.getClaims();
-  if (authError || !authData?.claims) {
-    redirect("/login");
-  }
-
-  const { data: tournamentData, error: tournamentError } = await supabase
-    .from("tournaments")
-    .select("id")
-    .eq("slug", slug)
-    .maybeSingle();
-
-  if (tournamentError) {
-    console.error(tournamentError);
-    return { error: toAppError(tournamentError) };
-  }
-  if (!tournamentData?.id) {
-    notFound();
-  }
-
-  const validatedTournament = z
-    .uuid({ version: "v4" })
-    .safeParse(tournamentData.id);
-  if (!validatedTournament.success) {
-    return { error: toAppError(validatedTournament.error) };
-  }
-  const tournamentId = validatedTournament.data;
-  return { data: { id: tournamentId } };
-}
-
 export async function upsertTournament(
   formState: EditTournamentServerState,
   formData: z.infer<typeof EditTournamentSchemaServer>,
@@ -355,23 +314,32 @@ export async function getSavedTournamentApplication(
 ): Promise<
   Result<{ application: z.infer<typeof InsertTournamentApplicationSchema> }>
 > {
-  const { data: tournamentIdData, error: tournamentIdError } =
-    await getTournamentId(slugRaw);
-
-  if (tournamentIdError) {
-    return { error: tournamentIdError };
-  }
-  if (!tournamentIdData?.id) {
+  const validatedData = z.string().safeParse(slugRaw);
+  if (!validatedData.success) {
     notFound();
   }
-  const tournamentId = tournamentIdData?.id;
+  const slug = validatedData.data;
 
   const supabase = await createClient();
-
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (authError || !authData?.claims) {
     redirect("/login");
   }
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (tournamentError) {
+    console.error(tournamentError);
+    return { error: toAppError(tournamentError) };
+  }
+  if (!tournamentData?.id) {
+    notFound();
+  }
+  const tournamentId = tournamentData.id;
 
   const { data, error } = await supabase
     .from("tournament_applications")
@@ -426,25 +394,34 @@ export async function getTournamentApplicationsSummary(
     }[];
   }>
 > {
-  const { data: tournamentIdData, error: tournamentIdError } =
-    await getTournamentId(slugRaw);
+  const validatedData = z.string().safeParse(slugRaw);
 
-  if (tournamentIdError) {
-    return { error: tournamentIdError };
-  }
-  if (!tournamentIdData?.id) {
+  if (!validatedData.success) {
     notFound();
   }
-  const tournamentId = tournamentIdData?.id;
+
+  const slug = validatedData.data;
 
   const supabase = await createClient();
-
-  // check user authorizaton
-
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (authError || !authData?.claims) {
     redirect("/login");
   }
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (tournamentError) {
+    console.error(tournamentError);
+    return { error: toAppError(tournamentError) };
+  }
+  if (!tournamentData?.id) {
+    notFound();
+  }
+  const tournamentId = tournamentData.id;
 
   const { data: adminData, error: adminError } = await supabase
     .from("tournament_admins")

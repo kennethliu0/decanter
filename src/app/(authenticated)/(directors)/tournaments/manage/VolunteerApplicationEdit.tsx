@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { GripVertical, Plus } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,

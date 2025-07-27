@@ -1,6 +1,5 @@
 import Link from "next/link";
 import TournamentAdminTable from "./TournamentAdminTable";
-import { getTournamentsManagedByUser } from "@/app/dal/tournaments/actions";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {

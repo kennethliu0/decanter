@@ -1,4 +1,3 @@
-import React from "react";
 import { TournamentApplyCard } from "./TournamentApplyCard";
 import { getTournaments } from "@/app/dal/tournaments/actions";
 import { fuzzyMatch, matchesFilter } from "@/lib/utils";

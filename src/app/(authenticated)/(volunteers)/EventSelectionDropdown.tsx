@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { EVENTS } from "@/lib/config";
 import {
   Popover,
@@ -16,7 +16,6 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
 type Props = {
@@ -84,10 +83,9 @@ const EventSelectionDropdown = (props: Props) => {
                 >
                   {event}
                   <Check
-                    className={cn(
-                      "ml-auto",
-                      props.value === event ? "opacity-100" : "opacity-0",
-                    )}
+                    className={clsx("ml-auto", {
+                      "opacity-0": props.value === event,
+                    })}
                   />
                 </CommandItem>
               ))}

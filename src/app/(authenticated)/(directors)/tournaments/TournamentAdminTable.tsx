@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import { use } from "react";
 import { TournamentAdminCard } from "./TournamentAdminCard";
 import { getTournamentsManagedByUser } from "@/app/dal/tournaments/actions";
 

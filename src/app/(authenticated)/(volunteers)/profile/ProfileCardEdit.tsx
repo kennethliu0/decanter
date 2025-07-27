@@ -1,11 +1,11 @@
 "use client";
 
-import React, { startTransition, use, useActionState, useEffect } from "react";
+import { startTransition, use, useActionState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import * as z from "zod/v4";
+import { infer as zodInfer } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -27,7 +27,7 @@ import LoadingButton from "@/components/ui/LoadingButton";
 import { CONTACT_EMAIL } from "@/lib/config";
 
 type Props = {
-  profilePromise: Promise<Result<{ profile: z.infer<typeof FormSchema> }>>;
+  profilePromise: Promise<Result<{ profile: zodInfer<typeof FormSchema> }>>;
 };
 
 const ProfileCardEdit = (props: Props) => {
@@ -46,11 +46,11 @@ const ProfileCardEdit = (props: Props) => {
     preferencesB: profile?.preferencesB ?? ["", "", "", ""],
     preferencesC: profile?.preferencesC ?? ["", "", "", ""],
   };
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<zodInfer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues,
   });
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  function onSubmit(values: zodInfer<typeof FormSchema>) {
     startTransition(() => {
       action(values);
       form.reset(values);

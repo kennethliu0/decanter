@@ -8,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React, { startTransition, useActionState } from "react";
-import { z } from "zod/v4";
+import { startTransition, useActionState } from "react";
+import { infer as zodInfer } from "zod/v4";
 import { UpdatePasswordSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,12 +31,12 @@ type Props = {};
 
 const UpdatePasswordForm = (props: Props) => {
   const [state, action, pending] = useActionState(updatePassword, undefined);
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<zodInfer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: { password: "", confirmPassword: "" },
   });
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  function onSubmit(values: zodInfer<typeof FormSchema>) {
     startTransition(() => {
       action(values);
     });

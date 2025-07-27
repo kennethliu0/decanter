@@ -8,14 +8,14 @@ import {
   TournamentApplicationInfoSchema,
 } from "@/lib/definitions";
 import { format } from "date-fns";
-import React, {
+import {
   startTransition,
   use,
   useActionState,
   useEffect,
   useState,
 } from "react";
-import z from "zod/v4";
+import { infer as zodInfer } from "zod/v4";
 import { InsertTournamentApplicationSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,7 +44,7 @@ import ErrorComponent from "@/components/ui/ErrorComponent";
 type Props = {
   applicationPromise: Promise<
     Result<{
-      application: z.infer<typeof TournamentApplicationInfoSchema>;
+      application: zodInfer<typeof TournamentApplicationInfoSchema>;
     }>
   >;
   preferencesPromise: Promise<
@@ -52,7 +52,7 @@ type Props = {
   >;
   savedApplicationPromise: Promise<
     Result<{
-      application: z.infer<typeof InsertTournamentApplicationSchema>;
+      application: zodInfer<typeof InsertTournamentApplicationSchema>;
     }>
   >;
 };
@@ -60,8 +60,8 @@ type Props = {
 const ApplyForm = (props: Props) => {
   const router = useRouter();
   const [submitMode, setSubmitMode] = useState<"save" | "submit">("submit");
-  const [hasToastedSuccess, setHasToastedSuccess] = React.useState(false);
-  const [hasToastedError, setHasToastedError] = React.useState(false);
+  const [hasToastedSuccess, setHasToastedSuccess] = useState(false);
+  const [hasToastedError, setHasToastedError] = useState(false);
 
   const { data, error } = use(props.applicationPromise);
   if (error || !data?.application) {
@@ -116,7 +116,7 @@ const ApplyForm = (props: Props) => {
     undefined,
   );
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<zodInfer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       mode: "save",
@@ -132,7 +132,7 @@ const ApplyForm = (props: Props) => {
     },
   });
   const onSubmit = (
-    values: z.infer<typeof FormSchema>,
+    values: zodInfer<typeof FormSchema>,
     mode: "save" | "submit",
   ) => {
     form.reset(values);

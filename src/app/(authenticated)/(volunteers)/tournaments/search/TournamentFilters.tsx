@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { US_STATES } from "@/lib/config";
 import { cn } from "@/lib/utils";

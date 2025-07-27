@@ -1,15 +1,14 @@
-import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TournamentCardAdminDisplay } from "@/lib/definitions";
-import z from "zod/v4";
+import { infer as zodInfer } from "zod/v4";
 import { formatToUTCDate } from "@/lib/utils";
 import DecanterIcon from "@/components/ui/DecanterIcon";
 
 type Props = {
-  tournament: z.infer<typeof TournamentCardAdminDisplay>;
+  tournament: zodInfer<typeof TournamentCardAdminDisplay>;
 };
 const truncate = (str: string, maxLength = 69, ellipsis = "...") => {
   if (str.length <= maxLength) return str;

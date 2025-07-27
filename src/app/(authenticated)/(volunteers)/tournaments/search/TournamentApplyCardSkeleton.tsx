@@ -1,6 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
-
 type Props = {};
 
 const TournamentApplyCardSkeleton = (props: Props) => {

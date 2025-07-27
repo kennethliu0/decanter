@@ -1,5 +1,4 @@
 "use client";
-import * as React from "react";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -19,6 +18,7 @@ import {
 } from "@/components/ui/popover";
 import { US_STATES } from "@/lib/config";
 import clsx from "clsx";
+import { useState } from "react";
 
 type Props = {
   onChange: (value: string | null) => void;
@@ -27,7 +27,7 @@ type Props = {
 };
 
 const LocationCombobox = ({ onChange, value, error }: Props) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <Popover

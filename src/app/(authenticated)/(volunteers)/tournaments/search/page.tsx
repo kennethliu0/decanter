@@ -1,5 +1,4 @@
 import MobileTournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFiltersMobile";
-import { Pagination } from "@/components/ui/pagination";
 import Search from "@/components/ui/Search";
 import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFilters";
 import TournamentTable from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentTable";

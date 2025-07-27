@@ -1,4 +1,3 @@
-import React from "react";
 import TournamentApplyCardSkeleton from "./TournamentApplyCardSkeleton";
 import { TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
 import { Pagination } from "@/components/ui/pagination";

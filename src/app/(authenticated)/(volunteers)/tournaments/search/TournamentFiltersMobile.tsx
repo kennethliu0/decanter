@@ -10,7 +10,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { FilterIcon } from "lucide-react";
-import React from "react";
 import TournamentFilters from "./TournamentFilters";
 
 type Props = {};

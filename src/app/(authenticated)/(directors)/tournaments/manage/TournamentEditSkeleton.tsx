@@ -1,6 +1,5 @@
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
 
 const TournamentEditSkeleton = () => {
   return (

@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="w-full py-4 text-center">
+    <footer className="py-4 text-center mt-auto">
       Decanter | All rights reserved.
     </footer>
   );

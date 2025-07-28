@@ -33,15 +33,13 @@ export default async function Home({
         redirect("/tournaments");
       default:
         return (
-          <main className="grow">
-            <div className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
-              <h2 className="text-xl font-semibold">Something went wrong</h2>
-              <p className="text-muted-foreground">
-                Your tournament could not be retrieved. Please try again. If the
-                issue persists, clear your browser cache or contact us at{" "}
-                {CONTACT_EMAIL}.
-              </p>
-            </div>
+          <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
+            <h2 className="text-xl font-semibold">Something went wrong</h2>
+            <p className="text-muted-foreground">
+              Your tournament could not be retrieved. Please try again. If the
+              issue persists, clear your browser cache or contact us at{" "}
+              {CONTACT_EMAIL}.
+            </p>
           </main>
         );
     }

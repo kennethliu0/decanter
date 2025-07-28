@@ -58,7 +58,7 @@ const Page = async (props: Props) => {
       toLocalEndOfDay(searchParams["applyDeadlineAfter"])
     : today;
   return (
-    <main className="flex p-4 gap-4 justify-center grow">
+    <main className="flex p-4 gap-4 justify-center">
       {/* for desktop layouts */}
       <TournamentFilters
         type="multiple"

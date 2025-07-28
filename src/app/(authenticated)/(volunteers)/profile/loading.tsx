@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LoadingProfile() {
   return (
-    <main className="grow max-w-2xl w-full mx-auto space-y-4">
+    <main className="max-w-2xl w-full mx-auto space-y-4">
       <h1 className="text-3xl font-bold">Edit Volunteer Profile</h1>
       <div className="space-y-2">
         <Label>Name</Label>

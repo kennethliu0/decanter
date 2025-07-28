@@ -1,7 +1,7 @@
 type Props = {};
 
 const page = (props: Props) => {
-  return <main className="flex grow">Authenticated!</main>;
+  return <main>Authenticated!</main>;
 };
 
 export default page;

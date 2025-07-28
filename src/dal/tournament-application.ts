@@ -34,21 +34,29 @@ export async function getTournaments(): Promise<
   const { data, error } = await supabase
     .from("tournaments")
     .select(
-      "id, image_url, website_url, name, location, division, start_date, end_date, apply_deadline, slug",
+      `id, image_url, website_url, name, location, division, 
+      start_date, end_date, apply_deadline, slug, 
+      tournament_applications!left(submitted)`,
     )
     .eq("approved", true)
-    .eq("closed_early", false);
+    .eq("closed_early", false)
+    .eq("tournament_applications.user_id", authData.claims.sub);
   if (error) {
+    console.error(error);
     return { error: toAppError(error) };
   }
   const validatedFields = TournamentCards.safeParse(
-    data.map((entry) => toCamel(entry)),
+    data.map(({ tournament_applications, ...rest }) => {
+      return toCamel({
+        applied: !!tournament_applications?.[0]?.submitted,
+        ...rest,
+      });
+    }),
   );
   if (!validatedFields.success) {
     console.error(validatedFields.error);
     return { error: toAppError(validatedFields.error) };
   }
-
   return {
     data: validatedFields.data,
   };

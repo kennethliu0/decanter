@@ -334,6 +334,7 @@ export const TournamentCardInfo = TournamentApplicationInfoSchema.omit({
   applicationFields: true,
 }).extend({
   slug: z.string(),
+  applied: z.boolean(),
 });
 export const TournamentCards = z.array(TournamentCardInfo);
 
@@ -348,7 +349,9 @@ export const TournamentCardDisplay = TournamentCardInfo.omit({
   applyDeadline: z.date(),
 });
 
-export const TournamentAdminCardInfo = TournamentCardInfo.extend({
+export const TournamentAdminCardInfo = TournamentCardInfo.omit({
+  applied: true,
+}).extend({
   applicationCount: z.number(),
 });
 

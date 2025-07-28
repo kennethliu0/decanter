@@ -64,9 +64,17 @@ const TournamentApplyCard = (props: Props) => {
           <Link href={props.tournament.websiteUrl}>
             <Globe width="1.5em" />
           </Link>
-          <Link href={`/tournaments/apply/${props.tournament.slug}`}>
-            <Button>Apply</Button>
-          </Link>
+          {props.tournament.applied ?
+            <Button
+              className="w-17"
+              disabled
+            >
+              Applied
+            </Button>
+          : <Link href={`/tournaments/apply/${props.tournament.slug}`}>
+              <Button className="w-17">Apply</Button>
+            </Link>
+          }
         </div>
       </div>
     </div>

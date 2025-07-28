@@ -14,7 +14,7 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { login } from "@/app/dal/auth/actions";
+import { login } from "@/app/actions/auth";
 import {
   LoginFormSchema as FormSchema,
   isLoginMessageKey,

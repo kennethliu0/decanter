@@ -1,6 +1,9 @@
 import Link from "next/link";
-import TournamentEdit from "../TournamentEdit";
-export default function Home() {
+import TournamentEditSkeleton from "../TournamentEditSkeleton";
+import { Separator } from "@/components/ui/separator";
+import SkeletonTable from "../VolunteerTableSkeleton";
+
+function LoadingPage() {
   return (
     <main className="px-4 max-w-4xl w-full mx-auto space-y-4">
       <div className="space-y-2">
@@ -11,7 +14,12 @@ export default function Home() {
           </span>
         </Link>
       </div>
-      <TournamentEdit />
+      <TournamentEditSkeleton />
+      <Separator />
+      <h2 className="text-2xl">View Applications</h2>
+      <SkeletonTable />
     </main>
   );
 }
+
+export default LoadingPage;

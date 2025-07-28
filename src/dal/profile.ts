@@ -1,25 +1,55 @@
-"use server";
+import "server-only";
 
 import {
-  VolunteerProfileSchema,
-  UpdateProfileState,
   EventPreferencesB,
   EventPreferencesC,
   Result,
+  VolunteerProfileSchema,
 } from "@/lib/definitions";
-import { ERROR_CODES, toAppError } from "@/lib/errors";
+import { AppAuthError, AppError, ERROR_CODES, toAppError } from "@/lib/errors";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { z } from "zod/v4";
+import { infer as zodInfer } from "zod/v4";
+
+export async function upsertProfile(
+  profile: zodInfer<typeof VolunteerProfileSchema>,
+): Promise<{ error?: AppError }> {
+  const validatedFields = VolunteerProfileSchema.safeParse(profile);
+  if (!validatedFields.success) {
+    return { error: toAppError(validatedFields.error) };
+  }
+
+  const supabase = await createClient();
+
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    return { error: AppAuthError };
+  }
+
+  const { error } = await supabase.from("volunteer_profiles").upsert({
+    id: authData.claims.sub,
+    email: authData.claims.email,
+    name: validatedFields.data.name,
+    education: validatedFields.data.education,
+    bio: validatedFields.data.bio,
+    experience: validatedFields.data.experience,
+    preferences_b: validatedFields.data.preferencesB,
+    preferences_c: validatedFields.data.preferencesC,
+  });
+
+  if (error) {
+    return { error: toAppError(error) };
+  }
+  return {};
+}
 
 export async function getProfile(): Promise<
-  Result<{ profile: z.infer<typeof VolunteerProfileSchema> }>
+  Result<{ profile: zodInfer<typeof VolunteerProfileSchema> }>
 > {
   const supabase = await createClient();
 
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (authError || !authData?.claims) {
-    redirect("/login");
+    return { error: AppAuthError };
   }
   const { data, error } = await supabase
     .from("volunteer_profiles")
@@ -50,49 +80,14 @@ export async function getProfile(): Promise<
   }
 }
 
-export async function upsertProfile(
-  formState: UpdateProfileState,
-  formData: z.infer<typeof VolunteerProfileSchema>,
-) {
-  const validatedFields = VolunteerProfileSchema.safeParse(formData);
-
-  if (!validatedFields.success) {
-    return {
-      errors: z.flattenError(validatedFields.error).fieldErrors,
-    };
-  }
-  const supabase = await createClient();
-  const { data: authData, error: authError } = await supabase.auth.getClaims();
-  if (authError || !authData?.claims) {
-    redirect("/login");
-  }
-
-  const { error } = await supabase.from("volunteer_profiles").upsert({
-    id: authData.claims.sub,
-    email: authData.claims.email,
-    name: validatedFields.data.name,
-    education: validatedFields.data.education,
-    bio: validatedFields.data.bio,
-    experience: validatedFields.data.experience,
-    preferences_b: validatedFields.data.preferencesB,
-    preferences_c: validatedFields.data.preferencesC,
-  });
-  if (error) {
-    console.error(error);
-    return { messsage: toAppError(error).message, success: false };
-  }
-  return { success: true };
-}
-
 export async function getEventPreferences(): Promise<
   Result<{ preferencesB: string[]; preferencesC: string[] }>
 > {
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (authError || !authData?.claims) {
-    redirect("/login");
+    return { error: AppAuthError };
   }
-
   const { data, error } = await supabase
     .from("volunteer_profiles")
     .select("preferences_b, preferences_c")

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { signInWithGoogleAction } from "@/app/dal/auth/actions";
+import { signInWithGoogleAction } from "@/app/actions/auth";
 import React, { useState } from "react";
 
 type Props = {

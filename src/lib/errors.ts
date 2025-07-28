@@ -36,6 +36,18 @@ export type AppError = {
   meta?: Record<string, any>;
 };
 
+export const AppAuthError: AppError = {
+  message: "User is not authenticated",
+  code: ERROR_CODES.UNAUTHORIZED,
+  status: 401,
+  name: "AuthError",
+};
+export const TournamentNotFoundError: AppError = {
+  message: "Tournament could not be found",
+  code: ERROR_CODES.NOT_FOUND,
+  status: 404,
+};
+
 export function isAppError(obj: unknown): obj is AppError {
   return (
     typeof obj === "object"

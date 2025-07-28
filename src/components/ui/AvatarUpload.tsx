@@ -30,7 +30,7 @@ export default function AvatarUpload({
       formData.append("image", file);
 
       try {
-        const res = await fetch("/dal/tournament-icons", {
+        const res = await fetch("/tournament-icons", {
           method: "POST",
           body: formData,
         });

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ComponentProps } from "react";
+import { ComponentProps } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import VolunteerField from "./VolunteerField";

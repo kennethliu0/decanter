@@ -14,7 +14,7 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { signup } from "@/app/dal/auth/actions";
+import { signup } from "@/app/actions/auth";
 import { SignupFormSchema as FormSchema } from "@/lib/definitions";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";

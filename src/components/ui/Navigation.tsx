@@ -18,7 +18,7 @@ import {
 import { Menu, User, XIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { logout } from "@/app/dal/auth/actions";
+import { logout } from "@/app/actions/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,

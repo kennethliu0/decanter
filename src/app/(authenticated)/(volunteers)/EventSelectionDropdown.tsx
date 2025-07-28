@@ -84,7 +84,7 @@ const EventSelectionDropdown = (props: Props) => {
                   {event}
                   <Check
                     className={clsx("ml-auto", {
-                      "opacity-0": props.value === event,
+                      "opacity-0": props.value !== event,
                     })}
                   />
                 </CommandItem>

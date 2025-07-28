@@ -1,6 +1,6 @@
 "use client";
 
-import { upsertTournamentApplication } from "@/app/dal/tournaments/actions";
+import { upsertTournamentApplicationAction } from "@/app/actions/tournaments";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   InsertTournamentApplicationSchema,
@@ -8,13 +8,7 @@ import {
   TournamentApplicationInfoSchema,
 } from "@/lib/definitions";
 import { format } from "date-fns";
-import {
-  startTransition,
-  use,
-  useActionState,
-  useEffect,
-  useState,
-} from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { infer as zodInfer } from "zod/v4";
 import { InsertTournamentApplicationSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
@@ -31,88 +25,38 @@ import {
 import GroupedEventPreferencesInput from "../../../profile/GroupedEventPreferencesInput";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ERROR_CODES } from "@/lib/errors";
-import { CONTACT_EMAIL } from "@/lib/config";
-import Link from "next/link";
 import LoadingButton from "@/components/ui/LoadingButton";
 import { useRouter } from "next/navigation";
 import DecanterIcon from "@/components/ui/DecanterIcon";
-import ErrorComponent from "@/components/ui/ErrorComponent";
 
 type Props = {
-  applicationPromise: Promise<
-    Result<{
-      application: zodInfer<typeof TournamentApplicationInfoSchema>;
-    }>
-  >;
-  preferencesPromise: Promise<
-    Result<{ preferencesB: string[]; preferencesC: string[] }>
-  >;
-  savedApplicationPromise: Promise<
-    Result<{
-      application: zodInfer<typeof InsertTournamentApplicationSchema>;
-    }>
-  >;
+  application: zodInfer<typeof TournamentApplicationInfoSchema>;
+  preferences:
+    | {
+        preferencesB: string[];
+        preferencesC: string[];
+      }
+    | undefined;
+  savedApplication:
+    | zodInfer<typeof InsertTournamentApplicationSchema>
+    | undefined;
+  toastProperty: string;
+  toastStatus: string;
 };
 
 const ApplyForm = (props: Props) => {
   const router = useRouter();
   const [submitMode, setSubmitMode] = useState<"save" | "submit">("submit");
-  const [hasToastedSuccess, setHasToastedSuccess] = useState(false);
-  const [hasToastedError, setHasToastedError] = useState(false);
 
-  const { data, error } = use(props.applicationPromise);
-  if (error || !data?.application) {
-    return (
-      <ErrorComponent
-        error={
-          error || {
-            message: "Error retrieving application",
-            code: ERROR_CODES.SERVER_ERROR,
-          }
-        }
-        link={{ href: "/tournaments/search", label: "Back to Search" }}
-      />
-    );
-  }
-
-  const { id, ...tournament } = data.application;
-
-  const { data: preferencesData, error: preferencesError } = use(
-    props.preferencesPromise,
-  );
-  if (preferencesError?.code === ERROR_CODES.VOLUNTEER_PROFILE_NOT_FOUND) {
-    return (
-      <ErrorComponent
-        error={preferencesError}
-        link={{ href: "/profile", label: "Create Volunteer Profile" }}
-      />
-    );
-  }
+  const { id, ...tournament } = props.application;
   const profilePreferences =
-    preferencesData?.[`preferences${tournament.division}`];
+    props.preferences?.[`preferences${tournament.division}`];
 
-  const { data: savedData, error: savedError } = use(
-    props.savedApplicationPromise,
-  );
-  if (savedError?.code === ERROR_CODES.ALREADY_SUBMITTED) {
-    return (
-      <SubmittedApplicationNotice
-        tournamentName={`${tournament.name} (Division ${tournament.division})`}
-      />
-    );
-  }
-  const validatedSave =
-    savedData?.application ?
-      InsertTournamentApplicationSchema.safeParse(savedData.application)
-    : null;
-
-  const savedApplication = validatedSave?.success ? validatedSave.data : null;
+  const savedApplication = props.savedApplication;
 
   const [state, action, pending] = useActionState(
-    upsertTournamentApplication,
+    upsertTournamentApplicationAction,
     undefined,
   );
 
@@ -159,28 +103,12 @@ const ApplyForm = (props: Props) => {
   }, [state]);
 
   useEffect(() => {
-    if (hasToastedSuccess || hasToastedError) return;
-
-    if (savedApplication) {
-      toast.success("Successfully loaded saved application.");
-      setHasToastedSuccess(true);
-    } else if (savedError || (!validatedSave?.success && savedData)) {
-      toast.error("Could not retrieve saved application.");
-      setHasToastedError(true);
-    } else if (preferencesError || !profilePreferences) {
-      toast.error("Could not retrieve event preferences");
-      setHasToastedError(true);
+    if (props.toastStatus === "success") {
+      toast.success(`Successfully loaded saved ${props.toastProperty}.`);
+    } else if (props.toastStatus === "error") {
+      toast.error(`Could not retrieve saved ${props.toastProperty}`);
     }
-  }, [
-    savedError,
-    savedData,
-    savedApplication,
-    validatedSave,
-    preferencesError,
-    profilePreferences,
-    hasToastedSuccess,
-    hasToastedError,
-  ]);
+  }, [props.toastProperty, props.toastStatus]);
 
   return (
     <div className="max-w-2xl w-full mx-auto space-y-2 px-4">
@@ -280,26 +208,6 @@ const ApplyForm = (props: Props) => {
           </div>
         </form>
       </Form>
-    </div>
-  );
-};
-
-const SubmittedApplicationNotice = ({
-  tournamentName,
-}: {
-  tournamentName: string;
-}) => {
-  return (
-    <div className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
-      <h2 className="text-xl font-semibold">Application Already Submitted</h2>
-      <p className="text-muted-foreground">
-        You’ve already submitted an application for{" "}
-        <strong>{tournamentName}</strong>. If you think this is a mistake,
-        contact us at {CONTACT_EMAIL}.
-      </p>
-      <Link href="/tournaments/search">
-        <Button variant="secondary">Back to Search</Button>
-      </Link>
     </div>
   );
 };

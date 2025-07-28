@@ -1,8 +1,10 @@
 import { TournamentApplyCard } from "./TournamentApplyCard";
-import { getTournaments } from "@/app/dal/tournaments/actions";
 import { fuzzyMatch, matchesFilter } from "@/lib/utils";
 import { Pagination } from "@/components/ui/pagination";
 import { TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
+import { getTournaments } from "@/dal/tournament-application";
+import { ERROR_CODES } from "@/lib/errors";
+import { redirect } from "next/navigation";
 
 type Props = {
   query?: string;
@@ -20,7 +22,14 @@ type Props = {
 const TournamentTable = async (props: Props) => {
   const { data: rawTournaments = [], error } = await getTournaments();
   if (error) {
-    return <div>{error.message}</div>;
+    if (error.code === ERROR_CODES.AUTH_ERROR) {
+      redirect("/login");
+    }
+    return (
+      <div className="text-center">
+        Tournaments could not be loaded, please try again later.
+      </div>
+    );
   }
   const {
     query,

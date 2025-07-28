@@ -16,13 +16,13 @@ import {
   EmailState,
   isLoginAuthCode,
 } from "@/lib/definitions";
-import z from "zod/v4";
+import { infer as zodInfer, flattenError } from "zod/v4";
 import { isAuthApiError } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 
 export async function login(
   state: LoginFormState,
-  formData: z.infer<typeof LoginFormSchema>,
+  formData: zodInfer<typeof LoginFormSchema>,
 ) {
   const validatedFields = LoginFormSchema.safeParse({
     email: formData.email,
@@ -31,7 +31,7 @@ export async function login(
 
   if (!validatedFields.success) {
     return {
-      errors: z.flattenError(validatedFields.error).fieldErrors,
+      errors: flattenError(validatedFields.error).fieldErrors,
     };
   }
 
@@ -81,7 +81,7 @@ export async function logout() {
 
 export async function signup(
   state: SignupFormState,
-  formData: z.infer<typeof SignupFormSchema>,
+  formData: zodInfer<typeof SignupFormSchema>,
 ) {
   const validatedFields = SignupFormSchema.safeParse({
     email: formData.email,
@@ -91,7 +91,7 @@ export async function signup(
 
   if (!validatedFields.success) {
     return {
-      errors: z.flattenError(validatedFields.error).fieldErrors,
+      errors: flattenError(validatedFields.error).fieldErrors,
     };
   }
 
@@ -122,12 +122,12 @@ export async function signup(
 
 export async function resetPasswordEmail(
   formState: EmailState,
-  formData: z.infer<typeof EmailSchema>,
+  formData: zodInfer<typeof EmailSchema>,
 ) {
   const validatedFields = EmailSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
-      errors: z.flattenError(validatedFields.error).fieldErrors,
+      errors: flattenError(validatedFields.error).fieldErrors,
     };
   }
 
@@ -158,12 +158,12 @@ export async function resetPasswordEmail(
 
 export async function updatePassword(
   formState: UpdatePasswordState,
-  formData: z.infer<typeof UpdatePasswordSchema>,
+  formData: zodInfer<typeof UpdatePasswordSchema>,
 ) {
   const validatedFields = UpdatePasswordSchema.safeParse(formData);
   if (!validatedFields.success) {
     return {
-      errors: z.flattenError(validatedFields.error).fieldErrors,
+      errors: flattenError(validatedFields.error).fieldErrors,
     };
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, use, useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -17,27 +17,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import GroupedEventPreferencesInput from "./GroupedEventPreferencesInput";
-import {
-  VolunteerProfileSchema as FormSchema,
-  Result,
-} from "@/lib/definitions";
-import { upsertProfile } from "@/app/dal/volunteer-profiles/actions";
+import { VolunteerProfileSchema as FormSchema } from "@/lib/definitions";
+import { upsertProfileAction } from "@/app/actions/volunteer-profiles";
 import { toast } from "sonner";
 import LoadingButton from "@/components/ui/LoadingButton";
-import { CONTACT_EMAIL } from "@/lib/config";
-
 type Props = {
-  profilePromise: Promise<Result<{ profile: zodInfer<typeof FormSchema> }>>;
+  profile: zodInfer<typeof FormSchema> | undefined;
 };
 
-const ProfileCardEdit = (props: Props) => {
-  const [state, action, pending] = useActionState(upsertProfile, undefined);
-
-  const { data, error } = use(props.profilePromise);
-  if (error) {
-    return <ProfileError />;
-  }
-  const profile = data?.profile || null;
+const ProfileCardEdit = ({ profile }: Props) => {
+  const [state, action, pending] = useActionState(
+    upsertProfileAction,
+    undefined,
+  );
   const defaultValues = {
     name: profile?.name ?? "",
     education: profile?.education ?? "",
@@ -67,7 +59,7 @@ const ProfileCardEdit = (props: Props) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="px-4 flex flex-col max-w-2xl min-w-xs mx-auto justify-center gap-4">
+        <div className="px-4 flex flex-col max-w-2xl min-w-xs mx-auto justify-center gap-2">
           <FormField
             control={form.control}
             name="name"
@@ -220,15 +212,3 @@ const ProfileCardEdit = (props: Props) => {
 };
 
 export default ProfileCardEdit;
-
-const ProfileError = () => {
-  return (
-    <div className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
-      <h2 className="text-xl font-semibold">Something went wrong</h2>
-      <p className="text-muted-foreground">
-        Your profile could not be retrieved. Please try again. If the issue
-        persists, clear your browser cache or contact us at {CONTACT_EMAIL}.
-      </p>
-    </div>
-  );
-};

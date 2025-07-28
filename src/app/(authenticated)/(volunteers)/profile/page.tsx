@@ -1,12 +1,34 @@
+import { getProfile } from "@/dal/profile";
 import ProfileCardEdit from "./ProfileCardEdit";
-import { getProfile } from "@/app/dal/volunteer-profiles/actions";
+import { ERROR_CODES } from "@/lib/errors";
+import { redirect } from "next/navigation";
+import { CONTACT_EMAIL } from "@/lib/config";
 
-export default function Home() {
-  const profilePromise = getProfile();
+export default async function Home() {
+  const { data, error } = await getProfile();
+  if (error) {
+    if (error.code === ERROR_CODES.UNAUTHORIZED) {
+      redirect("/login");
+    } else {
+      return (
+        <main className="grow">
+          <div className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
+            <h2 className="text-xl font-semibold">Something went wrong</h2>
+            <p className="text-muted-foreground">
+              Your profile could not be retrieved. Please try again. If the
+              issue persists, clear your browser cache or contact us at{" "}
+              {CONTACT_EMAIL}.
+            </p>
+          </div>
+        </main>
+      );
+    }
+  }
+
   return (
     <main className="max-w-2xl w-full mx-auto grow space-y-4">
       <h1 className="px-4 text-3xl font-bold">Edit Volunteer Profile</h1>
-      <ProfileCardEdit profilePromise={profilePromise} />
+      <ProfileCardEdit profile={data?.profile} />
     </main>
   );
 }

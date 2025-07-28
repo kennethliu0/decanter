@@ -1,10 +1,10 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import React, { startTransition, use, useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect, useMemo } from "react";
 import LocationCombobox from "./LocationCombobox";
 import { Button } from "@/components/ui/button";
-import z from "zod/v4";
+import { infer as zodInfer } from "zod/v4";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AvatarUpload from "@/components/ui/AvatarUpload";
@@ -22,10 +22,9 @@ import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
 import {
   EditTournamentSchemaServer as ServerSchema,
   EditTournamentSchemaClient as FormSchema,
-  Result,
 } from "@/lib/definitions";
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
-import { upsertTournament } from "@/app/dal/tournaments/actions";
+import { upsertTournamentAction } from "@/app/actions/tournaments";
 import { parse, format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import { Check, Clock } from "lucide-react";
@@ -40,17 +39,10 @@ import {
 import LoadingButton from "@/components/ui/LoadingButton";
 
 type Props = {
-  tournamentPromise?: Promise<
-    Result<{ tournament: z.infer<typeof ServerSchema> }>
-  >;
+  tournament?: zodInfer<typeof ServerSchema>;
 };
 
 const TournamentEdit = (props: Props) => {
-  const promisedTournament =
-    props.tournamentPromise ? use(props.tournamentPromise) : undefined;
-  if (promisedTournament && promisedTournament.error) {
-    return <div>{promisedTournament.error.message}</div>;
-  }
   const {
     startDate: startDateString,
     endDate: endDateString,
@@ -59,7 +51,7 @@ const TournamentEdit = (props: Props) => {
     approved,
     id,
     ...tournament
-  } = promisedTournament?.data?.tournament || {
+  } = props.tournament || {
     imageUrl: "",
     websiteUrl: "",
     name: "",
@@ -75,9 +67,12 @@ const TournamentEdit = (props: Props) => {
   const applyDeadlineDate =
     applyDeadlineString ? new Date(applyDeadlineString) : undefined;
 
-  const [state, action, pending] = useActionState(upsertTournament, undefined);
+  const [state, action, pending] = useActionState(
+    upsertTournamentAction,
+    undefined,
+  );
   const today = new Date();
-  const defaultValues = React.useMemo(
+  const defaultValues = useMemo(
     () => ({
       startDate:
         startDateString ?
@@ -102,11 +97,11 @@ const TournamentEdit = (props: Props) => {
     ],
   );
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<zodInfer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues,
   });
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  function onSubmit(values: zodInfer<typeof FormSchema>) {
     const {
       applyDeadlineDate: applyDeadline,
       applyDeadlineTime,

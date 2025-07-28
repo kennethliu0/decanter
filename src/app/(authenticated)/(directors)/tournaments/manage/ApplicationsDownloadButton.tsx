@@ -1,30 +1,30 @@
 "use client";
-import { generateApplicationsCSV } from "@/app/dal/tournaments/actions";
 import { Button } from "@/components/ui/button";
+import { Result } from "@/lib/definitions";
 import { Download } from "lucide-react";
-import React from "react";
-import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import { use } from "react";
 
 type Props = {
-  slug: string;
+  applicationsPromise: Promise<Result<string>>;
 };
 
 const ApplicationsDownloadButton = (props: Props) => {
-  const handleExport = async () => {
-    const { data, error } = await generateApplicationsCSV(props.slug);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    if (!data) {
-      toast.error("CSV couldn't be generated");
-      return;
-    }
+  const params = useParams();
+  const { slug } = params;
+  const { data, error } = use(props.applicationsPromise);
+  if (error || !data) {
+    return (
+      <p className="text-sm text-destructive">Loading applications failed</p>
+    );
+  }
+
+  const handleExport = () => {
     const blob = new Blob([data], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${props.slug}.csv`;
+    a.download = `${slug}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

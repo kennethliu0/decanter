@@ -1,6 +1,6 @@
 import { use } from "react";
 import { TournamentAdminCard } from "./TournamentAdminCard";
-import { getTournamentsManagedByUser } from "@/app/dal/tournaments/actions";
+import { getTournamentsManagedByUser } from "@/dal/tournament-management";
 
 type Props = {};
 

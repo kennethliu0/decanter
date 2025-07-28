@@ -22,14 +22,16 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const [sortValue, selectedDivisions, selectedLocations] = useMemo(
-    () => [
-      searchParams.get("sort") ?? "startDate",
-      searchParams.getAll("division"),
-      searchParams.getAll("location"),
-    ],
-    [searchParams],
-  );
+  const [sortValue, selectedDivisions, selectedLocations, showApplied] =
+    useMemo(
+      () => [
+        searchParams.get("sort") ?? "startDate",
+        searchParams.getAll("division"),
+        searchParams.getAll("location"),
+        searchParams.get("showApplied") ?? "false",
+      ],
+      [searchParams],
+    );
   const today = useMemo(() => {
     const date = new Date();
     date.setUTCHours(0, 0, 0, 0);
@@ -70,11 +72,12 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   return (
     <Accordion {...props}>
       <AccordionItem value="item-1">
-        <AccordionTrigger>Sort By</AccordionTrigger>
+        <AccordionTrigger>Sort & Filter</AccordionTrigger>
         <AccordionContent className="space-y-4">
           <RadioGroup
             value={sortValue}
             onValueChange={handleSortChange}
+            className="gap-4"
           >
             <div className="flex gap-3">
               <RadioGroupItem
@@ -91,6 +94,12 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
               <Label htmlFor="applyDeadline">Application Deadline</Label>
             </div>
           </RadioGroup>
+          <AccordionOption
+            id="show-applied"
+            text="Show Applied Tournaments"
+            onCheckedChange={getCheckboxHandler("showApplied", "true")}
+            checked={showApplied === "true"}
+          />
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">

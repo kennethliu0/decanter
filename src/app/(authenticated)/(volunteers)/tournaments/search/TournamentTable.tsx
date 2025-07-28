@@ -14,6 +14,7 @@ type Props = {
     startDateAfter: Date;
     startDateBefore: Date;
     applyDeadlineAfter: Date;
+    showApplied: boolean;
   };
   sort?: string;
   currentPage: number;
@@ -39,6 +40,7 @@ const TournamentTable = async (props: Props) => {
       startDateAfter,
       startDateBefore,
       applyDeadlineAfter,
+      showApplied,
     },
     sort = "startDate",
     currentPage,
@@ -57,7 +59,8 @@ const TournamentTable = async (props: Props) => {
         && t.startDate > startDateAfter
         && t.startDate < startDateBefore
         && t.applyDeadline > applyDeadlineAfter
-        && (!query || fuzzyMatch(query, t.name)),
+        && (!query || fuzzyMatch(query, t.name))
+        && (showApplied || !t.applied),
     )
     .sort((a, b) =>
       sort === "applyDeadline" ?

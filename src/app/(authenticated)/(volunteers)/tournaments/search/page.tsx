@@ -17,6 +17,7 @@ type Props = {
     startDateBefore?: string;
     applyDeadlineAfter?: string;
     sort?: string;
+    showApplied?: boolean;
   }>;
 };
 
@@ -94,6 +95,7 @@ const Page = async (props: Props) => {
               startDateAfter,
               startDateBefore,
               applyDeadlineAfter,
+              showApplied: searchParams?.showApplied ?? false,
             }}
             currentPage={searchParams?.page || 1}
             sort={searchParams?.sort}

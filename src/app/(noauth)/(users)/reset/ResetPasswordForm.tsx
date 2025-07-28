@@ -8,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React, { startTransition, useActionState } from "react";
-import { z } from "zod/v4";
+import { startTransition, useActionState } from "react";
+import { infer as zodInfer } from "zod/v4";
 import { EmailSchema as FormSchema } from "@/lib/definitions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +24,7 @@ import {
 import { resetPasswordEmail } from "@/app/actions/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 
 type Props = {};
@@ -34,12 +34,12 @@ const ResetPasswordForm = (props: Props) => {
     resetPasswordEmail,
     undefined,
   );
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<zodInfer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: { email: "" },
   });
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  function onSubmit(values: zodInfer<typeof FormSchema>) {
     startTransition(() => {
       action(values);
     });

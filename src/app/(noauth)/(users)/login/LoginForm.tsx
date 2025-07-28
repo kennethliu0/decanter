@@ -1,7 +1,7 @@
 "use client";
 
-import React, { startTransition, useActionState } from "react";
-import * as z from "zod/v4";
+import { startTransition, useActionState } from "react";
+import { infer as zodInfer } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -38,14 +38,14 @@ import GoogleSignInButton from "../GoogleSignInButton";
 const LoginForm = () => {
   const [state, action, pending] = useActionState(login, undefined);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<zodInfer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  function onSubmit(values: zodInfer<typeof FormSchema>) {
     startTransition(() => {
       action(values);
     });

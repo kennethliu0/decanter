@@ -59,7 +59,7 @@ const ProfileCardEdit = ({ profile }: Props) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="px-4 flex flex-col max-w-2xl min-w-xs mx-auto justify-center gap-2">
+        <div className="space-y-2">
           <FormField
             control={form.control}
             name="name"

@@ -27,7 +27,7 @@ export default async function Home() {
 
   return (
     <main className="max-w-2xl w-full mx-auto grow space-y-4">
-      <h1 className="px-4 text-3xl font-bold">Edit Volunteer Profile</h1>
+      <h1 className="text-3xl font-bold">Edit Volunteer Profile</h1>
       <ProfileCardEdit profile={data?.profile} />
     </main>
   );

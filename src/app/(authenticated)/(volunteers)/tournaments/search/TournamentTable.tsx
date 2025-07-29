@@ -1,51 +1,38 @@
+"use client";
+
 import { TournamentApplyCard } from "./TournamentApplyCard";
-import { fuzzyMatch, matchesFilter } from "@/lib/utils";
+import { clearUTCTime, fuzzyMatch, matchesFilter } from "@/lib/utils";
 import { Pagination } from "@/components/ui/pagination";
-import { TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
-import { getTournaments } from "@/dal/tournament-application";
-import { ERROR_CODES } from "@/lib/errors";
-import { redirect } from "next/navigation";
+import { SEASON_END_DATE, TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
+import { useSearchParams } from "next/navigation";
+import { infer as zodInfer } from "zod/v4";
+import { TournamentCards } from "@/lib/definitions";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 type Props = {
-  query?: string;
-  filters: {
-    location?: string[] | string;
-    division?: ("B" | "C")[] | "B" | "C";
-    startDateAfter: Date;
-    startDateBefore: Date;
-    applyDeadlineAfter: Date;
-    showApplied: boolean;
-  };
-  sort?: string;
-  currentPage: number;
+  tournaments: zodInfer<typeof TournamentCards>;
 };
 
-const TournamentTable = async (props: Props) => {
-  const { data: rawTournaments = [], error } = await getTournaments();
-  if (error) {
-    if (error.code === ERROR_CODES.AUTH_ERROR) {
-      redirect("/login");
-    }
-    return (
-      <div className="text-center">
-        Tournaments could not be loaded, please try again later.
-      </div>
-    );
-  }
-  const {
-    query,
-    filters: {
-      location,
-      division,
-      startDateAfter,
-      startDateBefore,
-      applyDeadlineAfter,
-      showApplied,
-    },
-    sort = "startDate",
-    currentPage,
-  } = props;
-  const filteredTournaments = rawTournaments
+const TournamentTable = (props: Props) => {
+  const today = clearUTCTime(new Date());
+  const params = useSearchParams();
+  const query = params.get("query");
+  const location = params.get("location");
+  const division = params.get("division");
+  const showApplied = params.get("showApplied");
+  const sort = params.get("sort") ?? "startDate";
+  const currentPage = parseInt(params.get("page") ?? "1");
+  const startDateAfter = clearUTCTime(
+    new Date(params.get("startDateAfter") ?? today),
+  );
+  const startDateBefore = clearUTCTime(
+    new Date(params.get("startDateBefore") ?? SEASON_END_DATE),
+  );
+  const applyDeadlineAfter = clearUTCTime(
+    new Date(params.get("applyDeadlineAfter") ?? today),
+  );
+  const filteredTournaments = props.tournaments
     .map(({ startDate, endDate, applyDeadline, ...rest }) => ({
       startDate: new Date(startDate),
       endDate: new Date(endDate),
@@ -82,6 +69,21 @@ const TournamentTable = async (props: Props) => {
         Displaying {filteredTournaments.length === 0 ? 0 : start + 1} -{" "}
         {Math.min(end, filteredTournaments.length)} of{" "}
         {filteredTournaments.length} tournaments
+        {startDateAfter
+          && startDateBefore
+          && startDateAfter > startDateBefore && (
+            <Alert
+              variant="destructive"
+              className="text-left mt-4"
+            >
+              <AlertCircleIcon />
+              <AlertTitle>Invalid filters</AlertTitle>
+              <AlertDescription>
+                "Start Date After" field cannot be greater than "Start Date
+                Before"
+              </AlertDescription>
+            </Alert>
+          )}
       </div>
       <div className="grow grid gap-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 place-content-start">
         {displayedTournaments.map((tournament) => (

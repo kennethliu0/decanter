@@ -18,7 +18,7 @@ import {
   FormDescription,
   Form,
 } from "@/components/ui/form";
-import DatePickerUncontrolled from "@/components/ui/DatePickerUncontrolled";
+import DatePicker from "@/components/ui/DatePicker";
 import {
   EditTournamentSchemaServer as ServerSchema,
   EditTournamentSchemaClient as FormSchema,
@@ -265,7 +265,7 @@ const TournamentEdit = (props: Props) => {
                     <FormItem>
                       <FormLabel>Tournament Start Date</FormLabel>
                       <FormControl>
-                        <DatePickerUncontrolled
+                        <DatePicker
                           value={field.value}
                           onChange={field.onChange}
                           error={Boolean(fieldState.error)}
@@ -290,7 +290,7 @@ const TournamentEdit = (props: Props) => {
                     <FormItem>
                       <FormLabel>Tournament End Date</FormLabel>
                       <FormControl>
-                        <DatePickerUncontrolled
+                        <DatePicker
                           value={field.value}
                           onChange={field.onChange}
                           disablePast
@@ -317,7 +317,7 @@ const TournamentEdit = (props: Props) => {
                     <FormItem>
                       <FormLabel>Volunteer Application Due Date</FormLabel>
                       <FormControl>
-                        <DatePickerUncontrolled
+                        <DatePicker
                           value={field.value}
                           onChange={field.onChange}
                           disablePast

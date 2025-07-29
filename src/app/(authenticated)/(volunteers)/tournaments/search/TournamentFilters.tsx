@@ -9,10 +9,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { US_STATES } from "@/lib/config";
-import { cn } from "@/lib/utils";
-import { DatePicker } from "@/components/ui/DatePickerWithParams";
+import { usePathname, useSearchParams } from "next/navigation";
+import { SEASON_END_DATE, US_STATES } from "@/lib/config";
+import { cn, safeParseDate } from "@/lib/utils";
+import DatePicker from "@/components/ui/DatePicker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
@@ -20,23 +20,30 @@ type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const { replace } = useRouter();
 
-  const [sortValue, selectedDivisions, selectedLocations, showApplied] =
-    useMemo(
-      () => [
-        searchParams.get("sort") ?? "startDate",
-        searchParams.getAll("division"),
-        searchParams.getAll("location"),
-        searchParams.get("showApplied") ?? "false",
-      ],
-      [searchParams],
-    );
-  const today = useMemo(() => {
-    const date = new Date();
-    date.setUTCHours(0, 0, 0, 0);
-    return date;
-  }, []);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const [
+    sortValue,
+    selectedDivisions,
+    selectedLocations,
+    showApplied,
+    startDateAfter,
+    startDateBefore,
+    applyDeadlineAfter,
+  ] = useMemo(
+    () => [
+      searchParams.get("sort") ?? "startDate",
+      searchParams.getAll("division"),
+      searchParams.getAll("location"),
+      searchParams.get("showApplied") ?? "false",
+      safeParseDate(searchParams.get("startDateAfter"), today),
+      safeParseDate(searchParams.get("startDateBefore"), SEASON_END_DATE),
+      safeParseDate(searchParams.get("applyDeadlineAfter"), today),
+    ],
+    [searchParams],
+  );
 
   const handleCheckedChange = (
     property: string,
@@ -53,8 +60,12 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
     }
     params.delete(property); // remove all
     currentValues.forEach((val) => params.append(property, val));
-
-    replace(`${pathname}?${params.toString()}`);
+    // using replaceState instead of router.replace prevents a server-component re-render that would refetch data from the database
+    window.history.replaceState(
+      { ...params },
+      "",
+      `${pathname}?${params.toString()}`,
+    );
   };
 
   const getCheckboxHandler = (category: string, value: string) => {
@@ -66,7 +77,28 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", "1");
     params.set("sort", value);
-    replace(`${pathname}?${params.toString()}`);
+    window.history.replaceState(
+      { ...params },
+      "",
+      `${pathname}?${params.toString()}`,
+    );
+  };
+
+  const handleDateChange = (param: string) => {
+    return (date: Date | null) => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      if (date) {
+        params.set(param, date.toISOString().split("T")[0]);
+      } else {
+        params.delete(param);
+      }
+      window.history.replaceState(
+        { ...params },
+        "",
+        `${pathname}?${params.toString()}`,
+      );
+    };
   };
 
   return (
@@ -122,22 +154,23 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
       <AccordionItem value="item-3">
         <AccordionTrigger>Date</AccordionTrigger>
         <AccordionContent className="space-y-4">
+          <Label htmlFor="start-date-after">Start Date After</Label>
           <DatePicker
-            label="Start Date After"
-            param="startDateAfter"
-            buttonId="start-date-after-button"
-            defaultDate={today}
+            id="start-date-after"
+            value={startDateAfter}
+            onChange={handleDateChange("startDateAfter")}
           />
+          <Label htmlFor="start-date-before">Start Date Before</Label>
           <DatePicker
-            label="Start Date Before"
-            param="startDateBefore"
-            buttonId="start-date-before-button"
+            id="start-date-before"
+            value={startDateBefore}
+            onChange={handleDateChange("startDateBefore")}
           />
+          <Label htmlFor="start-date-after">Apply Deadline After</Label>
           <DatePicker
-            label="Application Deadline After"
-            param="applyDeadlineAfter"
-            buttonId="apply-date-after-button"
-            defaultDate={today}
+            id="apply-deadline-after"
+            value={applyDeadlineAfter}
+            onChange={handleDateChange("applyDeadlineAfter")}
           />
         </AccordionContent>
       </AccordionItem>

@@ -2,62 +2,29 @@ import MobileTournamentFilters from "@/app/(authenticated)/(volunteers)/tourname
 import Search from "@/components/ui/Search";
 import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFilters";
 import TournamentTable from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentTable";
-import TournamentTableSkeleton from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentTableSkeleton";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
-import { Suspense } from "react";
-
-type Props = {
-  searchParams: Promise<{
-    query?: string;
-    page?: number;
-    location?: string[] | string;
-    division?: ("B" | "C")[] | "B" | "C";
-    startDateAfter?: string;
-    startDateBefore?: string;
-    applyDeadlineAfter?: string;
-    sort?: string;
-    showApplied?: boolean;
-  }>;
-};
-
-const clearUTCTime = (date: Date) => {
-  date.setUTCHours(0, 0, 0, 0);
-  return date;
-};
-
-function toLocalEndOfDay(dateStr: string): Date {
-  const [year, month, day] = dateStr.split("-").map(Number);
-
-  return new Date(year, month - 1, day, 23, 59, 59, 999);
-}
-
-const MAX_DATE = new Date(8640000000000000);
-
-const retrieveDate = (
-  searchParams: any,
-  param: string,
-  fallback: Date,
-): Date => {
-  return searchParams[param] ?
-      clearUTCTime(new Date(searchParams[param]))
-    : fallback;
-};
-
+import { getTournaments } from "@/dal/tournament-application";
+import { redirect } from "next/navigation";
+import { CONTACT_EMAIL } from "@/lib/config";
+import { ERROR_CODES } from "@/lib/errors";
+type Props = {};
 const Page = async (props: Props) => {
-  const today = clearUTCTime(new Date());
+  const { data = [], error } = await getTournaments();
+  if (error) {
+    if (error.code === ERROR_CODES.AUTH_ERROR) {
+      redirect("/login");
+    } else {
+      return (
+        <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
+          <h2 className="text-xl font-semibold">Something went wrong</h2>
+          <p className="text-muted-foreground">
+            Tournaments could not be retrieved. Please try again. If the issue
+            persists, clear your browser cache or contact us at {CONTACT_EMAIL}.
+          </p>
+        </main>
+      );
+    }
+  }
 
-  const searchParams = await props.searchParams;
-  const startDateAfter = retrieveDate(searchParams, "startDateAfter", today);
-  const startDateBefore = retrieveDate(
-    searchParams,
-    "startDateBefore",
-    MAX_DATE,
-  );
-  const applyDeadlineAfter =
-    searchParams["applyDeadlineAfter"] ?
-      toLocalEndOfDay(searchParams["applyDeadlineAfter"])
-    : today;
   return (
     <main className="flex p-4 gap-4 justify-center">
       {/* for desktop layouts */}
@@ -74,33 +41,7 @@ const Page = async (props: Props) => {
             placeholder="Search tournaments..."
           />
         </div>
-        {startDateAfter
-          && startDateBefore
-          && startDateAfter > startDateBefore && (
-            <Alert variant="destructive">
-              <AlertCircleIcon />
-              <AlertTitle>Invalid filters</AlertTitle>
-              <AlertDescription>
-                "Start Date After" field cannot be a date greater than "Start
-                Date Before"
-              </AlertDescription>
-            </Alert>
-          )}
-        <Suspense fallback={<TournamentTableSkeleton />}>
-          <TournamentTable
-            query={searchParams?.query}
-            filters={{
-              location: searchParams?.location,
-              division: searchParams?.division,
-              startDateAfter,
-              startDateBefore,
-              applyDeadlineAfter,
-              showApplied: searchParams?.showApplied ?? false,
-            }}
-            currentPage={searchParams?.page || 1}
-            sort={searchParams?.sort}
-          />
-        </Suspense>
+        <TournamentTable tournaments={data} />
       </div>
     </main>
   );

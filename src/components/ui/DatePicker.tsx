@@ -20,15 +20,17 @@ type Props = {
   disableOutOfSeason?: boolean;
   disablePast?: boolean;
   small?: boolean;
+  id?: string;
 };
 
-const DatePickerUncontrolled = ({
+const DatePicker = ({
   value,
   onChange,
   error,
   disableOutOfSeason,
   disablePast,
   small,
+  id,
 }: Props) => {
   const today = new Date();
   const [open, setOpen] = useState(false);
@@ -42,6 +44,7 @@ const DatePickerUncontrolled = ({
           <Button
             variant="outline"
             data-empty={!value}
+            id={id}
             className={clsx(
               "data-[empty=true]:text-muted-foreground justify-start text-left font-normal",
               {
@@ -80,4 +83,4 @@ const DatePickerUncontrolled = ({
   );
 };
 
-export default DatePickerUncontrolled;
+export default DatePicker;

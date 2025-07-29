@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { isMatch, parse } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -57,4 +58,14 @@ export function fuzzyMatch(query: string, target: string): boolean {
     if (i === query.length) return true;
   }
   return false;
+}
+
+export const clearUTCTime = (date: Date) => {
+  date.setUTCHours(0, 0, 0, 0);
+  return date;
+};
+
+export function safeParseDate(dateString: string | null, fallback: Date): Date {
+  if (dateString === null || !isMatch(dateString, "yyyy-M-d")) return fallback;
+  return parse(dateString, "yyyy-M-d", new Date());
 }

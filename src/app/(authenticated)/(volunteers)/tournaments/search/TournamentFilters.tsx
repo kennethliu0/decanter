@@ -14,6 +14,7 @@ import { SEASON_END_DATE, US_STATES } from "@/lib/config";
 import { cn, safeParseDate } from "@/lib/utils";
 import DatePicker from "@/components/ui/DatePicker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 
@@ -38,12 +39,37 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
       searchParams.getAll("division"),
       searchParams.getAll("location"),
       searchParams.get("showApplied") ?? "false",
-      safeParseDate(searchParams.get("startDateAfter"), today),
-      safeParseDate(searchParams.get("startDateBefore"), SEASON_END_DATE),
-      safeParseDate(searchParams.get("applyDeadlineAfter"), today),
+      safeParseDate(searchParams.get("startDateAfter")),
+      safeParseDate(searchParams.get("startDateBefore")),
+      safeParseDate(searchParams.get("applyDeadlineAfter")),
     ],
     [searchParams],
   );
+
+  const numSortFiltersEdited = useMemo(() => {
+    let count = 0;
+    if (showApplied !== "false") {
+      count++;
+    }
+    if (sortValue !== "startDate") {
+      count++;
+    }
+    return count;
+  }, [showApplied, sortValue]);
+
+  const numDateFiltersEdited = useMemo(() => {
+    let count = 0;
+    if (startDateAfter) {
+      count++;
+    }
+    if (startDateBefore) {
+      count++;
+    }
+    if (applyDeadlineAfter) {
+      count++;
+    }
+    return count;
+  }, [startDateAfter, startDateBefore, applyDeadlineAfter]);
 
   const handleCheckedChange = (
     property: string,
@@ -101,10 +127,28 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
     };
   };
 
+  const handleClearParams = (paramList: string[]) => {
+    return () => {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      for (const param of paramList) {
+        params.delete(param);
+      }
+      window.history.replaceState(
+        { ...params },
+        "",
+        `${pathname}?${params.toString()}`,
+      );
+    };
+  };
+
   return (
     <Accordion {...props}>
       <AccordionItem value="item-1">
-        <AccordionTrigger>Sort & Filter</AccordionTrigger>
+        <AccordionTrigger>
+          Sort & Filter{" "}
+          {numSortFiltersEdited > 0 && `(${numSortFiltersEdited})`}
+        </AccordionTrigger>
         <AccordionContent className="space-y-4">
           <RadioGroup
             value={sortValue}
@@ -132,10 +176,21 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             onCheckedChange={getCheckboxHandler("showApplied", "true")}
             checked={showApplied === "true"}
           />
+          <Button
+            variant="link"
+            className="p-0 h-auto"
+            onClick={handleClearParams(["sort", "showApplied"])}
+            disabled={numSortFiltersEdited === 0}
+          >
+            Clear
+          </Button>
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-2">
-        <AccordionTrigger>Division</AccordionTrigger>
+        <AccordionTrigger>
+          Division{" "}
+          {selectedDivisions.length > 0 && `(${selectedDivisions.length})`}
+        </AccordionTrigger>
         <AccordionContent className="space-y-4">
           <AccordionOption
             id="division-b"
@@ -149,43 +204,81 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             onCheckedChange={getCheckboxHandler("division", "C")}
             checked={selectedDivisions.includes("C")}
           />
+          <Button
+            variant="link"
+            className="p-0 h-auto"
+            onClick={handleClearParams(["division"])}
+            disabled={selectedDivisions.length === 0}
+          >
+            Clear
+          </Button>
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-3">
-        <AccordionTrigger>Date</AccordionTrigger>
+        <AccordionTrigger>
+          Date {numDateFiltersEdited > 0 && `(${numDateFiltersEdited})`}
+        </AccordionTrigger>
         <AccordionContent className="space-y-4">
           <Label htmlFor="start-date-after">Start Date After</Label>
           <DatePicker
             id="start-date-after"
             value={startDateAfter}
             onChange={handleDateChange("startDateAfter")}
+            placeholder={today}
           />
           <Label htmlFor="start-date-before">Start Date Before</Label>
           <DatePicker
             id="start-date-before"
             value={startDateBefore}
             onChange={handleDateChange("startDateBefore")}
+            placeholder={SEASON_END_DATE}
           />
           <Label htmlFor="start-date-after">Apply Deadline After</Label>
           <DatePicker
             id="apply-deadline-after"
             value={applyDeadlineAfter}
             onChange={handleDateChange("applyDeadlineAfter")}
+            placeholder={today}
           />
+          <Button
+            variant="link"
+            className="p-0 h-auto"
+            onClick={handleClearParams([
+              "startDateAfter",
+              "startDateBefore",
+              "applyDeadlineAfter",
+            ])}
+            disabled={numDateFiltersEdited === 0}
+          >
+            Clear
+          </Button>
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-4">
-        <AccordionTrigger>Location</AccordionTrigger>
-        <AccordionContent className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
-          {["Online", ...US_STATES].map((state, index) => (
-            <AccordionOption
-              key={index}
-              id={state}
-              text={state}
-              onCheckedChange={getCheckboxHandler("location", state)}
-              checked={selectedLocations.includes(state)}
-            />
-          ))}
+        <AccordionTrigger>
+          Location{" "}
+          {selectedLocations.length > 0 && `(${selectedLocations.length})`}
+        </AccordionTrigger>
+        <AccordionContent>
+          <Button
+            variant="link"
+            className="p-0 h-auto mb-4"
+            onClick={handleClearParams(["location"])}
+            disabled={selectedLocations.length === 0}
+          >
+            Clear
+          </Button>
+          <div className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
+            {["Online", ...US_STATES].map((state, index) => (
+              <AccordionOption
+                key={index}
+                id={state}
+                text={state}
+                onCheckedChange={getCheckboxHandler("location", state)}
+                checked={selectedLocations.includes(state)}
+              />
+            ))}
+          </div>
         </AccordionContent>
       </AccordionItem>
     </Accordion>

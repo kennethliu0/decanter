@@ -65,7 +65,11 @@ export const clearUTCTime = (date: Date) => {
   return date;
 };
 
-export function safeParseDate(dateString: string | null, fallback: Date): Date {
-  if (dateString === null || !isMatch(dateString, "yyyy-M-d")) return fallback;
+export function safeParseDate(
+  dateString: string | null,
+  fallback?: Date,
+): Date | null {
+  if (dateString === null || !isMatch(dateString, "yyyy-M-d"))
+    return fallback ?? null;
   return parse(dateString, "yyyy-M-d", new Date());
 }

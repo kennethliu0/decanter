@@ -14,13 +14,15 @@ import {
 } from "@/lib/config";
 
 type Props = {
-  value: Date;
+  value: Date | null;
   onChange: (...event: any[]) => void;
+  placeholder?: Date;
   error?: boolean;
   disableOutOfSeason?: boolean;
   disablePast?: boolean;
   small?: boolean;
   id?: string;
+  grayed?: boolean;
 };
 
 const DatePicker = ({
@@ -31,6 +33,8 @@ const DatePicker = ({
   disablePast,
   small,
   id,
+  grayed,
+  placeholder,
 }: Props) => {
   const today = new Date();
   const [open, setOpen] = useState(false);
@@ -51,19 +55,23 @@ const DatePicker = ({
                 "!border-destructive": error,
                 "w-[200px]": small,
                 "w-[280px]": !small,
-                "text-muted-foreground": !value,
+                "text-muted-foreground": !value || grayed,
               },
             )}
           >
             <CalendarIcon />
-            {value ? format(value, "PPP") : <span>Pick a date</span>}
+            {value ?
+              format(value, "PPP")
+            : placeholder ?
+              format(placeholder, "PPP")
+            : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
           <Calendar
             mode="single"
-            selected={value}
-            defaultMonth={value}
+            selected={value ?? placeholder ?? undefined}
+            defaultMonth={value ?? placeholder ?? undefined}
             {...(disableOutOfSeason && {
               disabled: (date) =>
                 date < (disablePast ? today : SEASON_START_DATE)

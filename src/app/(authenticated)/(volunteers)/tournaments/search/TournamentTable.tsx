@@ -54,8 +54,9 @@ const TournamentTable = (props: Props) => {
         a.applyDeadline.getTime() - b.applyDeadline.getTime()
       : a.startDate.getTime() - b.startDate.getTime(),
     );
-  const totalPages = Math.ceil(
-    filteredTournaments.length / TOURNAMENT_CARDS_PER_PAGE,
+  const totalPages = Math.max(
+    Math.ceil(filteredTournaments.length / TOURNAMENT_CARDS_PER_PAGE),
+    1,
   );
   const safePage = Math.max(1, Math.min(currentPage, totalPages || 1));
 

@@ -279,17 +279,6 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             selected={selectedLocations}
             setSelected={handleLocationChange}
           />
-          {/* <div className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
-            {["Online", ...US_STATES].map((state, index) => (
-              <AccordionOption
-                key={index}
-                id={state}
-                text={state}
-                onCheckedChange={getCheckboxHandler("location", state)}
-                checked={selectedLocations.includes(state)}
-              />
-            ))}
-          </div> */}
           <Button
             variant="link"
             className="p-0 h-auto"

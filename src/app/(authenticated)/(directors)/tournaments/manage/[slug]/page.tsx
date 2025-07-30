@@ -8,11 +8,13 @@ import { DataTable } from "../DataTable";
 import { columns } from "../VolunteerColumns";
 import {
   getApplicationsCSV,
+  getInviteManagement,
   getTournamentManagement,
 } from "@/dal/tournament-management";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { CONTACT_EMAIL } from "@/lib/config";
+import InviteManagement from "../InviteManagement";
 export default async function Home({
   params,
 }: {
@@ -21,6 +23,8 @@ export default async function Home({
   const { slug } = await params;
 
   const applicationsPromise = getApplicationsCSV(slug);
+
+  const inviteLinkPromise = getInviteManagement(slug);
 
   const { data, error } = await getTournamentManagement(slug);
   if (error) {
@@ -69,6 +73,9 @@ export default async function Home({
         data={applications}
         columns={columns}
       />
+      <Separator />
+      <h2 className="text-2xl">Invite Others to Manage Tournament</h2>
+      <InviteManagement invitePromise={inviteLinkPromise} />
     </main>
   );
 }

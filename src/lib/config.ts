@@ -60,6 +60,7 @@ export const EVENTS = {
 export const TOURNAMENT_CARDS_PER_PAGE: number = 12;
 
 export const CONTACT_EMAIL = "support@example.com";
+export const SITE_URL = "http://localhost:3000";
 
 export const CALENDAR_START_DATE = new Date(SEASON_YEAR - 1, 0, 1);
 export const CALENDAR_END_DATE = new Date(SEASON_YEAR, 11, 31);

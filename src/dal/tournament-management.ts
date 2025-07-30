@@ -16,7 +16,7 @@ import { createClient } from "@/utils/supabase/server";
 import { infer as zodInfer, string as zodString } from "zod/v4";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
-import { SEASON_YEAR } from "@/lib/config";
+import { SEASON_YEAR, SITE_URL } from "@/lib/config";
 
 export async function getTournamentsManagedByUser(): Promise<
   Result<zodInfer<typeof TournamentAdminCards>>
@@ -107,7 +107,7 @@ export async function getTournamentManagement(slug: string): Promise<
   const { data: adminData, error: adminError } = await supabase
     .from("tournament_admins")
     .select("tournament_id")
-    .eq("tournament_id", tournamentIdData.id)
+    .eq("tournament_id", tournamentId)
     .eq("user_id", authData.claims.sub)
     .maybeSingle();
   if (adminError) {
@@ -142,27 +142,24 @@ export async function getTournamentManagement(slug: string): Promise<
   if (!validatedTournament.success) {
     return { error: toAppError(validatedTournament.error) };
   }
+  const tournament = validatedTournament.data;
 
   // return up to 100 applications for performance
 
-  const { data, error } = await supabase
+  const { data: applicationData, error: applicationError } = await supabase
     .from("tournament_applications")
     .select("user_id, volunteer_profiles(name, email, education)")
     .eq("tournament_id", tournamentId)
     .eq("submitted", true)
     .order("updated_at", { ascending: true })
     .limit(100);
-  if (error) {
-    console.error(error);
-    return { error: toAppError(error) };
+  if (applicationError) {
+    console.error(applicationError);
+    return { error: toAppError(applicationError) };
   }
-  if (!data) {
-    return { data: { tournament: validatedTournament.data, applications: [] } };
-  }
-  return {
-    data: {
-      tournament: validatedTournament.data,
-      applications: data
+  const applications =
+    applicationData ?
+      applicationData
         .filter((val) => val.volunteer_profiles != null)
         .map((val) => {
           // force treat volunteer_profiles as an object, not an array
@@ -177,7 +174,13 @@ export async function getTournamentManagement(slug: string): Promise<
             name: profile?.name || "Unknown",
             education: profile?.education || "Unknown",
           };
-        }),
+        })
+    : [];
+
+  return {
+    data: {
+      tournament,
+      applications,
     },
   };
 }
@@ -226,27 +229,50 @@ export async function upsertTournament(
       };
     }
   }
-
-  const { error } = await supabase.from("tournaments").upsert({
-    id,
-    ...toSnake({ ...values }),
-    ...(created_by ? { created_by } : {}),
-    ...(slug ? { slug } : {}),
-  });
-  if (error) {
-    console.error(error);
-    return { error: toAppError(error) };
-  }
-  if (newTournament) {
+  if (!newTournament) {
+    const { error } = await supabase.from("tournaments").update({
+      id,
+      ...toSnake({ ...values }),
+    });
+    if (error) {
+      console.error(error);
+      return { error: toAppError(error) };
+    }
+  } else {
+    const { error: tournamentError } = await supabase
+      .from("tournaments")
+      .insert({
+        id,
+        ...toSnake({ ...values }),
+        created_by,
+        slug,
+      });
+    if (tournamentError) {
+      console.error(tournamentError);
+      return { error: toAppError(tournamentError) };
+    }
     const { error } = await supabase.from("tournament_admins").insert({
       tournament_id: id,
-      user_id: authData.claims.id,
+      user_id: authData.claims.sub,
+      email: authData.claims.email,
     });
     if (error) {
       console.error(error);
       return {
         error: {
           message: "Couldn't set tournament admin privileges",
+          code: ERROR_CODES.UNKNOWN,
+        },
+      };
+    }
+    const { error: inviteError } = await supabase
+      .from("tournament_invites")
+      .insert({ tournament_id: id });
+    if (inviteError) {
+      console.error(error);
+      return {
+        error: {
+          message: "Couldn't create tournament invite",
           code: ERROR_CODES.UNKNOWN,
         },
       };
@@ -276,6 +302,11 @@ export async function getApplicationsCSV(
 
   const slug = validatedFields.data;
 
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    return { error: AppAuthError };
+  }
+
   const { data: tournamentData, error: tournamentError } = await supabase
     .from("tournaments")
     .select("id, application_fields")
@@ -292,11 +323,6 @@ export async function getApplicationsCSV(
   const tournamentId = tournamentData.id;
 
   // check user authorizaton
-
-  const { data: authData, error: authError } = await supabase.auth.getClaims();
-  if (authError || !authData?.claims) {
-    return { error: AppAuthError };
-  }
 
   const { data: adminData, error: adminError } = await supabase
     .from("tournament_admins")
@@ -385,4 +411,78 @@ export async function getApplicationsCSV(
   return {
     data: csv.map((row) => row.map(escapeCSVCell).join(",")).join("\n"),
   };
+}
+
+export async function getInviteManagement(
+  slugRaw: string,
+): Promise<Result<{ link: string; emails: string[] }>> {
+  const validatedFields = zodString().safeParse(slugRaw);
+  if (!validatedFields.success) {
+    return { error: TournamentNotFoundError };
+  }
+  const slug = validatedFields.data;
+
+  const supabase = await createClient();
+
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (!authData?.claims || authError) {
+    return { error: AppAuthError };
+  }
+
+  const { data: tournamentData, error: tournamentError } = await supabase
+    .from("tournaments")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (tournamentError) {
+    return { error: toAppError(tournamentError) };
+  }
+
+  if (!tournamentData?.id) {
+    return { error: TournamentNotFoundError };
+  }
+  const tournamentId = tournamentData.id;
+
+  // check user authorizaton
+
+  const { data: adminData, error: adminError } = await supabase
+    .from("tournament_admins")
+    .select("user_id")
+    .eq("user_id", authData.claims.sub)
+    .eq("tournament_id", tournamentId)
+    .single();
+
+  if (adminError || !adminData) {
+    return {
+      error: {
+        message: "Unauthorized access",
+        code: ERROR_CODES.UNAUTHORIZED,
+        status: 401,
+      },
+    };
+  }
+
+  const { data: allAdminsData, error: allAdminsError } = await supabase
+    .from("tournament_admins")
+    .select("email")
+    .eq("tournament_id", tournamentId);
+  if (allAdminsError) {
+    return { error: toAppError(allAdminsError) };
+  }
+
+  const emails = allAdminsData ? allAdminsData.map((val) => val.email) : [];
+
+  const { data: inviteData, error: inviteError } = await supabase
+    .from("tournament_invites")
+    .select("id")
+    .eq("tournament_id", tournamentId)
+    .maybeSingle();
+
+  if (inviteError) {
+    return { error: toAppError(inviteError) };
+  }
+  const link =
+    inviteData?.id ? `${SITE_URL}/tournaments/invite/${inviteData.id}` : "";
+  return { data: { link, emails } };
 }

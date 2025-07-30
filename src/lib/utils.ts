@@ -32,16 +32,6 @@ export function toSnake<T extends Record<string, any>>(
   }
   return result;
 }
-
-export function matchesFilter<T>(
-  filter: T | T[] | null | undefined,
-  value: T,
-): boolean {
-  if (filter == null) return true; // null or undefined
-  if (Array.isArray(filter)) return filter.includes(value);
-  return filter === value;
-}
-
 export function formatToUTCDate(date: Date): string {
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, "0");

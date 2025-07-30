@@ -1,7 +1,7 @@
 "use client";
 
 import { TournamentApplyCard } from "./TournamentApplyCard";
-import { clearUTCTime, fuzzyMatch, matchesFilter } from "@/lib/utils";
+import { clearUTCTime, fuzzyMatch } from "@/lib/utils";
 import { Pagination } from "@/components/ui/pagination";
 import { SEASON_END_DATE, TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
 import { useSearchParams } from "next/navigation";
@@ -18,8 +18,8 @@ const TournamentTable = (props: Props) => {
   const today = clearUTCTime(new Date());
   const params = useSearchParams();
   const query = params.get("query");
-  const location = params.get("location");
-  const division = params.get("division");
+  const location = params.getAll("location");
+  const division = params.getAll("division");
   const showApplied = params.get("showApplied");
   const sort = params.get("sort") ?? "startDate";
   const currentPage = parseInt(params.get("page") ?? "1");
@@ -41,8 +41,8 @@ const TournamentTable = (props: Props) => {
     }))
     .filter(
       (t) =>
-        matchesFilter(location, t.location)
-        && matchesFilter(division, t.division)
+        (location.length === 0 || location.includes(t.location))
+        && (division.length === 0 || division.includes(t.division))
         && t.startDate > startDateAfter
         && t.startDate < startDateBefore
         && t.applyDeadline > applyDeadlineAfter

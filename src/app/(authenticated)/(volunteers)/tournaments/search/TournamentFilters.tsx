@@ -15,6 +15,7 @@ import { cn, safeParseDate } from "@/lib/utils";
 import DatePicker from "@/components/ui/DatePicker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
+import { FancyMultiSelect } from "@/components/ui/fancy-multi-select";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 
@@ -125,6 +126,18 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
         `${pathname}?${params.toString()}`,
       );
     };
+  };
+
+  const handleLocationChange = (locations: string[]) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", "1");
+    params.delete("location");
+    locations.forEach((l) => params.append("location", l));
+    window.history.replaceState(
+      { ...params },
+      "",
+      `${pathname}?${params.toString()}`,
+    );
   };
 
   const handleClearParams = (paramList: string[]) => {
@@ -259,16 +272,14 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           Location{" "}
           {selectedLocations.length > 0 && `(${selectedLocations.length})`}
         </AccordionTrigger>
-        <AccordionContent>
-          <Button
-            variant="link"
-            className="p-0 h-auto mb-4"
-            onClick={handleClearParams(["location"])}
-            disabled={selectedLocations.length === 0}
-          >
-            Clear
-          </Button>
-          <div className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
+        <AccordionContent className="space-y-4">
+          <FancyMultiSelect
+            options={["Online", ...US_STATES]}
+            placeholder="Select Location..."
+            selected={selectedLocations}
+            setSelected={handleLocationChange}
+          />
+          {/* <div className="columns-2 xs:columns-3 sm:columns-2 space-y-4">
             {["Online", ...US_STATES].map((state, index) => (
               <AccordionOption
                 key={index}
@@ -278,7 +289,15 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
                 checked={selectedLocations.includes(state)}
               />
             ))}
-          </div>
+          </div> */}
+          <Button
+            variant="link"
+            className="p-0 h-auto"
+            onClick={handleClearParams(["location"])}
+            disabled={selectedLocations.length === 0}
+          >
+            Clear
+          </Button>
         </AccordionContent>
       </AccordionItem>
     </Accordion>

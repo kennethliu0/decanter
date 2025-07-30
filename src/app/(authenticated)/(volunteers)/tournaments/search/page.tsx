@@ -26,11 +26,11 @@ const Page = async (props: Props) => {
   }
 
   return (
-    <main className="flex p-4 gap-4 justify-center">
+    <main className="grow flex p-4 gap-4 justify-center">
       {/* for desktop layouts */}
       <TournamentFilters
         type="multiple"
-        className="min-w-[280px] shrink-0 hidden md:block"
+        className="max-w-2xs w-full shrink-0 hidden md:block"
       />
       <div className="max-w-5xl w-full shrink flex flex-col gap-2">
         <div className="flex">

@@ -6,11 +6,20 @@ import {
   InsertTournamentApplicationState,
   InsertTournamentApplicationSchema,
 } from "@/lib/definitions";
-import { infer as zodInfer, flattenError, enum as zodEnum } from "zod/v4";
+import {
+  infer as zodInfer,
+  flattenError,
+  uuid as zodUuid,
+  success,
+} from "zod/v4";
 import { notFound, redirect } from "next/navigation";
-import { upsertTournament } from "@/dal/tournament-management";
+import {
+  consumeTournamentInvite,
+  upsertTournament,
+} from "@/dal/tournament-management";
 import { ERROR_CODES } from "@/lib/errors";
 import { upsertTournamentApplication } from "@/dal/tournament-application";
+import { el } from "date-fns/locale";
 
 export async function upsertTournamentAction(
   formState: EditTournamentServerState,
@@ -67,4 +76,28 @@ export async function upsertTournamentApplicationAction(
     }
   }
   return { success: true };
+}
+
+export async function useTournamentInviteAction(inviteIdRaw: string) {
+  const validatedFields = zodUuid({ version: "v4" }).safeParse(inviteIdRaw);
+  if (!validatedFields.success) {
+    notFound();
+  }
+  const { data, error } = await consumeTournamentInvite(validatedFields.data);
+  if (error) {
+    switch (error.code) {
+      case ERROR_CODES.AUTH_ERROR:
+        redirect("/login");
+      case ERROR_CODES.NOT_FOUND:
+        notFound();
+      default:
+        console.error(error);
+        return { message: error.message, success: false };
+    }
+  }
+  if (data?.slug) {
+    redirect(`/tournaments/manage/${data.slug}`);
+  } else {
+    redirect(`/tournaments`);
+  }
 }

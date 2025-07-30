@@ -7,13 +7,18 @@ import {
 } from "@/lib/definitions";
 import {
   AppAuthError,
+  AppError,
   ERROR_CODES,
   toAppError,
   TournamentNotFoundError,
 } from "@/lib/errors";
 import { toCamel, toSnake } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";
-import { infer as zodInfer, string as zodString } from "zod/v4";
+import {
+  infer as zodInfer,
+  string as zodString,
+  uuid as zodUuid,
+} from "zod/v4";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
 import { SEASON_YEAR, SITE_URL } from "@/lib/config";
@@ -485,4 +490,55 @@ export async function getInviteManagement(
   const link =
     inviteData?.id ? `${SITE_URL}/tournaments/invite/${inviteData.id}` : "";
   return { data: { link, emails } };
+}
+
+export async function consumeTournamentInvite(
+  inviteIdRaw: string,
+): Promise<Result<{ slug: string }>> {
+  const validatedFields = zodUuid({ version: "v4" }).safeParse(inviteIdRaw);
+  if (!validatedFields.success) {
+    return { error: TournamentNotFoundError };
+  }
+  const inviteId = validatedFields.data;
+
+  const supabase = await createClient();
+
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    return { error: AppAuthError };
+  }
+
+  const { data, error } = await supabase.rpc("accept_invite", {
+    invite_id: inviteId,
+  });
+  if (error) {
+    if (error.code === "P0001") {
+      // exception was raised by rpc
+      if (error.message.startsWith(ERROR_CODES.UNAUTHORIZED)) {
+        return { error: AppAuthError };
+      } else if (error.message.startsWith(ERROR_CODES.NOT_FOUND)) {
+        return { error: TournamentNotFoundError };
+      } else if (error.message.startsWith(ERROR_CODES.ALREADY_EXISTS)) {
+        return {
+          error: {
+            message: "User is already an admin for this tournament",
+            code: ERROR_CODES.ALREADY_EXISTS,
+          },
+        };
+      } else {
+        console.error(error);
+        return {
+          error: {
+            message: "Unknown exception was raised",
+            code: ERROR_CODES.UNKNOWN,
+            status: 400,
+          },
+        };
+      }
+    } else {
+      console.error(error);
+      return { error: toAppError(error) };
+    }
+  }
+  return { data: { slug: data } };
 }

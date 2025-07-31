@@ -13,8 +13,10 @@ const TournamentTableServer = async (props: Props) => {
       redirect("/login");
     } else {
       return (
-        <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
-          <h2 className="text-xl font-semibold">Something went wrong</h2>
+        <main className="w-full max-w-2xl mx-auto rounded-xl p-4 text-center space-y-2">
+          <h2 className="text-xl font-semibold text-destructive">
+            Something went wrong
+          </h2>
           <p className="text-muted-foreground">
             Tournaments could not be retrieved. Please try again. If the issue
             persists, clear your browser cache or contact us at {CONTACT_EMAIL}.

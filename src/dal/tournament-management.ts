@@ -235,10 +235,12 @@ export async function upsertTournament(
     }
   }
   if (!newTournament) {
-    const { error } = await supabase.from("tournaments").update({
-      id,
-      ...toSnake({ ...values }),
-    });
+    const { error } = await supabase
+      .from("tournaments")
+      .update({
+        ...toSnake({ ...values }),
+      })
+      .eq("id", id);
     if (error) {
       console.error(error);
       return { error: toAppError(error) };
@@ -492,7 +494,65 @@ export async function getInviteManagement(
   return { data: { link, emails } };
 }
 
-export async function consumeTournamentInvite(
+export async function getTournamentInviteInfo(inviteIdRaw: string): Promise<
+  Result<{
+    name: string;
+    division: string;
+    imageUrl: string;
+  }>
+> {
+  const validatedFields = zodUuid({ version: "v4" }).safeParse(inviteIdRaw);
+  if (!validatedFields.success) {
+    return { error: TournamentNotFoundError };
+  }
+  const inviteId = validatedFields.data;
+
+  const supabase = await createClient();
+
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    return { error: AppAuthError };
+  }
+
+  const { data, error } = await supabase.rpc("get_invite_info", {
+    invite_id: inviteId,
+  });
+  if (error) {
+    if (error.code === "P0001") {
+      // exception was raised by rpc
+      if (error.message.startsWith(ERROR_CODES.UNAUTHORIZED)) {
+        return { error: AppAuthError };
+      } else if (error.message.startsWith(ERROR_CODES.NOT_FOUND)) {
+        return { error: TournamentNotFoundError };
+      } else {
+        console.error(error);
+        return {
+          error: {
+            message: "Unknown exception was raised",
+            code: ERROR_CODES.UNKNOWN,
+            status: 400,
+          },
+        };
+      }
+    } else {
+      console.error(error);
+      return { error: toAppError(error) };
+    }
+  }
+  if (data) {
+    return {
+      data: {
+        name: data.tour_name,
+        division: data.tour_division,
+        imageUrl: data.tour_image,
+      },
+    };
+  } else {
+    return { error: TournamentNotFoundError };
+  }
+}
+
+export async function acceptTournamentInvite(
   inviteIdRaw: string,
 ): Promise<Result<{ slug: string }>> {
   const validatedFields = zodUuid({ version: "v4" }).safeParse(inviteIdRaw);
@@ -518,13 +578,6 @@ export async function consumeTournamentInvite(
         return { error: AppAuthError };
       } else if (error.message.startsWith(ERROR_CODES.NOT_FOUND)) {
         return { error: TournamentNotFoundError };
-      } else if (error.message.startsWith(ERROR_CODES.ALREADY_EXISTS)) {
-        return {
-          error: {
-            message: "User is already an admin for this tournament",
-            code: ERROR_CODES.ALREADY_EXISTS,
-          },
-        };
       } else {
         console.error(error);
         return {
@@ -539,6 +592,9 @@ export async function consumeTournamentInvite(
       console.error(error);
       return { error: toAppError(error) };
     }
+  }
+  if (!data) {
+    return { error: TournamentNotFoundError };
   }
   return { data: { slug: data } };
 }

@@ -5,21 +5,16 @@ import {
   EditTournamentServerState,
   InsertTournamentApplicationState,
   InsertTournamentApplicationSchema,
+  AcceptTournamentInviteState,
 } from "@/lib/definitions";
-import {
-  infer as zodInfer,
-  flattenError,
-  uuid as zodUuid,
-  success,
-} from "zod/v4";
+import { infer as zodInfer, flattenError, uuid as zodUuid } from "zod/v4";
 import { notFound, redirect } from "next/navigation";
 import {
-  consumeTournamentInvite,
+  acceptTournamentInvite,
   upsertTournament,
 } from "@/dal/tournament-management";
 import { ERROR_CODES } from "@/lib/errors";
 import { upsertTournamentApplication } from "@/dal/tournament-application";
-import { el } from "date-fns/locale";
 
 export async function upsertTournamentAction(
   formState: EditTournamentServerState,
@@ -78,12 +73,15 @@ export async function upsertTournamentApplicationAction(
   return { success: true };
 }
 
-export async function useTournamentInviteAction(inviteIdRaw: string) {
+export async function acceptTournamentInviteAction(
+  formState: AcceptTournamentInviteState,
+  inviteIdRaw: string,
+) {
   const validatedFields = zodUuid({ version: "v4" }).safeParse(inviteIdRaw);
   if (!validatedFields.success) {
     notFound();
   }
-  const { data, error } = await consumeTournamentInvite(validatedFields.data);
+  const { data, error } = await acceptTournamentInvite(validatedFields.data);
   if (error) {
     switch (error.code) {
       case ERROR_CODES.AUTH_ERROR:

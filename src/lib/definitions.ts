@@ -360,3 +360,10 @@ export const TournamentAdminCards = z.array(TournamentAdminCardInfo);
 export const TournamentCardAdminDisplay = TournamentCardDisplay.extend({
   applicationCount: z.number(),
 });
+
+export type AcceptTournamentInviteState =
+  | {
+      message: string;
+      success: boolean;
+    }
+  | undefined;

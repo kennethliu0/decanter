@@ -2,6 +2,7 @@ import Link from "next/link";
 import TournamentEditSkeleton from "../TournamentEditSkeleton";
 import { Separator } from "@/components/ui/separator";
 import SkeletonTable from "../VolunteerTableSkeleton";
+import InviteManagementSkeleton from "../InviteManagementSkeleton";
 
 function LoadingPage() {
   return (
@@ -18,6 +19,9 @@ function LoadingPage() {
       <Separator />
       <h2 className="text-2xl">View Applications</h2>
       <SkeletonTable />
+      <Separator />
+      <h2 className="text-2xl">Invite Others to Manage Tournament</h2>
+      <InviteManagementSkeleton />
     </main>
   );
 }

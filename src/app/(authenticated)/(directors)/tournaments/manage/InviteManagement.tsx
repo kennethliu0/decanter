@@ -1,6 +1,6 @@
 import { Result } from "@/lib/definitions";
 import { use } from "react";
-import ShareInviteButton from "./ShareInviteButton";
+import { CopyableLink } from "@/components/ui/copyable-link";
 
 type Props = {
   invitePromise: Promise<Result<{ link: string; emails: string[] }>>;
@@ -22,9 +22,19 @@ const InviteManagement = (props: Props) => {
             ))}
           </ul>
         </div>
-      : <p>Could not retrieve currently added users</p>}
-
-      <ShareInviteButton inviteLink={data?.link ?? ""} />
+      : <p className="text-sm text-destructive">
+          Could not retrieve currently added users
+        </p>
+      }
+      {data?.link ?
+        <CopyableLink
+          link={data.link}
+          label="Admin Access Link"
+        />
+      : <p className="text-sm text-destructive">
+          Could not retrieve currently added users
+        </p>
+      }
       <p className="text-sm">
         Note that you cannot remove users from management without contacting
         Decanter support. This link should never be shared to anyone except

@@ -1,30 +1,11 @@
 import MobileTournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFiltersMobile";
 import Search from "@/components/ui/Search";
 import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFilters";
-import TournamentTable from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentTable";
-import { getTournaments } from "@/dal/tournament-application";
-import { redirect } from "next/navigation";
-import { CONTACT_EMAIL } from "@/lib/config";
-import { ERROR_CODES } from "@/lib/errors";
+import { Suspense } from "react";
+import TournamentTableSkeleton from "./TournamentTableSkeleton";
+import TournamentTableServer from "./TournamentTableServer";
 type Props = {};
-const Page = async (props: Props) => {
-  const { data = [], error } = await getTournaments();
-  if (error) {
-    if (error.code === ERROR_CODES.AUTH_ERROR) {
-      redirect("/login");
-    } else {
-      return (
-        <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
-          <h2 className="text-xl font-semibold">Something went wrong</h2>
-          <p className="text-muted-foreground">
-            Tournaments could not be retrieved. Please try again. If the issue
-            persists, clear your browser cache or contact us at {CONTACT_EMAIL}.
-          </p>
-        </main>
-      );
-    }
-  }
-
+const Page = (props: Props) => {
   return (
     <main className="grow flex p-4 gap-4 justify-center">
       {/* for desktop layouts */}
@@ -41,7 +22,9 @@ const Page = async (props: Props) => {
             placeholder="Search tournaments..."
           />
         </div>
-        <TournamentTable tournaments={data} />
+        <Suspense fallback={<TournamentTableSkeleton />}>
+          <TournamentTableServer />
+        </Suspense>
       </div>
     </main>
   );

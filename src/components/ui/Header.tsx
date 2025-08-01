@@ -25,33 +25,29 @@ const Header = (props: Props) => {
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-2 sm:px-8 py-2">
       <div className="flex items-center justify-between">
-        <Link href="/">
-          <Button
-            variant="ghost"
-            size="icon"
-          >
-            <DecanterIcon />
-          </Button>
-        </Link>
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuLink
                 asChild
-                className={`${navigationMenuTriggerStyle()} border border-input sm:border-none `}
+                className="px-4"
               >
-                <Link href={"/login"}>
-                  <p className="font-semibold">Sign In</p>
+                <Link href="/">
+                  <DecanterIcon className="text-primary" />
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+        <NavigationMenu viewport={false}>
+          <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuLink
                 asChild
-                className={`${navigationMenuTriggerStyle()} hidden sm:block border border-input`}
+                className={`${navigationMenuTriggerStyle()} border border-input `}
               >
-                <Link href={"/signup"}>
-                  <p className="font-semibold">Sign Up</p>
+                <Link href={"/login"}>
+                  <p className="font-semibold">Sign In</p>
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { signInWithGoogleAction } from "@/app/actions/auth";
-import React, { useState } from "react";
+import { useState } from "react";
 
 type Props = {
   signin?: boolean;
@@ -22,7 +22,6 @@ const GoogleSignInButton = ({ signin = true }: Props) => {
   return (
     <Button
       className="w-full"
-      variant="outline"
       onClick={handleGoogleSignIn}
       disabled={googleLoading}
     >

@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Menu, User, XIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import { logout } from "@/app/actions/auth";
 import {
   DropdownMenu,
@@ -39,23 +38,22 @@ const Navigation = (props: Props) => {
   ];
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
-      <div className="hidden sm:flex items-center">
-        <Link href="/">
-          <Button
-            variant="ghost"
-            size="icon"
-          >
-            <DecanterIcon />
-          </Button>
-        </Link>
+      <div className="hidden sm:flex justify-between items-center">
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink
+                asChild
+                className="px-4"
+              >
+                <Link href="/">
+                  <DecanterIcon className="text-primary" />
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
             {links.map(({ label, path }, index) => (
               <NavigationMenuItem key={index}>
-                <NavigationMenuLink
-                  asChild
-                  className={navigationMenuTriggerStyle()}
-                >
+                <NavigationMenuLink asChild>
                   <Link href={path}>
                     <p className="font-semibold">{label}</p>
                   </Link>
@@ -64,20 +62,20 @@ const Navigation = (props: Props) => {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        <div className="h-full ml-auto flex items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <User />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="mr-4">
-              <Link href="/update-password">
-                <DropdownMenuItem>Change Password</DropdownMenuItem>
-              </Link>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <NavigationMenu viewport={false}>
+          <NavigationMenuList>
+            <NavigationMenuItem className="ml-auto">
+              <NavigationMenuLink asChild>
+                <button
+                  onClick={logout}
+                  className="font-semibold"
+                >
+                  Log Out
+                </button>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
       <Sheet>
         <SheetTrigger asChild>
@@ -126,11 +124,6 @@ const Navigation = (props: Props) => {
             </SheetClose>
           ))}
           <Separator />
-          <SheetClose asChild>
-            <Link href="/update-password">
-              <p>Change Password</p>
-            </Link>
-          </SheetClose>
           <SheetClose asChild>
             <button
               className="text-left cursor-pointer"

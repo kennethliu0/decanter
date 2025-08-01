@@ -4,58 +4,10 @@ import { AppError } from "./errors";
 
 export type Result<T> = { data?: T; error?: AppError };
 
-const password = z
-  .string()
-  .min(8, "At least 8 characters long")
-  .max(256, "At most 256 characters long")
-  .trim();
-
-export const SignupFormSchema = z
-  .object({
-    email: z.email().trim(),
-    password,
-    confirmPassword: z.string(),
-  })
-  .refine((values) => values.password === values.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-export type SignupFormState =
-  | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-        confirmPassword?: string[];
-      };
-      message?: string;
-    }
-  | undefined;
-
-export const LoginFormSchema = z.object({
-  email: z.email().trim(),
-  password: z.string().min(1, "Invalid password").trim(),
-});
-
-export type LoginFormState =
-  | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
-  | undefined;
-
 export const LoginAuthCodes = {
-  email_not_confirmed: "Check your email to confirm this account.",
   invalid_credentials: "Invalid login credentials.",
-  same_password: "Use a new password.",
-  over_email_send_rate:
-    "Too many emails sent to this address, please wait a while before trying again.",
   over_request_rate_limit:
     "Too many requests from this client, please wait a while before trying again.",
-  email_address_invalid: "Use a different email address.",
 };
 
 export const isLoginAuthCode = (
@@ -65,12 +17,6 @@ export const isLoginAuthCode = (
 };
 
 export const LoginMessages = {
-  check_email: {
-    error: false,
-    title: "Check your email",
-    description:
-      "We just sent you a confirmation email. Click the link inside it to activate your account.",
-  },
   oauth_failed: {
     error: true,
     title: "Something went wrong",
@@ -181,28 +127,6 @@ export type UpdateProfileState =
       };
       message?: string;
       success?: boolean;
-    }
-  | undefined;
-
-export const EmailSchema = z.object({
-  email: z.email().trim(),
-});
-
-export type EmailState =
-  | { errors?: { email?: string[] }; message?: string }
-  | undefined;
-
-export const UpdatePasswordSchema = z
-  .object({ password, confirmPassword: z.string() })
-  .refine((values) => values.password === values.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-export type UpdatePasswordState =
-  | {
-      errors?: { password?: string[]; confirmPassword?: string[] };
-      message?: string;
     }
   | undefined;
 

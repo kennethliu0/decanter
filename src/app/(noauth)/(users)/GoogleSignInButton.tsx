@@ -2,18 +2,23 @@
 
 import { Button } from "@/components/ui/button";
 import { signInWithGoogleAction } from "@/app/actions/auth";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { isSafeRedirect } from "@/lib/utils";
 
-type Props = {
-  signin?: boolean;
-};
+type Props = {};
 
-const GoogleSignInButton = ({ signin = true }: Props) => {
+const GoogleSignInButton = (props: Props) => {
   const [googleLoading, setGoogleLoading] = useState(false);
+  const params = useSearchParams();
+  const redirectToRaw = params.get("redirect");
+  const redirectTo =
+    isSafeRedirect(params.get("redirect")) ? redirectToRaw! : "/dashboard";
+
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      await signInWithGoogleAction();
+      await signInWithGoogleAction(redirectTo);
     } catch (error) {
       console.error("OAuth error", error);
       setGoogleLoading(false);
@@ -25,9 +30,7 @@ const GoogleSignInButton = ({ signin = true }: Props) => {
       onClick={handleGoogleSignIn}
       disabled={googleLoading}
     >
-      {googleLoading ?
-        "Redirecting..."
-      : `Sign ${signin ? "in" : "up"} with Google`}
+      {googleLoading ? "Redirecting..." : `Sign in with Google`}
     </Button>
   );
 };

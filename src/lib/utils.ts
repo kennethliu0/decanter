@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { isMatch, parse } from "date-fns";
 import { twMerge } from "tailwind-merge";
+import { allowedRedirectBases } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -62,4 +63,19 @@ export function safeParseDate(
   if (dateString === null || !isMatch(dateString, "yyyy-M-d"))
     return fallback ?? null;
   return parse(dateString, "yyyy-M-d", new Date());
+}
+
+export function isSafeRedirect(redirect: string | null | undefined): boolean {
+  if (!redirect) return false;
+
+  try {
+    // Reject absolute URLs
+    const url = new URL(redirect, "http://example.com"); // base for parsing
+    return (
+      url.origin === "http://example.com" // Must be a relative path
+      && allowedRedirectBases.some((base) => url.pathname.startsWith(base))
+    );
+  } catch {
+    return false; // Invalid URL
+  }
 }

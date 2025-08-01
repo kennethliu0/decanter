@@ -13,8 +13,9 @@ import {
 } from "@/dal/tournament-management";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { CONTACT_EMAIL } from "@/lib/config";
+import { CONTACT_EMAIL, SITE_URL } from "@/lib/config";
 import InviteManagement from "../InviteManagement";
+import { CopyableLink } from "@/components/ui/copyable-link";
 export default async function Home({
   params,
 }: {
@@ -68,6 +69,10 @@ export default async function Home({
       <TournamentEdit tournament={tournament} />
       <Separator />
       <h2 className="text-2xl">View Applications</h2>
+      <CopyableLink
+        link={`${SITE_URL}/tournaments/apply/${slug}`}
+        label="Application Link"
+      />
       <Suspense fallback={<Button>Loading Applications</Button>}>
         <ApplicationsDownloadButton applicationsPromise={applicationsPromise} />
       </Suspense>

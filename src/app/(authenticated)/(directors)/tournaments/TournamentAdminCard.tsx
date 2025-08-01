@@ -26,7 +26,7 @@ const TournamentAdminCard = (props: Props) => {
   // console.log(props.tournament);
 
   return (
-    <div className="min-w-[312px] max-w-[413px] border p-4 rounded-lg bg-card">
+    <div className="min-w-[312px] w-full max-w-[413px] border p-3 rounded-lg bg-card">
       <div className="flex gap-2">
         <Avatar className="w-[60px] h-[60px]">
           <AvatarImage

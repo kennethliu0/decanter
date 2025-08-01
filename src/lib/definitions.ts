@@ -281,7 +281,9 @@ export const TournamentAdminCardInfo = TournamentCardInfo.omit({
 
 export const TournamentAdminCards = z.array(TournamentAdminCardInfo);
 
-export const TournamentCardAdminDisplay = TournamentCardDisplay.extend({
+export const TournamentCardAdminDisplay = TournamentCardDisplay.omit({
+  applied: true,
+}).extend({
   applicationCount: z.number(),
 });
 

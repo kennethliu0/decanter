@@ -18,8 +18,8 @@ export async function GET(request: Request) {
     }
   }
 
-  // return the user to an error page with instructions
+  // return the user to login page
   console.error("Error exchanging code for session or missing code");
-  const redirectUrl = `${origin}/error`; // Create an error page at this route
+  const redirectUrl = `${origin}/login?message=oauth-failed`;
   return NextResponse.redirect(redirectUrl);
 }

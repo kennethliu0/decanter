@@ -7,18 +7,20 @@ export default function Home() {
     <>
       <Header />
       <main className="w-full grow flex flex-col items-center">
-        <div className="w-full">
-          <img src='/hero_header.svg' alt = "logo" className="max-w-6xl w-full mx-auto py-5"></img>
-          <div className="px-20 py-3 ">
-            <h1 className="text-4xl font-bold text-center break-words py-2">Join the Perfect Tournament.</h1>
-            <p className="text-1xl text-center break-words">An open source tool for volunteers to seamlessly find and one-click apply to tournaments.</p>
+        <div className="flex xl:flex-row flex-col items-center justify-between w-full px-4 py-30">
+          <div className="relative xl:w-full order-first xl:order-last">
+            <img src='/hero_header.svg' alt = "logo" className="w-full"></img>
           </div>
-          <div className="w-full flex gap-4 place-content-center-safe">
-            <Link href="/signup">
-              <Button>Sign Up Today</Button>
-            </Link>
+          <div className="relative px-20 py-3 ">
+            <h1 className="text-6xl text-sky-300 font-bold  break-words p">Seamless Volunteering.</h1>
+            <p className="text-1xl py-2 break-words">An open source platform connecting Science Olympiad tournaments to volunteers nationwide.</p>
           </div>
         </div>
+        <div className="w-full flex gap-4 place-content-center-safe">
+            <Link href="/signup">
+              <Button size="lg">Sign Up Today</Button>
+            </Link>
+          </div>
       </main>
     </>
   );

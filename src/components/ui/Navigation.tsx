@@ -14,11 +14,12 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { Menu, User, XIcon } from "lucide-react";
+import { Menu, XIcon } from "lucide-react";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
 import { Separator } from "./separator";
 import DecanterIcon from "./DecanterIcon";
+import LogoutButton from "./LogoutButton";
 
 type Props = {};
 
@@ -58,12 +59,7 @@ const Navigation = (props: Props) => {
           <NavigationMenuList>
             <NavigationMenuItem className="ml-auto">
               <NavigationMenuLink asChild>
-                <button
-                  onClick={logout}
-                  className="font-semibold"
-                >
-                  Log Out
-                </button>
+                <LogoutButton />
               </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>

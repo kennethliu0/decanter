@@ -107,10 +107,11 @@ export const VolunteerProfileSchema = z.object({
   name: z
     .string()
     .refine((val) => val.split(" ").length >= 2, "Include first and last name")
+    .max(200)
     .trim(),
-  education: z.string().min(1, "Education cannot be empty").trim(),
-  bio: z.string().min(1, "Bio cannot be empty").trim(),
-  experience: z.string().min(1, "Experience cannot be empty").trim(),
+  education: z.string().min(1, "Education cannot be empty").max(1000).trim(),
+  bio: z.string().min(1, "Bio cannot be empty").max(1000).trim(),
+  experience: z.string().min(1, "Experience cannot be empty").max(1000).trim(),
   preferencesB: EventPreferencesB,
   preferencesC: EventPreferencesC,
 });
@@ -132,8 +133,8 @@ export type UpdateProfileState =
 
 export const EditTournamentSchemaBase = z.object({
   imageUrl: z.url("Invalid image"),
-  websiteUrl: z.url(),
-  name: z.string().min(1, "Required field").trim(),
+  websiteUrl: z.url().max(200),
+  name: z.string().min(1, "Required field").max(200).trim(),
   location: z
     .string()
     .refine((value) => value === "Online" || US_STATES.includes(value), {
@@ -144,7 +145,7 @@ export const EditTournamentSchemaBase = z.object({
   applicationFields: z
     .array(
       z.object({
-        prompt: z.string().trim(),
+        prompt: z.string().max(100).trim(),
         type: z.enum(["short", "long"]),
         id: z.uuid({ version: "v4" }),
       }),
@@ -235,7 +236,11 @@ export const InsertTournamentApplicationSchema = z.object({
   responses: z.array(
     z.object({
       fieldId: z.uuid({ version: "v4" }),
-      response: z.string().min(1, "Field required, otherwise put N/A").trim(),
+      response: z
+        .string()
+        .min(1, "Field required, otherwise put N/A")
+        .max(1000)
+        .trim(),
     }),
   ),
 });

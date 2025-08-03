@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { infer as zodInfer } from "zod/v4";
 import { formatToUTCDate } from "@/lib/utils";
 import DecanterIcon from "@/components/ui/DecanterIcon";
+import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
 
 type Props = {
   tournament: zodInfer<typeof TournamentCardDisplay>;
@@ -61,9 +62,11 @@ const TournamentApplyCard = (props: Props) => {
           </p>
         </div>
         <div className="flex gap-1 items-center">
-          <Link href={props.tournament.websiteUrl}>
-            <Globe width="1.5em" />
-          </Link>
+          <ExternalLinkIcon
+            href={props.tournament.websiteUrl}
+            iconSize={24}
+            label={`${props.tournament.name} external link`}
+          />
           {props.tournament.applied ?
             <Button
               className="w-17"

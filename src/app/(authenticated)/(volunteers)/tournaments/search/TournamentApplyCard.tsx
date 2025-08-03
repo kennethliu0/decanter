@@ -75,7 +75,9 @@ const TournamentApplyCard = (props: Props) => {
           >
             <Link
               href={`/tournaments/apply/${props.tournament.slug}`}
-              className="!text-primary-foreground"
+              className={
+                props.tournament.applied ? "" : "!text-primary-foreground"
+              }
             >
               {props.tournament.applied ? "Applied" : "Apply"}
             </Link>

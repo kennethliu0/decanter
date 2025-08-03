@@ -51,20 +51,6 @@ export default async function Home({
     );
   }
 
-  if (savedApplication.error?.code === ERROR_CODES.ALREADY_SUBMITTED) {
-    return (
-      <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
-        <h2 className="text-xl font-semibold">Application Already Submitted</h2>
-        <p className="text-muted-foreground">
-          You’ve already submitted an application for this tournament. If you
-          think this is a mistake, contact us at {CONTACT_EMAIL}.
-        </p>
-        <Link href="/tournaments/search">
-          <Button variant="secondary">Back to Search</Button>
-        </Link>
-      </main>
-    );
-  }
   const toast =
     savedApplication.data?.application ? ["application", "success"]
     : savedApplication.error ? ["application", "error"]
@@ -77,6 +63,7 @@ export default async function Home({
         application={applicationInfo?.data?.application}
         preferences={eventPreferences?.data}
         savedApplication={savedApplication?.data?.application}
+        submitted={savedApplication?.data?.submitted ?? false}
         toastProperty={toast[0]}
         toastStatus={toast[1]}
       />

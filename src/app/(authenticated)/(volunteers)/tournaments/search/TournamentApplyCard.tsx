@@ -67,17 +67,19 @@ const TournamentApplyCard = (props: Props) => {
             iconSize={24}
             label={`${props.tournament.name} external link`}
           />
-          {props.tournament.applied ?
-            <Button
-              className="w-17"
-              disabled
+
+          <Button
+            asChild
+            variant={props.tournament.applied ? "outline" : "default"}
+            className="w-17"
+          >
+            <Link
+              href={`/tournaments/apply/${props.tournament.slug}`}
+              className="!text-primary-foreground"
             >
-              Applied
-            </Button>
-          : <Link href={`/tournaments/apply/${props.tournament.slug}`}>
-              <Button className="w-17">Apply</Button>
+              {props.tournament.applied ? "Applied" : "Apply"}
             </Link>
-          }
+          </Button>
         </div>
       </div>
     </div>

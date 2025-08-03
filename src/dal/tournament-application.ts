@@ -120,7 +120,7 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
 export async function getSavedTournamentApplication(
   slugRaw: string,
 ): Promise<
-  Result<{ application: zodInfer<typeof InsertTournamentApplicationSchema> }>
+  Result<{ application: zodInfer<typeof InsertTournamentApplicationSchema>, submitted: boolean }>
 > {
   const validatedData = zodString().safeParse(slugRaw);
   if (!validatedData.success) {
@@ -170,16 +170,6 @@ export async function getSavedTournamentApplication(
   if (!data) {
     return {};
   }
-  if (data.submitted) {
-    return {
-      error: {
-        message: "Application already submitted",
-        code: ERROR_CODES.ALREADY_SUBMITTED,
-        status: 409,
-      },
-    };
-  }
-
   const validatedApplication = InsertTournamentApplicationSchema.safeParse({
     mode: "save",
     preferences: data.preferences,
@@ -193,7 +183,7 @@ export async function getSavedTournamentApplication(
   }
 
   return {
-    data: { application: validatedApplication.data },
+    data: { application: validatedApplication.data, submitted: data.submitted ?? false},
   };
 }
 

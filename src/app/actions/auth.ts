@@ -7,7 +7,6 @@ import { createClient } from "@/utils/supabase/server";
 import { LoginAuthCodes, isLoginAuthCode } from "@/lib/definitions";
 import { isAuthApiError } from "@supabase/supabase-js";
 import { headers } from "next/headers";
-import { SITE_URL } from "@/lib/config";
 import { isSafeRedirect } from "@/lib/utils";
 
 export async function logout() {
@@ -35,8 +34,7 @@ export async function signInWithGoogleAction(redirectToRaw: string) {
   const requestHeaders = await headers();
   const origin = requestHeaders.get("origin"); // e.g., 'http://localhost:3000' or 'https://your-site.com'
 
-  const allowedOrigins = ["http://localhost:3000", SITE_URL];
-  if (!origin || !allowedOrigins.includes(origin)) {
+  if (origin !== process.env.NEXT_PUBLIC_SITE_URL) {
     console.error("Untrusted origin:", origin);
     return redirect("/login");
   }

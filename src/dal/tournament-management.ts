@@ -21,7 +21,7 @@ import {
 } from "zod/v4";
 import { v4 as uuidv4 } from "uuid";
 import slugify from "slugify";
-import { SEASON_YEAR, SITE_URL } from "@/lib/config";
+import { SEASON_YEAR } from "@/lib/config";
 
 export async function getTournamentsManagedByUser(): Promise<
   Result<zodInfer<typeof TournamentAdminCards>>
@@ -490,7 +490,7 @@ export async function getInviteManagement(
     return { error: toAppError(inviteError) };
   }
   const link =
-    inviteData?.id ? `${SITE_URL}/tournaments/invite/${inviteData.id}` : "";
+    inviteData?.id ? `${process.env.NEXT_PUBLIC_SITE_URL}/tournaments/invite/${inviteData.id}` : "";
   return { data: { link, emails } };
 }
 

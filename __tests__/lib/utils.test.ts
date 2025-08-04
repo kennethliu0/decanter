@@ -116,12 +116,24 @@ describe("isSafeRedirect", () => {
     expect(isSafeRedirect("%2f%2fgoogle.com")).toBe(false);
   });
 
+  test("/tournaments is a safe redirect", () => {
+    expect(isSafeRedirect("/tournaments")).toBe(true);
+  });
+
   test("tournaments is a safe redirect", () => {
     expect(isSafeRedirect("tournaments")).toBe(true);
   });
+
+  test("invalid urls return false", () => {
+    expect(isSafeRedirect("invalid url")).toBe(false);
+  })
+  
+  test("ht!tp:/weird..url is not safe", () => {
+    expect(isSafeRedirect("ht!tp:/weird..ur")).toBe(false);
+  })
 });
 
-// Optional: formatToUTCDate
+// formatToUTCDate
 describe("formatToUTCDate", () => {
   test("formats to MM/DD/YYYY", () => {
     const date = new Date(Date.UTC(2025, 0, 2));

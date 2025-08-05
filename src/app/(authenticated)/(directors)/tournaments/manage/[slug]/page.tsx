@@ -70,7 +70,7 @@ export default async function Home({
       <Separator />
       <h2 className="text-2xl">View Applications</h2>
       <CopyableLink
-        link={`${process.env.NEXT_PUBLIC_SITE_URL}/tournaments/apply/${slug}`}
+        link={`${process.env.NEXT_PUBLIC_SITE_URL!}/tournaments/apply/${slug}`}
         label="Application Link"
       />
       <Suspense fallback={<Button>Loading Applications</Button>}>

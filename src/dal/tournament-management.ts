@@ -490,7 +490,7 @@ export async function getInviteManagement(
     return { error: toAppError(inviteError) };
   }
   const link =
-    inviteData?.id ? `${process.env.NEXT_PUBLIC_SITE_URL}/tournaments/invite/${inviteData.id}` : "";
+    inviteData?.id ? `${process.env.NEXT_PUBLIC_SITE_URL!}/tournaments/invite/${inviteData.id}` : "";
   return { data: { link, emails } };
 }
 

@@ -1,9 +1,6 @@
 import ApplyForm from "./ApplyForm";
-import ErrorComponent from "@/components/ui/ErrorComponent";
+import ErrorComponent from "./ErrorComponent";
 import { ERROR_CODES } from "@/lib/errors";
-import { CONTACT_EMAIL } from "@/lib/config";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   getSavedTournamentApplication,
   getTournamentApplicationInfo,

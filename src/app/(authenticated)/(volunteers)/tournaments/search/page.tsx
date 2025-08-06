@@ -1,5 +1,5 @@
 import MobileTournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFiltersMobile";
-import Search from "@/components/ui/Search";
+import Search from "@/components/custom/Search";
 import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/search/TournamentFilters";
 import { Suspense } from "react";
 import TournamentTableSkeleton from "./TournamentTableSkeleton";

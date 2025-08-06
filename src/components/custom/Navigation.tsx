@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import {
   Sheet,
   SheetClose,
@@ -7,17 +7,17 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/components/shadcn/sheet";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+} from "@/components/shadcn/navigation-menu";
 import { Menu, XIcon } from "lucide-react";
 import Link from "next/link";
 import { logout } from "@/app/actions/auth";
-import { Separator } from "./separator";
+import { Separator } from "../shadcn/separator";
 import DecanterIcon from "./DecanterIcon";
 import LogoutButton from "./LogoutButton";
 

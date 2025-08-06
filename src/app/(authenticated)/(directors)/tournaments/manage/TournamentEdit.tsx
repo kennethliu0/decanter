@@ -1,14 +1,14 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/shadcn/input";
 import { startTransition, useActionState, useEffect, useMemo } from "react";
 import LocationCombobox from "./LocationCombobox";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { infer as zodInfer } from "zod/v4";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import AvatarUpload from "@/components/ui/AvatarUpload";
-import { Switch } from "@/components/ui/switch";
+import AvatarUpload from "@/components/custom/AvatarUpload";
+import { Switch } from "@/components/shadcn/switch";
 import {
   FormField,
   FormItem,
@@ -17,8 +17,8 @@ import {
   FormMessage,
   FormDescription,
   Form,
-} from "@/components/ui/form";
-import DatePicker from "@/components/ui/DatePicker";
+} from "@/components/shadcn/form";
+import DatePicker from "@/components/custom/DatePicker";
 import {
   EditTournamentSchemaServer as ServerSchema,
   EditTournamentSchemaClient as FormSchema,
@@ -26,7 +26,7 @@ import {
 import VolunteerApplicationEdit from "./VolunteerApplicationEdit";
 import { upsertTournamentAction } from "@/app/actions/tournaments";
 import { parse, format } from "date-fns";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/components/shadcn/label";
 import { Check, Clock } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -35,8 +35,8 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import LoadingButton from "@/components/ui/LoadingButton";
+} from "@/components/shadcn/select";
+import LoadingButton from "@/components/custom/LoadingButton";
 
 type Props = {
   tournament?: zodInfer<typeof ServerSchema>;

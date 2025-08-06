@@ -1,10 +1,10 @@
 import Link from "next/link";
 import TournamentEditSkeleton from "../TournamentEditSkeleton";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@/components/shadcn/separator";
 import SkeletonTable from "../VolunteerTableSkeleton";
 import InviteManagementSkeleton from "../InviteManagementSkeleton";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/shadcn/label";
+import { Skeleton } from "@/components/shadcn/skeleton";
 
 function LoadingPage() {
   return (

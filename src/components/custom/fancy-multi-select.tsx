@@ -2,13 +2,13 @@
 
 import { MapPin, X } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/shadcn/badge";
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@/components/shadcn/command";
 import { Command as CommandPrimitive } from "cmdk";
 import { useCallback, useRef, useState } from "react";
 import clsx from "clsx";

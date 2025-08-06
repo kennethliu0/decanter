@@ -5,8 +5,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+} from "@/components/shadcn/popover";
+import { Button } from "@/components/shadcn/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
@@ -15,7 +15,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "@/components/ui/command";
+} from "@/components/shadcn/command";
 import clsx from "clsx";
 
 type Props = {

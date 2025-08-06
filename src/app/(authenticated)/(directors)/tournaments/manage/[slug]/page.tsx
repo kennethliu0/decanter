@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@/components/shadcn/separator";
 import Link from "next/link";
 import TournamentEdit from "../TournamentEdit";
 import ApplicationsDownloadButton from "../ApplicationsDownloadButton";
@@ -12,10 +12,10 @@ import {
   getTournamentManagement,
 } from "@/dal/tournament-management";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { CONTACT_EMAIL } from "@/lib/config";
 import InviteManagement from "../InviteManagement";
-import { CopyableLink } from "@/components/ui/copyable-link";
+import { CopyableLink } from "@/components/custom/copyable-link";
 export default async function Home({
   params,
 }: {

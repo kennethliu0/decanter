@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/shadcn/label";
+import { Skeleton } from "@/components/shadcn/skeleton";
 
 export default function LoadingProfile() {
   return (

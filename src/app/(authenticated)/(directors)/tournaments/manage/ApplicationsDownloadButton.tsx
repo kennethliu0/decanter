@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { Result } from "@/lib/definitions";
 import { Download } from "lucide-react";
 import { useParams } from "next/navigation";

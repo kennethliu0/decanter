@@ -1,6 +1,6 @@
 import Link from "next/link";
 import TournamentAdminTable from "./TournamentAdminTable";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { Suspense } from "react";
 import TournamentAdminTableSkeleton from "./TournamentAdminTableSkeleton";
 

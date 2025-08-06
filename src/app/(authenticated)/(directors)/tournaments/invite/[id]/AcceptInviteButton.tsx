@@ -1,7 +1,7 @@
 "use client";
 
 import { acceptTournamentInviteAction } from "@/app/actions/tournaments";
-import LoadingButton from "@/components/ui/LoadingButton";
+import LoadingButton from "@/components/custom/LoadingButton";
 import { startTransition, useActionState, useEffect } from "react";
 import { toast } from "sonner";
 

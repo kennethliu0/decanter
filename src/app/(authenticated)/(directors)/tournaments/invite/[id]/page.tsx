@@ -3,8 +3,12 @@ import AcceptInviteButton from "./AcceptInviteButton";
 import { getTournamentInviteInfo } from "@/dal/tournament-management";
 import { ERROR_CODES } from "@/lib/errors";
 import { notFound, redirect } from "next/navigation";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import DecanterIcon from "@/components/ui/DecanterIcon";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/shadcn/avatar";
+import DecanterIcon from "@/components/custom/DecanterIcon";
 
 type Props = {
   params: Promise<{ id: string }>;

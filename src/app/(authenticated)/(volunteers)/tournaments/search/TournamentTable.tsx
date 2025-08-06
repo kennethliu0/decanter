@@ -2,12 +2,12 @@
 
 import { TournamentApplyCard } from "./TournamentApplyCard";
 import { clearUTCTime, fuzzyMatch } from "@/lib/utils";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination } from "@/components/custom/pagination";
 import { SEASON_END_DATE, TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
 import { useSearchParams } from "next/navigation";
 import { infer as zodInfer } from "zod/v4";
 import { TournamentCards } from "@/lib/definitions";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/shadcn/alert";
 import { AlertCircleIcon } from "lucide-react";
 
 type Props = {

@@ -1,7 +1,7 @@
 import { AppError } from "@/lib/errors";
 import Link from "next/link";
 import React from "react";
-import { Button } from "./button";
+import { Button } from "@/components/shadcn/button";
 
 type Props = {
   error: AppError;

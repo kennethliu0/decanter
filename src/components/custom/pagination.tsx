@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/shadcn/button";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeftIcon,
@@ -47,7 +47,7 @@ type Props = {
   totalPages: number;
 } & React.ComponentProps<typeof PaginationRoot>;
 
-const Pagination = ({ totalPages, ...props }: Props) => {
+export const Pagination = ({ totalPages, ...props }: Props) => {
   const pathName = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -94,6 +94,7 @@ const Pagination = ({ totalPages, ...props }: Props) => {
   );
 };
 
+/* v8 ignore start */
 function PaginationRoot({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
@@ -208,7 +209,6 @@ function PaginationEllipsis({
 }
 
 export {
-  Pagination,
   PaginationRoot,
   PaginationContent,
   PaginationLink,
@@ -217,3 +217,5 @@ export {
   PaginationNext,
   PaginationEllipsis,
 };
+
+/*v8 ignore stop */

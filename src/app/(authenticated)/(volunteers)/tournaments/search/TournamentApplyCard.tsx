@@ -1,14 +1,18 @@
 import { Globe } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/shadcn/avatar";
+import { Badge } from "@/components/shadcn/badge";
 import Link from "next/link";
 import { format } from "date-fns";
 import { TournamentCardDisplay } from "@/lib/definitions";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { infer as zodInfer } from "zod/v4";
 import { formatToUTCDate } from "@/lib/utils";
-import DecanterIcon from "@/components/ui/DecanterIcon";
-import { ExternalLinkIcon } from "@/components/ui/external-link-icon";
+import DecanterIcon from "@/components/custom/DecanterIcon";
+import { ExternalLinkIcon } from "@/components/custom/external-link-icon";
 
 type Props = {
   tournament: zodInfer<typeof TournamentCardDisplay>;

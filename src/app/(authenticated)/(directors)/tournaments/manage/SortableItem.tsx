@@ -4,7 +4,7 @@ import { ComponentProps } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import VolunteerField from "./VolunteerField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { GripVertical } from "lucide-react";
 
 type Props = {

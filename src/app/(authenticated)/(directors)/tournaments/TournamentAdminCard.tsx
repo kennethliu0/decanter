@@ -1,11 +1,15 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/shadcn/avatar";
+import { Badge } from "@/components/shadcn/badge";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { TournamentCardAdminDisplay } from "@/lib/definitions";
 import { infer as zodInfer } from "zod/v4";
 import { formatToUTCDate } from "@/lib/utils";
-import DecanterIcon from "@/components/ui/DecanterIcon";
+import DecanterIcon from "@/components/custom/DecanterIcon";
 
 type Props = {
   tournament: zodInfer<typeof TournamentCardAdminDisplay>;

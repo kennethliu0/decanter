@@ -1,4 +1,4 @@
-import Navigation from "@/components/ui/Navigation";
+import Navigation from "@/components/custom/Navigation";
 export default function AuthenticatedLayout({
   children,
 }: Readonly<{

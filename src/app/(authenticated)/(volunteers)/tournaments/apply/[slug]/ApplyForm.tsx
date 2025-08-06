@@ -1,7 +1,11 @@
 "use client";
 
 import { upsertTournamentApplicationAction } from "@/app/actions/tournaments";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/shadcn/avatar";
 import {
   InsertTournamentApplicationSchema,
   TournamentApplicationInfoSchema,
@@ -19,14 +23,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/shadcn/form";
 import GroupedEventPreferencesInput from "../../../profile/GroupedEventPreferencesInput";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/shadcn/textarea";
+import { Input } from "@/components/shadcn/input";
 import { toast } from "sonner";
-import LoadingButton from "@/components/ui/LoadingButton";
+import LoadingButton from "@/components/custom/LoadingButton";
 import { useRouter } from "next/navigation";
-import DecanterIcon from "@/components/ui/DecanterIcon";
+import DecanterIcon from "@/components/custom/DecanterIcon";
 
 type Props = {
   application: zodInfer<typeof TournamentApplicationInfoSchema>;

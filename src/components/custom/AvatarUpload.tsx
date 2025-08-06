@@ -2,9 +2,9 @@
 
 import React, { ChangeEvent, useState } from "react";
 import { UploadIcon, TrashIcon, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/avatar";
 import clsx from "clsx";
 import { toast } from "sonner";
 import DecanterIcon from "./DecanterIcon";

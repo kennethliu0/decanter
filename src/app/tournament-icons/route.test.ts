@@ -38,7 +38,7 @@ const form = new FormData();
 form.append("image", blob, "test-icon.png");
 
 describe("/tournament-icons", () => {
-  it("should return 200", async () => {
+  it("returns 200", async () => {
     createSupabaseMock();
 
     const req = new NextRequest(
@@ -53,7 +53,29 @@ describe("/tournament-icons", () => {
     expect(res.status).toBe(200);
   });
 
-  it("should redirect to /login if not authenticated", async () => {
+  it("calls Supabase", async () => {
+    const createClientMock = vi.fn().mockResolvedValue({
+      data: {
+        claims: { sub: "8b9c6149-b4a8-414f-adf2-a1ccbe7ecd8f" },
+      },
+    });
+    const fileUploadMock = vi.fn().mockResolvedValue({ error: null });
+    createSupabaseMock(createClientMock, fileUploadMock);
+
+    const req = new NextRequest(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
+      {
+        method: "POST",
+        body: form,
+      },
+    );
+
+    await POST(req);
+    expect(createClientMock).toHaveBeenCalledTimes(1);
+    expect(fileUploadMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("redirects to /login if not authenticated", async () => {
     createSupabaseMock(vi.fn().mockResolvedValue({ data: null }));
 
     const req = new NextRequest(
@@ -70,7 +92,7 @@ describe("/tournament-icons", () => {
       `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
     );
   });
-  it("should return resource url on success", async () => {
+  it("returns resource url on success", async () => {
     createSupabaseMock();
 
     const req = new NextRequest(
@@ -89,7 +111,7 @@ describe("/tournament-icons", () => {
     );
   });
 
-  it("should return error message when upload fails", async () => {
+  it("returns error message when upload fails", async () => {
     createSupabaseMock(undefined, vi.fn().mockResolvedValue({ error: true }));
 
     const req = new NextRequest(
@@ -106,7 +128,7 @@ describe("/tournament-icons", () => {
       "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
     );
   });
-  it("should return error message when file is not an image", async () => {
+  it("returns error message when file is not an image", async () => {
     createSupabaseMock();
     const imageBuffer = await readFile(
       "src/app/tournament-icons/evil-test.txt",

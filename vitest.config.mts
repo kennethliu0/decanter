@@ -6,7 +6,15 @@ import { loadEnv } from 'vite'
 export default defineConfig(({ mode }) => ({
   plugins: [tsconfigPaths(), react()],
   test: {
-    environment: 'jsdom',
+    environment: 'node',
+    environmentNatchGlobs: [
+      // actions run on the server
+      ['src/app/actions/**', 'node'],
+      // route handlers run on the server
+      ['**/route.ts', 'node'],
+      // app directory needs access to the dom
+      ['src/app/**', 'jsdom'],
+    ],
     globals: true,
     env: loadEnv(mode, process.cwd(), ''),
     coverage: {

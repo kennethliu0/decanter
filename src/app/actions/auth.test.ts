@@ -191,4 +191,29 @@ describe("signInWithGoogleAction", async () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("signInWithOAuth did not return a URL");
   });
+
+  it("handles Supabase errors", async () => {
+    const signInMock = vi
+      .fn()
+      .mockResolvedValue({ error: new AuthApiError("Error", 400, undefined) });
+    createSignInSupabaseMock(signInMock);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(signInWithGoogleAction("/tournaments")).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
+
+    expect(signInMock).toHaveBeenCalledTimes(1);
+    expect(redirect).toHaveBeenCalledExactlyOnceWith(
+      "/login?message=oauth_failed",
+    );
+    expect(spy).toHaveBeenCalledExactlyOnceWith(
+      "Error signing in with Google:",
+      {
+        message: "Error",
+        code: undefined,
+        name: "AuthApiError",
+      },
+    );
+  });
 });

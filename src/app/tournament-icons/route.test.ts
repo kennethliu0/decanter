@@ -206,4 +206,20 @@ describe("/tournament-icons", () => {
     expect(res.status).toBe(403);
     expect(await res.json()).toEqual({ error: "Invalid origin" });
   });
+  it("returns if no file is attached", async () => {
+    const formData = new FormData();
+    const req = new NextRequest(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
+      {
+        method: "POST",
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
+        body: formData,
+      },
+    );
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "No File uploaded" });
+  });
 });

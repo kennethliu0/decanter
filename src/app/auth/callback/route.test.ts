@@ -81,7 +81,7 @@ describe("/auth/callback", () => {
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournaments`,
     );
   });
-  it("should check unsafe 'next' params", async () => {
+  it("checks unsafe 'next' params", async () => {
     createSupabaseMock();
     using isSafeSpy = vi.spyOn(utils, "isSafeRedirect");
     const response = await GET(
@@ -93,6 +93,16 @@ describe("/auth/callback", () => {
     expect(response.status).toBe(307);
     expect(response.headers.get("Location")).toBe(
       `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+    );
+  });
+  it("checks origin url", async () => {
+    createSupabaseMock();
+    const response = await GET(
+      new NextRequest(`https://evil.com/auth/callback?code=1234`),
+    );
+    expect(response.status).toBe(307);
+    expect(response.headers.get("Location")).toBe(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/login?message=invalid-origin`,
     );
   });
 });

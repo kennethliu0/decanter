@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       // URL to redirect to after successful auth exchange, combining origin and next path
       const safeNext = isSafeRedirect(next) ? next : "/dashboard";
       if (origin !== process.env.NEXT_PUBLIC_SITE_URL!) {
-        return Response.redirect(
+        return NextResponse.redirect(
           `${process.env.NEXT_PUBLIC_SITE_URL!}/login?message=invalid-origin`,
         );
       }

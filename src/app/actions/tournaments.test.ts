@@ -1,18 +1,37 @@
-import { upsertTournament } from "@/dal/tournament-management";
+import {
+  acceptTournamentInvite,
+  upsertTournament,
+} from "@/dal/tournament-management";
 import { upsertTournamentApplication } from "@/dal/tournament-application";
 import {
+  acceptTournamentInviteAction,
   upsertTournamentAction,
   upsertTournamentApplicationAction,
 } from "./tournaments";
 import { redirect, notFound } from "next/navigation";
-import { AppAuthError, TournamentNotFoundError } from "@/lib/errors";
+import {
+  AppAuthError,
+  ERROR_CODES,
+  TournamentNotFoundError,
+} from "@/lib/errors";
 import { infer as zodInfer } from "zod/v4";
 import {
   EditTournamentSchemaServer,
   InsertTournamentApplicationSchema,
 } from "@/lib/definitions";
 
-vi.mock("next/navigation");
+vi.mock("next/navigation", async () => {
+  const actual = await vi.importActual("next/navigation");
+  return {
+    ...actual,
+    redirect: vi.fn(() => {
+      throw new Error("NEXT_REDIRECT");
+    }),
+    notFound: vi.fn(() => {
+      throw new Error("NEXT_NOT_FOUND");
+    }),
+  };
+});
 vi.mock("@/dal/tournament-management");
 vi.mock("@/dal/tournament-application");
 
@@ -60,9 +79,7 @@ describe("upsertTournamentAction", () => {
   });
 
   it("calls upsertTournament", async () => {
-    vi.mocked(upsertTournament).mockResolvedValue({
-      data: { slug: "test-tournament-slug" },
-    });
+    vi.mocked(upsertTournament).mockResolvedValue({});
     await upsertTournamentAction(undefined, sampleTournament);
     expect(upsertTournament).toHaveBeenCalledTimes(1);
     expect(upsertTournament).toHaveBeenCalledWith(sampleTournament);
@@ -78,7 +95,9 @@ describe("upsertTournamentAction", () => {
     vi.mocked(upsertTournament).mockResolvedValue({
       data: { slug: "test-tournament-slug" },
     });
-    await upsertTournamentAction(undefined, sampleTournament);
+    await expect(
+      upsertTournamentAction(undefined, sampleTournament),
+    ).rejects.toThrow("NEXT_REDIRECT");
     expect(redirect).toHaveBeenCalledTimes(1);
     expect(redirect).toHaveBeenCalledWith(
       "/tournaments/manage/test-tournament-slug",
@@ -93,7 +112,9 @@ describe("upsertTournamentAction", () => {
 
   it("redirects to login page if unauthenticated", async () => {
     vi.mocked(upsertTournament).mockResolvedValue({ error: AppAuthError });
-    await upsertTournamentAction(undefined, sampleTournament);
+    await expect(
+      upsertTournamentAction(undefined, sampleTournament),
+    ).rejects.toThrow("NEXT_REDIRECT");
     expect(redirect).toHaveBeenCalledTimes(1);
     expect(redirect).toHaveBeenCalledWith("/login");
   });
@@ -102,8 +123,22 @@ describe("upsertTournamentAction", () => {
     vi.mocked(upsertTournament).mockResolvedValue({
       error: TournamentNotFoundError,
     });
-    await upsertTournamentAction(undefined, sampleTournament);
+    await expect(
+      upsertTournamentAction(undefined, sampleTournament),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
     expect(notFound).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns error message", async () => {
+    vi.mocked(upsertTournament).mockResolvedValue({
+      error: {
+        message: "Misc. error",
+        code: ERROR_CODES.UNKNOWN,
+      },
+    });
+    const result = await upsertTournamentAction(undefined, sampleTournament);
+    expect(result.success).toBe(false);
+    expect(result.message).toBe("Misc. error");
   });
 });
 
@@ -155,7 +190,9 @@ describe("upsertTournamentApplicationAction", () => {
     vi.mocked(upsertTournamentApplication).mockResolvedValue({
       error: AppAuthError,
     });
-    await upsertTournamentApplicationAction(undefined, sampleApplication);
+    await expect(
+      upsertTournamentApplicationAction(undefined, sampleApplication),
+    ).rejects.toThrow("NEXT_REDIRECT");
     expect(redirect).toHaveBeenCalledTimes(1);
     expect(redirect).toHaveBeenCalledWith("/login");
   });
@@ -164,7 +201,92 @@ describe("upsertTournamentApplicationAction", () => {
     vi.mocked(upsertTournamentApplication).mockResolvedValue({
       error: TournamentNotFoundError,
     });
-    await upsertTournamentApplicationAction(undefined, sampleApplication);
+    await expect(
+      upsertTournamentApplicationAction(undefined, sampleApplication),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
     expect(notFound).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns error message", async () => {
+    vi.mocked(upsertTournamentApplication).mockResolvedValue({
+      error: {
+        message: "Misc. error",
+        code: ERROR_CODES.UNKNOWN,
+      },
+    });
+    const result = await upsertTournamentApplicationAction(
+      undefined,
+      sampleApplication,
+    );
+    expect(result.success).toBe(false);
+    expect(result.message).toBe("Misc. error");
+  });
+});
+
+describe("acceptTournamentInviteAction", () => {
+  const inviteId = "bf1cd522-89b1-4152-9f9a-ff426ce634a9";
+
+  it("validates user inputs", async () => {
+    const invalidInviteId = "invalid id";
+    await expect(
+      acceptTournamentInviteAction(undefined, invalidInviteId),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
+    expect(acceptTournamentInvite).not.toHaveBeenCalled();
+    expect(notFound).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls acceptTournamentInvite", async () => {
+    vi.mocked(acceptTournamentInvite).mockResolvedValue({});
+    await expect(
+      acceptTournamentInviteAction(undefined, inviteId),
+    ).rejects.toThrow("NEXT_REDIRECT");
+    expect(acceptTournamentInvite).toHaveBeenCalledTimes(1);
+    expect(acceptTournamentInvite).toHaveBeenCalledWith(inviteId);
+  });
+
+  it("redirects to tournament management page", async () => {
+    vi.mocked(acceptTournamentInvite).mockResolvedValue({
+      data: { slug: "test-tournament-slug" },
+    });
+    await expect(
+      acceptTournamentInviteAction(undefined, inviteId),
+    ).rejects.toThrow("NEXT_REDIRECT");
+    expect(redirect).toHaveBeenCalledTimes(1);
+    expect(redirect).toHaveBeenCalledWith(
+      "/tournaments/manage/test-tournament-slug",
+    );
+  });
+
+  it("redirects to login page if unauthenticated", async () => {
+    vi.mocked(acceptTournamentInvite).mockResolvedValue({
+      error: AppAuthError,
+    });
+    await expect(
+      acceptTournamentInviteAction(undefined, inviteId),
+    ).rejects.toThrow("NEXT_REDIRECT");
+    expect(redirect).toHaveBeenCalledTimes(1);
+    expect(redirect).toHaveBeenCalledWith("/login");
+  });
+
+  it("calls notFound if ID doesn't match", async () => {
+    vi.mocked(acceptTournamentInvite).mockResolvedValue({
+      error: TournamentNotFoundError,
+    });
+    await expect(
+      acceptTournamentInviteAction(undefined, inviteId),
+    ).rejects.toThrow("NEXT_NOT_FOUND");
+    expect(notFound).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns error message", async () => {
+    vi.mocked(acceptTournamentInvite).mockResolvedValue({
+      error: {
+        message: "Misc. error",
+        code: ERROR_CODES.UNKNOWN,
+      },
+    });
+    const result = await acceptTournamentInviteAction(undefined, inviteId);
+    expect(result.success).toBe(false);
+    expect(result.message).toBe("Misc. error");
   });
 });

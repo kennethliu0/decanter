@@ -8,7 +8,6 @@ import { type Mock, vi } from "vitest";
 import { headers } from "next/headers";
 
 vi.mock("next/cache");
-vi.mock("next/navigation");
 
 vi.mock("next/headers", () => ({
   headers: vi.fn(async () => ({
@@ -17,8 +16,6 @@ vi.mock("next/headers", () => ({
     ),
   })),
 }));
-
-vi.mock("@/utils/supabase/server");
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -37,7 +34,7 @@ describe("logout", async () => {
     const signOutMock = vi.fn().mockResolvedValue({ error: null });
     createSignOutSupabaseMock(signOutMock);
 
-    await logout();
+    await expect(logout()).rejects.toThrow("NEXT_REDIRECT");
 
     expect(createClient).toHaveBeenCalledTimes(1);
     expect(signOutMock).toHaveBeenCalledTimes(1);
@@ -46,7 +43,7 @@ describe("logout", async () => {
   it("redirects to login page", async () => {
     createSignOutSupabaseMock();
 
-    await logout();
+    await expect(logout()).rejects.toThrow("NEXT_REDIRECT");
 
     expect(revalidatePath).toHaveBeenCalledTimes(1);
     expect(revalidatePath).toHaveBeenCalledWith("/login", "layout");
@@ -60,8 +57,7 @@ describe("logout", async () => {
         error: new AuthApiError("message", 400, undefined),
       }),
     );
-
-    using spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
 
     const result = await logout();
 
@@ -107,7 +103,7 @@ describe("signInWithGoogleAction", async () => {
       .mockResolvedValue({ data: { url: "http://googleauth.com" } });
     createSignInSupabaseMock(signInMock);
 
-    await signInWithGoogleAction("");
+    await expect(signInWithGoogleAction("")).rejects.toThrow("NEXT_REDIRECT");
 
     expect(createClient as Mock).toHaveBeenCalledTimes(1);
     expect(signInMock).toHaveBeenCalledTimes(1);
@@ -125,7 +121,9 @@ describe("signInWithGoogleAction", async () => {
       .mockResolvedValue({ data: { url: "http://googleauth.com" } });
     createSignInSupabaseMock(signInMock);
 
-    await signInWithGoogleAction("/tournaments");
+    await expect(signInWithGoogleAction("/tournaments")).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
 
     expect(signInMock).toHaveBeenCalledTimes(1);
     expect(signInMock).toHaveBeenCalledWith({
@@ -142,7 +140,9 @@ describe("signInWithGoogleAction", async () => {
       .mockResolvedValue({ data: { url: "http://googleauth.com" } });
     createSignInSupabaseMock(signInMock);
 
-    await signInWithGoogleAction("https://evil.com");
+    await expect(signInWithGoogleAction("https://evil.com")).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
 
     expect(signInMock).toHaveBeenCalledTimes(1);
     expect(signInMock).toHaveBeenCalledWith({
@@ -165,11 +165,30 @@ describe("signInWithGoogleAction", async () => {
 
     using spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await signInWithGoogleAction("/tournaments");
+    await expect(signInWithGoogleAction("/tournaments")).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
 
     expect(redirect).toHaveBeenCalledTimes(1);
     expect(redirect).toHaveBeenCalledWith("/login");
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith("Untrusted origin:", "https://evil.com");
+  });
+
+  it("checks google auth url", async () => {
+    const signInMock = vi.fn().mockResolvedValue({ data: { url: "" } });
+    createSignInSupabaseMock(signInMock);
+
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(signInWithGoogleAction("/tournaments")).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
+
+    expect(signInMock).toHaveBeenCalledTimes(1);
+    expect(redirect).toHaveBeenCalledTimes(1);
+    expect(redirect).toHaveBeenCalledWith("/login?message=oauth_failed");
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith("signInWithOAuth did not return a URL");
   });
 });

@@ -84,7 +84,7 @@ export async function acceptTournamentInviteAction(
   const { data, error } = await acceptTournamentInvite(validatedFields.data);
   if (error) {
     switch (error.code) {
-      case ERROR_CODES.AUTH_ERROR:
+      case ERROR_CODES.UNAUTHORIZED:
         redirect("/login");
       case ERROR_CODES.NOT_FOUND:
         notFound();

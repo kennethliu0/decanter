@@ -16,7 +16,7 @@ const page = async (props: Props) => {
 
   if (error) {
     switch (error.code) {
-      case ERROR_CODES.AUTH_ERROR:
+      case ERROR_CODES.UNAUTHORIZED:
         redirect("/login");
       case ERROR_CODES.NOT_FOUND:
         notFound();

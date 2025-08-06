@@ -89,7 +89,6 @@ export async function acceptTournamentInviteAction(
       case ERROR_CODES.NOT_FOUND:
         notFound();
       default:
-        console.error(error);
         return { message: error.message, success: false };
     }
   }

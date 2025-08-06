@@ -5,7 +5,7 @@ export const SEASON_YEAR = 2026;
 export const EVENTS = {
   B: [
     "Air Trajectory",
-    "Anatomy & Physiology",
+    "Anatomy and Physiology",
     "Boomilever",
     "Bungee Drop",
     "Circuit Lab",
@@ -29,7 +29,7 @@ export const EVENTS = {
     "Write It Do It",
   ],
   C: [
-    "Anatomy & Physiology",
+    "Anatomy and Physiology",
     "Astronomy",
     "Boomilever",
     "Bungee Drop",

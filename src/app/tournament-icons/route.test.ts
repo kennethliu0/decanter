@@ -3,7 +3,6 @@ import { POST } from "./route";
 import { Mock } from "vitest";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { readFile } from "fs/promises";
-import { v4 as uuidv4 } from "uuid";
 import { NextRequest } from "next/server";
 
 vi.mock("uuid", () => ({
@@ -46,6 +45,9 @@ describe("/tournament-icons", () => {
       {
         method: "POST",
         body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
       },
     );
 
@@ -67,6 +69,9 @@ describe("/tournament-icons", () => {
       {
         method: "POST",
         body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
       },
     );
 
@@ -74,7 +79,6 @@ describe("/tournament-icons", () => {
     expect(createClientMock).toHaveBeenCalledTimes(1);
     expect(fileUploadMock).toHaveBeenCalledTimes(1);
   });
-
   it("redirects to /login if not authenticated", async () => {
     createSupabaseMock(vi.fn().mockResolvedValue({ data: null }));
 
@@ -83,6 +87,9 @@ describe("/tournament-icons", () => {
       {
         method: "POST",
         body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
       },
     );
 
@@ -100,6 +107,9 @@ describe("/tournament-icons", () => {
       {
         method: "POST",
         body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
       },
     );
 
@@ -107,7 +117,7 @@ describe("/tournament-icons", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.url).toBe(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/tournament-icons/8b9c6149-b4a8-414f-adf2-a1ccbe7ecd8f_test-icon.png`,
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/tournament-icons/8b9c6149-b4a8-414f-adf2-a1ccbe7ecd8f.png`,
     );
   });
 
@@ -119,6 +129,9 @@ describe("/tournament-icons", () => {
       {
         method: "POST",
         body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
       },
     );
     const res = await POST(req);
@@ -142,6 +155,9 @@ describe("/tournament-icons", () => {
       {
         method: "POST",
         body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
       },
     );
 
@@ -149,5 +165,45 @@ describe("/tournament-icons", () => {
     expect(res.status).toBe(400);
     const body = await res.json();
     expect(body.error).toBe("File is not an image");
+  });
+  it("returns error message when file is too large", async () => {
+    createSupabaseMock();
+    const largeBuffer = new Uint8Array(300 * 1024).fill(1);
+    const blob = new Blob([largeBuffer], { type: "image/png" });
+    const form = new FormData();
+    form.append("image", blob, "test-icon.png");
+
+    const req = new NextRequest(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
+      {
+        method: "POST",
+        body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
+      },
+    );
+
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe(
+      "Upload failed. Upload an image file that is less than 256 KB, or try again later.",
+    );
+  });
+  it("checks headers origin", async () => {
+    const req = new NextRequest(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
+      {
+        method: "POST",
+        body: form,
+        headers: {
+          Origin: "https://not-allowed.com",
+        },
+      },
+    );
+    const res = await POST(req);
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: "Invalid origin" });
   });
 });

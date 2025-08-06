@@ -4,6 +4,7 @@ import { Mock } from "vitest";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { readFile } from "fs/promises";
 import { v4 as uuidv4 } from "uuid";
+import { NextRequest } from "next/server";
 
 vi.mock("uuid", () => ({
   v4: vi.fn(() => "8b9c6149-b4a8-414f-adf2-a1ccbe7ecd8f"),
@@ -31,17 +32,16 @@ function createSupabaseMock(getClaimsMock?: Mock, fileUpload?: Mock) {
   } as unknown as SupabaseClient);
 }
 
+const imageBuffer = await readFile("src/app/tournament-icons/test-icon.png");
+const blob = new Blob([imageBuffer], { type: "image/png" });
+const form = new FormData();
+form.append("image", blob, "test-icon.png");
+
 describe("/tournament-icons", () => {
   it("should return 200", async () => {
     createSupabaseMock();
-    const imageBuffer = await readFile(
-      "src/app/tournament-icons/test-icon.png",
-    );
-    const blob = new Blob([imageBuffer], { type: "image/png" });
-    const form = new FormData();
-    form.append("image", blob, "test-icon.png");
 
-    const req = new Request(
+    const req = new NextRequest(
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
       {
         method: "POST",
@@ -55,14 +55,8 @@ describe("/tournament-icons", () => {
 
   it("should redirect to /login if not authenticated", async () => {
     createSupabaseMock(vi.fn().mockResolvedValue({ data: null }));
-    const imageBuffer = await readFile(
-      "src/app/tournament-icons/test-icon.png",
-    );
-    const blob = new Blob([imageBuffer], { type: "image/png" });
-    const form = new FormData();
-    form.append("image", blob, "test-icon.png");
 
-    const req = new Request(
+    const req = new NextRequest(
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
       {
         method: "POST",
@@ -71,21 +65,15 @@ describe("/tournament-icons", () => {
     );
 
     const res = await POST(req);
-    expect(res.status).toBe(302);
+    expect(res.status).toBe(307);
     expect(res.headers.get("Location")).toBe(
       `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
     );
   });
   it("should return resource url on success", async () => {
     createSupabaseMock();
-    const imageBuffer = await readFile(
-      "src/app/tournament-icons/test-icon.png",
-    );
-    const blob = new Blob([imageBuffer], { type: "image/png" });
-    const form = new FormData();
-    form.append("image", blob, "test-icon.png");
 
-    const req = new Request(
+    const req = new NextRequest(
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
       {
         method: "POST",
@@ -103,21 +91,14 @@ describe("/tournament-icons", () => {
 
   it("should return error message when upload fails", async () => {
     createSupabaseMock(undefined, vi.fn().mockResolvedValue({ error: true }));
-    const imageBuffer = await readFile(
-      "src/app/tournament-icons/test-icon.png",
-    );
-    const blob = new Blob([imageBuffer], { type: "image/png" });
-    const form = new FormData();
-    form.append("image", blob, "test-icon.png");
 
-    const req = new Request(
+    const req = new NextRequest(
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
       {
         method: "POST",
         body: form,
       },
     );
-
     const res = await POST(req);
     expect(res.status).toBe(400);
     const body = await res.json();
@@ -134,7 +115,7 @@ describe("/tournament-icons", () => {
     const form = new FormData();
     form.append("image", blob, "test-icon.png");
 
-    const req = new Request(
+    const req = new NextRequest(
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
       {
         method: "POST",

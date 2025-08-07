@@ -27,6 +27,10 @@ a:not([data-slot="button"]) {
   }
 }
 
+@theme inline {
+  --breakpoint-xs: 32.5em;
+}
+
 body {
   letter-spacing: var(--tracking-normal);
 }

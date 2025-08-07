@@ -28,7 +28,7 @@ export default function Home() {
               src="/hero_banner.svg"
               draggable="false"
               alt="logo"
-              className="relative dark:invert-95"
+              className="relative dark:invert-95 size-50 xs:size-112"
               style={{
                 userSelect: "none",
               }}

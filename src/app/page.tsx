@@ -5,22 +5,54 @@ import Link from "next/link";
 export default function Home() {
   return (
     <>
-      <div className="absolute opacity-15 min-w-screen min-h-full bg-[url(/background_pattern.svg)]"></div>
       <Header />
-      <main className="w-full grow flex flex-col items-center p-5 ">
-        <div className="relative flex flex-col items-center w-full bg-[radial-gradient(circle_at_50%_50%,var(--muted),transparent_35%)]">
+      <main
+        className="w-full grow flex flex-col items-center justify-center px-5"
+        style={{
+          backgroundImage: `
+    linear-gradient(to right, var(--muted) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--muted) 1px, transparent 1px)
+  `,
+          backgroundSize: "20px 20px",
+          WebkitMaskImage: `
+    linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)
+  `,
+          maskImage: `
+    linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)
+  `,
+        }}
+      >
+        <div className="relative flex flex-col items-center w-full">
           <div className="">
-            <img src='/hero_banner.svg' alt = "logo" className="relative dark:invert-95"/> 
+            <img
+              src="/hero_banner.svg"
+              draggable="false"
+              alt="logo"
+              className="relative dark:invert-95"
+              style={{
+                userSelect: "none",
+              }}
+            />
           </div>
         </div>
         <div className="relative">
-            <h1 className="text-center xl:text-7xl text-4xl md:text-5xl text-primary font-bold break-words">Seamless Volunteering</h1>
-            <p className="text-center text-1xl py-2 break-words">An open source platform connecting Science Olympiad tournaments to volunteers nationwide.</p>
+          <h1 className="text-center xl:text-7xl text-4xl md:text-5xl text-primary font-bold break-words">
+            Seamless Volunteering
+          </h1>
+          <p className="text-center text-1xl py-2 break-words">
+            An open source platform connecting Science Olympiad tournaments to
+            volunteers nationwide.
+          </p>
         </div>
         <div className="w-full flex gap-4 place-content-center-safe">
-            <Link href="/login">
-              <Button size="sm" className="text-bold">Sign Up Today</Button>
-            </Link>
+          <Link href="/login">
+            <Button
+              size="sm"
+              className="text-bold"
+            >
+              Sign Up Today
+            </Button>
+          </Link>
         </div>
       </main>
     </>

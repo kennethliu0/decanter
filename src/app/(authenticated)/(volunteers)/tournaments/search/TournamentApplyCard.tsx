@@ -1,13 +1,18 @@
 import { Globe } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/shadcn/avatar";
+import { Badge } from "@/components/shadcn/badge";
 import Link from "next/link";
 import { format } from "date-fns";
 import { TournamentCardDisplay } from "@/lib/definitions";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcn/button";
 import { infer as zodInfer } from "zod/v4";
 import { formatToUTCDate } from "@/lib/utils";
-import DecanterIcon from "@/components/ui/DecanterIcon";
+import DecanterIcon from "@/components/custom/DecanterIcon";
+import { ExternalLinkIcon } from "@/components/custom/external-link-icon";
 
 type Props = {
   tournament: zodInfer<typeof TournamentCardDisplay>;
@@ -61,20 +66,26 @@ const TournamentApplyCard = (props: Props) => {
           </p>
         </div>
         <div className="flex gap-1 items-center">
-          <Link href={props.tournament.websiteUrl}>
-            <Globe width="1.5em" />
-          </Link>
-          {props.tournament.applied ?
-            <Button
-              className="w-17"
-              disabled
+          <ExternalLinkIcon
+            href={props.tournament.websiteUrl}
+            iconSize={24}
+            label={`${props.tournament.name} external link`}
+          />
+
+          <Button
+            asChild
+            variant={props.tournament.applied ? "outline" : "default"}
+            className="w-17"
+          >
+            <Link
+              href={`/tournaments/apply/${props.tournament.slug}`}
+              className={
+                props.tournament.applied ? "" : "!text-primary-foreground"
+              }
             >
-              Applied
-            </Button>
-          : <Link href={`/tournaments/apply/${props.tournament.slug}`}>
-              <Button className="w-17">Apply</Button>
+              {props.tournament.applied ? "Applied" : "Apply"}
             </Link>
-          }
+          </Button>
         </div>
       </div>
     </div>

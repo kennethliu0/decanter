@@ -5,8 +5,8 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/components/shadcn/table";
+import { Skeleton } from "@/components/shadcn/skeleton";
 
 export default function SkeletonTable() {
   const skeletonRows = Array.from({ length: 10 });

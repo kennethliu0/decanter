@@ -1,3 +1,4 @@
+/* v8 ignore start */
 import React from "react";
 
 type IconProps = React.SVGProps<SVGSVGElement>;
@@ -37,3 +38,5 @@ const DecanterIcon: React.FC<IconProps> = ({
 );
 
 export default DecanterIcon;
+
+/* v8 ignore stop */

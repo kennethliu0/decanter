@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import Header from "@/components/ui/Header";
+import { Button } from "@/components/shadcn/button";
+import Header from "@/components/custom/Header";
 import Link from "next/link";
 
 export default function Home() {

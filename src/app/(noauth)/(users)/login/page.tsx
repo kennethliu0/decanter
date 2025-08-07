@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/components/shadcn/card";
 import GoogleSignInButton from "../GoogleSignInButton";
-import DecanterIcon from "@/components/ui/DecanterIcon";
+import DecanterIcon from "@/components/custom/DecanterIcon";
 export default function LoginPage() {
   return (
     <main className="flex flex-col items-center px-4">

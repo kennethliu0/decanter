@@ -1,10 +1,13 @@
 "use client";
 
 import { upsertTournamentApplicationAction } from "@/app/actions/tournaments";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/shadcn/avatar";
 import {
   InsertTournamentApplicationSchema,
-  Result,
   TournamentApplicationInfoSchema,
 } from "@/lib/definitions";
 import { format } from "date-fns";
@@ -16,19 +19,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/shadcn/form";
 import GroupedEventPreferencesInput from "../../../profile/GroupedEventPreferencesInput";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/shadcn/textarea";
+import { Input } from "@/components/shadcn/input";
 import { toast } from "sonner";
-import LoadingButton from "@/components/ui/LoadingButton";
+import LoadingButton from "@/components/custom/LoadingButton";
 import { useRouter } from "next/navigation";
-import DecanterIcon from "@/components/ui/DecanterIcon";
+import DecanterIcon from "@/components/custom/DecanterIcon";
 
 type Props = {
   application: zodInfer<typeof TournamentApplicationInfoSchema>;
@@ -41,6 +43,7 @@ type Props = {
   savedApplication:
     | zodInfer<typeof InsertTournamentApplicationSchema>
     | undefined;
+  submitted: boolean;
   toastProperty: string;
   toastStatus: string;
 };
@@ -139,73 +142,80 @@ const ApplyForm = (props: Props) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((values) => onSubmit(values, submitMode))}
-          className="space-y-2"
           autoComplete="off"
         >
-          <FormField
-            name="preferences"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Preferences</FormLabel>
-                <FormControl>
-                  <GroupedEventPreferencesInput
-                    division={tournament.division}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-                {state?.errors?.preferences && (
-                  <p className="text-sm text-destructive">
-                    {state.errors.preferences}
-                  </p>
-                )}
-              </FormItem>
-            )}
-          />
-          {tournament.applicationFields.map(({ type, prompt, id }, index) => (
+          <fieldset
+            disabled={props.submitted}
+            className="space-y-2"
+          >
             <FormField
-              key={id}
-              name={`responses.${index}.response`}
+              name="preferences"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{prompt}</FormLabel>
+                  <FormLabel>Confirm Preferences</FormLabel>
                   <FormControl>
-                    {type === "long" ?
-                      <Textarea
-                        className="resize-none"
-                        placeholder="Long response"
-                        {...field}
-                      />
-                    : <Input
-                        placeholder="Short response"
-                        {...field}
-                      />
-                    }
+                    <GroupedEventPreferencesInput
+                      division={tournament.division}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
+                  {state?.errors?.preferences && (
+                    <p className="text-sm text-destructive">
+                      {state.errors.preferences}
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
-          ))}
-          <div className="flex justify-end gap-2">
-            <LoadingButton
-              type="submit"
-              variant="outline"
-              pending={pending && submitMode === "save"}
-              disabled={!form.formState.isDirty}
-              onClick={() => setSubmitMode("save")}
-            >
-              Save Draft
-            </LoadingButton>
-            <LoadingButton
-              type="submit"
-              pending={pending && submitMode === "submit"}
-              disabled={!form.formState.isDirty}
-              onClick={() => setSubmitMode("submit")}
-            >
-              Submit
-            </LoadingButton>
-          </div>
+            {tournament.applicationFields.map(({ type, prompt, id }, index) => (
+              <FormField
+                key={id}
+                name={`responses.${index}.response`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{prompt}</FormLabel>
+                    <FormControl>
+                      {type === "long" ?
+                        <Textarea
+                          className="resize-none"
+                          placeholder="Long response"
+                          {...field}
+                        />
+                      : <Input
+                          placeholder="Short response"
+                          {...field}
+                        />
+                      }
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+            {props.submitted ?
+              <p className="text-muted-foreground text-sm text-end">
+                You have already submitted this application
+              </p>
+            : <div className="flex justify-end gap-2">
+                <LoadingButton
+                  type="submit"
+                  variant="outline"
+                  pending={pending && submitMode === "save"}
+                  onClick={() => setSubmitMode("save")}
+                >
+                  Save Draft
+                </LoadingButton>
+                <LoadingButton
+                  type="submit"
+                  pending={pending && submitMode === "submit"}
+                  onClick={() => setSubmitMode("submit")}
+                >
+                  Submit
+                </LoadingButton>
+              </div>
+            }
+          </fieldset>
         </form>
       </Form>
     </div>

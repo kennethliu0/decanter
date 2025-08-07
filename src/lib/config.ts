@@ -5,7 +5,7 @@ export const SEASON_YEAR = 2026;
 export const EVENTS = {
   B: [
     "Air Trajectory",
-    "Anatomy & Physiology",
+    "Anatomy and Physiology",
     "Boomilever",
     "Bungee Drop",
     "Circuit Lab",
@@ -29,7 +29,7 @@ export const EVENTS = {
     "Write It Do It",
   ],
   C: [
-    "Anatomy & Physiology",
+    "Anatomy and Physiology",
     "Astronomy",
     "Boomilever",
     "Bungee Drop",
@@ -60,7 +60,6 @@ export const EVENTS = {
 export const TOURNAMENT_CARDS_PER_PAGE: number = 12;
 
 export const CONTACT_EMAIL = "support@example.com";
-export const SITE_URL = "http://localhost:3000";
 export const allowedRedirectBases = ["/profile", "/tournaments"];
 
 export const CALENDAR_START_DATE = new Date(SEASON_YEAR - 1, 0, 1);

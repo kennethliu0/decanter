@@ -9,7 +9,7 @@ type Props = {};
 const TournamentTableServer = async (props: Props) => {
   const { data = [], error } = await getTournaments();
   if (error) {
-    if (error.code === ERROR_CODES.AUTH_ERROR) {
+    if (error.code === ERROR_CODES.UNAUTHORIZED) {
       redirect("/login");
     } else {
       return (

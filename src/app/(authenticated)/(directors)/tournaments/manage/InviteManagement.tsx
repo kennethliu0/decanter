@@ -1,6 +1,6 @@
 import { Result } from "@/lib/definitions";
 import { use } from "react";
-import { CopyableLink } from "@/components/ui/copyable-link";
+import { CopyableLink } from "@/components/custom/copyable-link";
 
 type Props = {
   invitePromise: Promise<Result<{ link: string; emails: string[] }>>;

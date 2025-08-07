@@ -15,12 +15,13 @@ export async function upsertProfileAction(
   if (!validatedFields.success) {
     return {
       errors: flattenError(validatedFields.error).fieldErrors,
+      success: false,
     };
   }
 
   const { error } = await upsertProfile(validatedFields.data);
   if (error) {
-    if (error.code === ERROR_CODES.AUTH_ERROR) {
+    if (error.code === ERROR_CODES.UNAUTHORIZED) {
       redirect("/login");
     } else {
       return { message: error.message, success: false };

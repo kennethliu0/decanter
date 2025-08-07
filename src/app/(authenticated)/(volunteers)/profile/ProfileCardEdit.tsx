@@ -1,9 +1,9 @@
 "use client";
 
 import { startTransition, useActionState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/shadcn/input";
+import { Textarea } from "@/components/shadcn/textarea";
+import { Button } from "@/components/shadcn/button";
 import { useForm } from "react-hook-form";
 import { infer as zodInfer } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,12 +15,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/shadcn/form";
 import GroupedEventPreferencesInput from "./GroupedEventPreferencesInput";
 import { VolunteerProfileSchema as FormSchema } from "@/lib/definitions";
 import { upsertProfileAction } from "@/app/actions/volunteer-profiles";
 import { toast } from "sonner";
-import LoadingButton from "@/components/ui/LoadingButton";
+import LoadingButton from "@/components/custom/LoadingButton";
 type Props = {
   profile: zodInfer<typeof FormSchema> | undefined;
 };

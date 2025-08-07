@@ -5,17 +5,17 @@ import {
   AccordionContent,
   AccordionTrigger,
   AccordionItem,
-} from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+} from "@/components/shadcn/accordion";
+import { Checkbox } from "@/components/shadcn/checkbox";
+import { Label } from "@/components/shadcn/label";
 import { useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { SEASON_END_DATE, US_STATES } from "@/lib/config";
 import { cn, safeParseDate } from "@/lib/utils";
-import DatePicker from "@/components/ui/DatePicker";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Button } from "@/components/ui/button";
-import { FancyMultiSelect } from "@/components/ui/fancy-multi-select";
+import DatePicker from "@/components/custom/DatePicker";
+import { RadioGroup, RadioGroupItem } from "@/components/shadcn/radio-group";
+import { Button } from "@/components/shadcn/button";
+import { FancyMultiSelect } from "@/components/custom/fancy-multi-select";
 
 type AccordionWrapperProps = React.ComponentProps<typeof Accordion>;
 

@@ -22,7 +22,6 @@ export enum ERROR_CODES {
   OVER_EMAIL_SEND_RATE = "OVER_EMAIL_SEND_RATE",
   OVER_REQUEST_RATE_LIMIT = "OVER_REQUEST_RATE_LIMIT",
   EMAIL_ADDRESS_INVALID = "EMAIL_ADDRESS_INVALID",
-  AUTH_ERROR = "AUTH_ERROR",
   DEADLINE_PASSED = "DEADLINE_PASSED",
 }
 
@@ -93,7 +92,7 @@ export function toAppError(err: unknown): AppError {
 
 function convertPostgrestError(err: PostgrestError): AppError {
   if (isAuthApiError(err)) {
-    return convertAuthApiError(err);
+    return AppAuthError;
   }
   switch (err.code) {
     case "23505": // unique_violation
@@ -128,69 +127,6 @@ function convertPostgrestError(err: PostgrestError): AppError {
           details: err.details,
           hint: err.hint,
         },
-      };
-  }
-}
-
-function convertAuthApiError(err: AuthApiError): AppError {
-  switch (err.code) {
-    case "email_not_confirmed":
-      return {
-        message: "Check your email to confirm this account.",
-        code: ERROR_CODES.EMAIL_NOT_CONFIRMED,
-        status: 401,
-        name: "AuthApiError",
-      };
-
-    case "invalid_login_credentials":
-      return {
-        message: "Invalid login credentials.",
-        code: ERROR_CODES.INVALID_CREDENTIALS,
-        status: 401,
-        name: "AuthApiError",
-      };
-
-    case "same_password":
-      return {
-        message: "Use a new password.",
-        code: ERROR_CODES.SAME_PASSWORD,
-        status: 400,
-        name: "AuthApiError",
-      };
-
-    case "over_email_send_rate":
-      return {
-        message:
-          "Too many emails sent to this address, please wait a while before trying again.",
-        code: ERROR_CODES.OVER_EMAIL_SEND_RATE,
-        status: 429,
-        name: "AuthApiError",
-      };
-
-    case "over_request_rate_limit":
-      return {
-        message:
-          "Too many requests from this client, please wait a while before trying again.",
-        code: ERROR_CODES.OVER_REQUEST_RATE_LIMIT,
-        status: 429,
-        name: "AuthApiError",
-      };
-
-    case "email_address_invalid":
-      return {
-        message: "Use a different email address.",
-        code: ERROR_CODES.EMAIL_ADDRESS_INVALID,
-        status: 400,
-        name: "AuthApiError",
-      };
-
-    default:
-      return {
-        message: err.message || "Authentication failed.",
-        code: ERROR_CODES.AUTH_ERROR,
-        status: err.status ?? 400,
-        name: "AuthApiError",
-        meta: { code: err.code },
       };
   }
 }

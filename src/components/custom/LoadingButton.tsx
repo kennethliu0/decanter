@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./button";
+import { Button } from "../shadcn/button";
 import { LoaderCircle } from "lucide-react";
 
 type Props = {

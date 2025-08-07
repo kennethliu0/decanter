@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { POST } from "./route";
 import { Mock } from "vitest";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { AuthError, SupabaseClient } from "@supabase/supabase-js";
 import { readFile } from "fs/promises";
 import { NextRequest } from "next/server";
 
@@ -80,7 +80,8 @@ describe("/tournament-icons", () => {
     expect(fileUploadMock).toHaveBeenCalledTimes(1);
   });
   it("redirects to /login if not authenticated", async () => {
-    createSupabaseMock(vi.fn().mockResolvedValue({ data: null }));
+    const authMock = vi.fn().mockResolvedValue({ data: null });
+    createSupabaseMock(authMock);
 
     const req = new NextRequest(
       `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
@@ -96,6 +97,22 @@ describe("/tournament-icons", () => {
     const res = await POST(req);
     expect(res.status).toBe(307);
     expect(res.headers.get("Location")).toBe(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
+    );
+    const req2 = new NextRequest(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/tournament-icons`,
+      {
+        method: "POST",
+        body: form,
+        headers: {
+          Origin: process.env.NEXT_PUBLIC_SITE_URL!,
+        },
+      },
+    );
+    authMock.mockResolvedValue({ error: new AuthError("not authenticated") });
+    const res2 = await POST(req2);
+    expect(res2.status).toBe(307);
+    expect(res2.headers.get("Location")).toBe(
       `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
     );
   });

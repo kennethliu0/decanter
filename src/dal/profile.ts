@@ -37,6 +37,7 @@ export async function upsertProfile(
   });
 
   if (error) {
+    console.error(error);
     return { error: toAppError(error) };
   }
   return {};
@@ -111,7 +112,7 @@ export async function getEventPreferences(): Promise<
   const validatedC = EventPreferencesC.safeParse(data.preferences_c);
 
   if (!validatedB.success || !validatedC.success) {
-    console.error(validatedB.error || validatedC.error);
+    console.error("Invalid database output for event preferences.");
     return {
       error: {
         message: "Invalid output from database.",

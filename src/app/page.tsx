@@ -48,7 +48,7 @@ export default function Home() {
           <Link href="/login">
             <Button
               size="sm"
-              className="text-bold"
+              className="text-bold text-primary-foreground"
             >
               Sign Up Today
             </Button>

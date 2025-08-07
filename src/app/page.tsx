@@ -45,14 +45,13 @@ export default function Home() {
           </p>
         </div>
         <div className="w-full flex gap-4 place-content-center-safe">
-          <Link href="/login">
-            <Button
-              size="sm"
-              className="text-bold text-primary-foreground"
-            >
-              Sign Up Today
-            </Button>
-          </Link>
+          <Button
+            size="sm"
+            className="font-semibold"
+            asChild
+          >
+            <Link href="/login">Sign Up Today</Link>
+          </Button>
         </div>
       </main>
     </>

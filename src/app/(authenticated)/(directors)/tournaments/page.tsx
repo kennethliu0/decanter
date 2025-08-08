@@ -11,9 +11,9 @@ export default function Home() {
       <Suspense fallback={<TournamentAdminTableSkeleton />}>
         <TournamentAdminTable />
       </Suspense>
-      <Link href="/tournaments/manage/new">
-        <Button>Create New Tournaments</Button>
-      </Link>
+      <Button asChild>
+        <Link href="/tournaments/manage/new">Create New Tournaments</Link>
+      </Button>
     </main>
   );
 }

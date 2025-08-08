@@ -26,9 +26,12 @@ const ErrorComponent = ({ error, link }: Props) => {
           Error Code: {error.code}
         </p>
       )}
-      <Link href={link.href}>
-        <Button variant="secondary">{link.label}</Button>
-      </Link>
+      <Button
+        variant="secondary"
+        asChild
+      >
+        <Link href={link.href}>{link.label}</Link>
+      </Button>
     </div>
   );
 };

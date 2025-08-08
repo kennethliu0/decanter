@@ -61,9 +61,11 @@ const TournamentAdminCard = (props: Props) => {
             {formatToUTCDate(props.tournament.endDate)}
           </p>
         </div>
-        <Link href={`/tournaments/manage/${props.tournament.slug}`}>
-          <Button>Manage Tournament</Button>
-        </Link>
+        <Button asChild>
+          <Link href={`/tournaments/manage/${props.tournament.slug}`}>
+            Manage Tournament
+          </Link>
+        </Button>
       </div>
     </div>
   );

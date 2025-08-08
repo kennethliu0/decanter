@@ -77,12 +77,7 @@ const TournamentApplyCard = (props: Props) => {
             variant={props.tournament.applied ? "outline" : "default"}
             className="w-17"
           >
-            <Link
-              href={`/tournaments/apply/${props.tournament.slug}`}
-              className={
-                props.tournament.applied ? "" : "!text-primary-foreground"
-              }
-            >
+            <Link href={`/tournaments/apply/${props.tournament.slug}`}>
               {props.tournament.applied ? "Applied" : "Apply"}
             </Link>
           </Button>

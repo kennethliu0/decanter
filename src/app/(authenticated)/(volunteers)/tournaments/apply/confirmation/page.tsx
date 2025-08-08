@@ -10,9 +10,12 @@ export default function Page() {
         from tournament directors directly if you are selected to volunteer for
         this tournament.
       </p>
-      <Link href="/tournaments/search">
-        <Button variant="secondary">Back to Search</Button>
-      </Link>
+      <Button
+        variant="secondary"
+        asChild
+      >
+        <Link href="/tournaments/search">Back to Search</Link>
+      </Button>
     </main>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/shadcn/button";
 import {
   Sheet,
@@ -98,6 +100,9 @@ const Navigation = (props: Props) => {
               </div>
             </Button>
           </SheetClose>
+          <SheetClose asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </SheetClose>
           {links.map((link, index) => (
             <SheetClose
               asChild
@@ -107,7 +112,7 @@ const Navigation = (props: Props) => {
                 href={link.path}
                 key={index}
               >
-                <p>{link.label}</p>
+                {link.label}
               </Link>
             </SheetClose>
           ))}

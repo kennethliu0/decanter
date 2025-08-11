@@ -11,7 +11,6 @@ const LoadingButton = ({ pending, children, disabled, ...props }: Props) => {
   return (
     <Button
       disabled={pending || disabled}
-      className="relative"
       {...props}
     >
       {pending && (

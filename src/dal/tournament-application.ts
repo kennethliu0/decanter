@@ -19,6 +19,7 @@ import {
   infer as zodInfer,
   string as zodString,
   enum as zodEnum,
+  number,
 } from "zod/v4";
 import { EVENTS } from "@/lib/config";
 
@@ -59,6 +60,47 @@ export async function getTournaments(): Promise<
   }
   return {
     data: validatedFields.data,
+  };
+}
+
+export async function getTournamentCounts(): Promise<
+  Result<{
+    savedApplications: number;
+    tournamentsB: number;
+    tournamentsC: number;
+  }>
+> {
+  const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  if (authError || !authData?.claims) {
+    return { error: AppAuthError };
+  }
+  const { data: applicationData, error: applicationError } = await supabase
+    .from("tournament_applications")
+    .select("tournament_id")
+    .eq("user_id", authData.claims.sub)
+    .eq("submitted", false);
+  if (applicationError) {
+    return { error: toAppError(applicationError) };
+  }
+
+  const { data, error } = await supabase
+    .from("tournaments")
+    .select("division")
+    .eq("approved", true);
+  if (error) {
+    console.error(error);
+    return { error: toAppError(error) };
+  }
+  const total = data.length;
+  const tournamentsB = data.filter((t) => t.division === "B").length;
+  const tournamentsC = data.filter((t) => t.division === "C").length;
+  return {
+    data: {
+      savedApplications: applicationData.length,
+      tournamentsB,
+      tournamentsC,
+    },
   };
 }
 
@@ -117,10 +159,11 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
   return { data: { application: validatedData.data } };
 }
 
-export async function getSavedTournamentApplication(
-  slugRaw: string,
-): Promise<
-  Result<{ application: zodInfer<typeof InsertTournamentApplicationSchema>, submitted: boolean }>
+export async function getSavedTournamentApplication(slugRaw: string): Promise<
+  Result<{
+    application: zodInfer<typeof InsertTournamentApplicationSchema>;
+    submitted: boolean;
+  }>
 > {
   const validatedData = zodString().safeParse(slugRaw);
   if (!validatedData.success) {
@@ -183,7 +226,10 @@ export async function getSavedTournamentApplication(
   }
 
   return {
-    data: { application: validatedApplication.data, submitted: data.submitted ?? false},
+    data: {
+      application: validatedApplication.data,
+      submitted: data.submitted ?? false,
+    },
   };
 }
 

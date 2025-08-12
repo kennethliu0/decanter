@@ -1,7 +1,5 @@
-import {
-  acceptTournamentInvite,
-  upsertTournament,
-} from "@/dal/tournament-management";
+import { upsertTournament } from "@/dal/tournament-management";
+import { acceptTournamentInvite } from "@/dal/tournament-invites";
 import { upsertTournamentApplication } from "@/dal/tournament-application";
 import {
   acceptTournamentInviteAction,

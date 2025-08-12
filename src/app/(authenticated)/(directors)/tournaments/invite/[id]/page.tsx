@@ -1,6 +1,6 @@
 import React from "react";
 import AcceptInviteButton from "./AcceptInviteButton";
-import { getTournamentInviteInfo } from "@/dal/tournament-management";
+import { getTournamentInviteInfo } from "@/dal/tournament-invites";
 import { ERROR_CODES } from "@/lib/errors";
 import { notFound, redirect } from "next/navigation";
 import {

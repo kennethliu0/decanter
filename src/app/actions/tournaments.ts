@@ -9,10 +9,8 @@ import {
 } from "@/lib/definitions";
 import { infer as zodInfer, flattenError, uuid as zodUuid } from "zod/v4";
 import { notFound, redirect } from "next/navigation";
-import {
-  acceptTournamentInvite,
-  upsertTournament,
-} from "@/dal/tournament-management";
+import { upsertTournament } from "@/dal/tournament-management";
+import { acceptTournamentInvite } from "@/dal/tournament-invites";
 import { ERROR_CODES } from "@/lib/errors";
 import { upsertTournamentApplication } from "@/dal/tournament-application";
 

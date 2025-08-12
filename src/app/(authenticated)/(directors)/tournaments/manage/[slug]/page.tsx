@@ -8,9 +8,9 @@ import { DataTable } from "../DataTable";
 import { columns } from "../VolunteerColumns";
 import {
   getApplicationsCSV,
-  getInviteManagement,
   getTournamentManagement,
 } from "@/dal/tournament-management";
+import { getInviteManagement } from "@/dal/tournament-invites";
 import { Suspense } from "react";
 import { Button } from "@/components/shadcn/button";
 import { CONTACT_EMAIL } from "@/lib/config";

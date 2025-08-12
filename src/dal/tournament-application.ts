@@ -19,9 +19,19 @@ import {
   infer as zodInfer,
   string as zodString,
   enum as zodEnum,
-  number,
 } from "zod/v4";
 import { EVENTS } from "@/lib/config";
+import {
+  fetchApplicationCount,
+  fetchApplicationInfo,
+  fetchName,
+  fetchSavedApplication,
+  fetchTournamentDivision,
+  fetchTournamentDivisionsCount,
+  fetchTournamentId,
+  fetchTournaments,
+  upsertApplication,
+} from "./tournament-application-queries";
 
 export async function getTournaments(): Promise<
   Result<zodInfer<typeof TournamentCards>>
@@ -32,22 +42,13 @@ export async function getTournaments(): Promise<
   if (authError || !authData?.claims) {
     return { error: AppAuthError };
   }
-  const { data, error } = await supabase
-    .from("tournaments")
-    .select(
-      `id, image_url, website_url, name, location, division, 
-      start_date, end_date, apply_deadline, slug, 
-      tournament_applications!left(submitted)`,
-    )
-    .eq("approved", true)
-    .eq("closed_early", false)
-    .eq("tournament_applications.user_id", authData.claims.sub);
+  const { data, error } = await fetchTournaments(authData.claims.sub);
   if (error) {
     console.error(error);
     return { error: toAppError(error) };
   }
   const validatedFields = TournamentCards.safeParse(
-    data.map(({ tournament_applications, ...rest }) => {
+    data?.map(({ tournament_applications, ...rest }) => {
       return toCamel({
         applied: !!tournament_applications?.[0]?.submitted,
         ...rest,
@@ -56,7 +57,12 @@ export async function getTournaments(): Promise<
   );
   if (!validatedFields.success) {
     console.error(validatedFields.error);
-    return { error: toAppError(validatedFields.error) };
+    return {
+      error: {
+        code: ERROR_CODES.SERVER_ERROR,
+        message: "A database error occurred.",
+      },
+    };
   }
   return {
     data: validatedFields.data,
@@ -75,19 +81,13 @@ export async function getTournamentCounts(): Promise<
   if (authError || !authData?.claims) {
     return { error: AppAuthError };
   }
-  const { data: applicationData, error: applicationError } = await supabase
-    .from("tournament_applications")
-    .select("tournament_id")
-    .eq("user_id", authData.claims.sub)
-    .eq("submitted", false);
+  const { data: applicationData, error: applicationError } =
+    await fetchApplicationCount(authData.claims.sub);
   if (applicationError) {
     return { error: toAppError(applicationError) };
   }
 
-  const { data, error } = await supabase
-    .from("tournaments")
-    .select("division")
-    .eq("approved", true);
+  const { data, error } = await fetchTournamentDivisionsCount();
   if (error) {
     console.error(error);
     return { error: toAppError(error) };
@@ -104,18 +104,19 @@ export async function getTournamentCounts(): Promise<
   };
 }
 
-export async function getTournamentApplicationInfo(slug: string): Promise<
+export async function getTournamentApplicationInfo(slugRaw: string): Promise<
   Result<{
     application: zodInfer<typeof TournamentApplicationInfoSchema>;
   }>
 > {
-  const validatedFields = zodString().safeParse(slug);
+  const validatedFields = zodString().safeParse(slugRaw);
   if (!validatedFields.success) {
     return {
       error: TournamentNotFoundError,
     };
   }
 
+  const slug = validatedFields.data;
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (authError || !authData?.claims) {
@@ -123,14 +124,7 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
       error: AppAuthError,
     };
   }
-  const { data, error } = await supabase
-    .from("tournaments")
-    .select(
-      "id, name, location, division, image_url, website_url, start_date, end_date, apply_deadline, application_fields, closed_early",
-    )
-    .eq("slug", validatedFields.data)
-    .eq("approved", true)
-    .maybeSingle();
+  const { data, error } = await fetchApplicationInfo(slug);
   if (error) {
     return { error: toAppError(error) };
   }
@@ -139,10 +133,19 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
       error: TournamentNotFoundError,
     };
   }
-  if (new Date(data.apply_deadline) < new Date() || data.closed_early) {
+  if (new Date(data.apply_deadline) < new Date()) {
     return {
       error: {
         message: "Application deadline for this tournament has already passed",
+        code: ERROR_CODES.DEADLINE_PASSED,
+        status: 422,
+      },
+    };
+  }
+  if (data.closed_early) {
+    return {
+      error: {
+        message: "Tournament applications have been closed",
         code: ERROR_CODES.DEADLINE_PASSED,
         status: 422,
       },
@@ -153,7 +156,12 @@ export async function getTournamentApplicationInfo(slug: string): Promise<
   );
   if (!validatedData.success) {
     console.error(error);
-    return { error: toAppError(validatedData.error) };
+    return {
+      error: {
+        message: "A database error occurred.",
+        code: ERROR_CODES.SERVER_ERROR,
+      },
+    };
   }
 
   return { data: { application: validatedData.data } };
@@ -181,11 +189,8 @@ export async function getSavedTournamentApplication(slugRaw: string): Promise<
     };
   }
 
-  const { data: tournamentData, error: tournamentError } = await supabase
-    .from("tournaments")
-    .select("id")
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data: tournamentData, error: tournamentError } =
+    await fetchTournamentId(slug);
 
   if (tournamentError) {
     console.error(tournamentError);
@@ -198,12 +203,10 @@ export async function getSavedTournamentApplication(slugRaw: string): Promise<
   }
   const tournamentId = tournamentData.id;
 
-  const { data, error } = await supabase
-    .from("tournament_applications")
-    .select("preferences, responses, submitted")
-    .eq("tournament_id", tournamentId)
-    .eq("user_id", authData.claims.sub)
-    .maybeSingle();
+  const { data, error } = await fetchSavedApplication(
+    tournamentId,
+    authData.claims.sub,
+  );
 
   if (error) {
     console.error(error);
@@ -222,13 +225,18 @@ export async function getSavedTournamentApplication(slugRaw: string): Promise<
 
   if (!validatedApplication.success) {
     console.error(validatedApplication.error);
-    return { error: toAppError(validatedApplication.error) };
+    return {
+      error: {
+        message: "A database error occurred.",
+        code: ERROR_CODES.SERVER_ERROR,
+      },
+    };
   }
 
   return {
     data: {
       application: validatedApplication.data,
-      submitted: data.submitted ?? false,
+      submitted: !!data.submitted,
     },
   };
 }
@@ -254,11 +262,8 @@ export async function upsertTournamentApplication(
   }
 
   // check that events are within the correct division
-  const { data: divisionData, error: divisionError } = await supabase
-    .from("tournaments")
-    .select("division")
-    .eq("id", tournamentId)
-    .maybeSingle();
+  const { data: divisionData, error: divisionError } =
+    await fetchTournamentDivision(tournamentId);
 
   if (divisionError) {
     console.error(divisionError);
@@ -290,11 +295,9 @@ export async function upsertTournamentApplication(
     }
   }
 
-  const { data: profileData, error: profileError } = await supabase
-    .from("volunteer_profiles")
-    .select("name")
-    .eq("id", authData.claims.sub)
-    .maybeSingle();
+  const { data: profileData, error: profileError } = await fetchName(
+    authData.claims.sub,
+  );
 
   if (!profileData || profileError) {
     return {
@@ -306,12 +309,8 @@ export async function upsertTournamentApplication(
   }
 
   // check if an application was submitted already
-  const { data: existingData, error: existingError } = await supabase
-    .from("tournament_applications")
-    .select("submitted")
-    .eq("tournament_id", tournamentId)
-    .eq("user_id", authData.claims.sub)
-    .maybeSingle();
+  const { data: existingData, error: existingError } =
+    await fetchSavedApplication(tournamentId, authData.claims.sub);
 
   if (existingError) {
     console.error(existingError);
@@ -325,7 +324,7 @@ export async function upsertTournamentApplication(
       },
     };
   }
-  const { error } = await supabase.from("tournament_applications").upsert({
+  const { error } = await upsertApplication({
     user_id: authData.claims.sub,
     tournament_id: tournamentId,
     preferences,

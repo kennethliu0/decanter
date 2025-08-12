@@ -1,36 +1,14 @@
 import { VolunteerProfileSchema } from "@/lib/definitions";
 import { createClient } from "@/utils/supabase/server";
-import { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import { Mock } from "vitest";
+import { PostgrestError } from "@supabase/supabase-js";
 import { infer as zodInfer } from "zod/v4";
 import { getEventPreferences, getProfile, upsertProfile } from "./profile";
 import { ERROR_CODES } from "@/lib/errors";
 import { checkAuthReturnsError } from "../../tests/utils/authCheckTest";
-import { mockedFrom } from "../../tests/utils/__mocks__/supabase";
-
-vi.mock("server-only", () => {
-  return {
-    // mock server only
-  };
-});
-
-function createSupabaseMock(getClaimsMock?: Mock, tableFromMock?: Mock) {
-  return vi.mocked(createClient).mockResolvedValue({
-    auth: {
-      getClaims:
-        getClaimsMock
-        ?? vi.fn().mockResolvedValue({
-          data: {
-            claims: {
-              sub: "52fd16f1-16d9-4ce2-a502-d0212a050cf1",
-              email: "bUWkP@example.com",
-            },
-          },
-        }),
-    },
-    from: tableFromMock ?? vi.fn().mockReturnThis(),
-  } as unknown as SupabaseClient);
-}
+import {
+  createSupabaseMock,
+  mockedFrom,
+} from "../../tests/utils/__mocks__/supabase";
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -92,8 +70,8 @@ describe("upsertProfile", () => {
     await upsertProfile(sampleProfile);
     expect(supabase).toHaveBeenCalledTimes(1);
     expect(upsertMock).toHaveBeenCalledExactlyOnceWith({
-      id: "52fd16f1-16d9-4ce2-a502-d0212a050cf1",
-      email: "bUWkP@example.com",
+      id: "11111111-1111-1111-1111-111111111111",
+      email: "email@example.com",
       ...sampleProfileServer,
     });
   });
@@ -149,7 +127,7 @@ describe("getProfile", () => {
     );
     expect(mockInstance.eq).toHaveBeenCalledExactlyOnceWith(
       "id",
-      "52fd16f1-16d9-4ce2-a502-d0212a050cf1",
+      "11111111-1111-1111-1111-111111111111",
     );
     expect(mockInstance.maybeSingle).toHaveBeenCalledTimes(1);
 
@@ -263,7 +241,7 @@ describe("getEventPreferences", () => {
     );
     expect(mockInstance.eq).toHaveBeenCalledExactlyOnceWith(
       "id",
-      "52fd16f1-16d9-4ce2-a502-d0212a050cf1",
+      "11111111-1111-1111-1111-111111111111",
     );
     expect(mockInstance.maybeSingle).toHaveBeenCalledTimes(1);
   });

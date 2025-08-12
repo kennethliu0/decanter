@@ -12,3 +12,9 @@ vi.mock("next/navigation", async () => {
 });
 
 vi.mock("@/utils/supabase/server");
+
+vi.mock("server-only", () => {
+  return {
+    // mock server only
+  };
+});

@@ -35,12 +35,6 @@ vi.mock("next/navigation", async () => {
 vi.mock("@/dal/tournament-management");
 vi.mock("@/dal/tournament-application");
 
-vi.mock("server-only", () => {
-  return {
-    // mock server-only module
-  };
-});
-
 beforeEach(() => {
   vi.resetAllMocks();
 });

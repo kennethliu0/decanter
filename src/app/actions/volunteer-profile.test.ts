@@ -12,12 +12,6 @@ import { redirect } from "next/navigation";
 vi.mock("next/navigation");
 vi.mock("@/dal/profile");
 
-vi.mock("server-only", () => {
-  return {
-    // mock server-only module
-  };
-});
-
 beforeEach(() => {
   vi.resetAllMocks();
 });

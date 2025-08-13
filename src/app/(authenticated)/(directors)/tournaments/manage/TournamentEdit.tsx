@@ -111,7 +111,6 @@ const TournamentEdit = (props: Props) => {
     } = values;
     const [hours, minutes] = applyDeadlineTime.split(":").map(Number);
     applyDeadline.setHours(hours, minutes, 59, 999);
-    form.reset(values);
     startTransition(() => {
       action({
         id,
@@ -126,9 +125,9 @@ const TournamentEdit = (props: Props) => {
   useEffect(() => {
     if (state?.success) {
       toast.success("Tournament successfully updated");
-    } else if (state?.success === false && state.message) {
-      toast.error(state.message);
-      form.reset();
+      form.reset(form.getValues());
+    } else if (state?.success === false) {
+      toast.error(state.message ?? "Something went wrong");
     }
   }, [state]);
   return (

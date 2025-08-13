@@ -82,7 +82,6 @@ const ApplyForm = (props: Props) => {
     values: zodInfer<typeof FormSchema>,
     mode: "save" | "submit",
   ) => {
-    form.reset(values);
     startTransition(() => {
       action({
         mode,
@@ -97,11 +96,13 @@ const ApplyForm = (props: Props) => {
     if (state?.success) {
       if (submitMode === "save") {
         toast.success("Application successfully saved");
+        form.reset(form.getValues());
       } else if (submitMode === "submit") {
         router.push("/tournaments/apply/confirmation");
+        form.reset(form.getValues());
       }
-    } else if (state?.success === false && state.message) {
-      toast.error(state.message);
+    } else if (state?.success === false) {
+      toast.error(state.message ?? "Something went wrong");
     }
   }, [state]);
 

@@ -45,14 +45,14 @@ const ProfileCardEdit = ({ profile }: Props) => {
   function onSubmit(values: zodInfer<typeof FormSchema>) {
     startTransition(() => {
       action(values);
-      form.reset(values);
     });
   }
   useEffect(() => {
     if (state?.success === true) {
       toast.success("Profile successfully updated!");
+      form.reset(form.getValues());
     } else if (state?.success === false) {
-      toast.error("Something went wrong");
+      toast.error(state.message ?? "Something went wrong");
     }
   }, [state]);
 

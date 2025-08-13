@@ -9,7 +9,10 @@ import {
 } from "@/lib/definitions";
 import { infer as zodInfer, flattenError, uuid as zodUuid } from "zod/v4";
 import { notFound, redirect } from "next/navigation";
-import { upsertTournament } from "@/dal/tournament-management";
+import {
+  insertTournament,
+  updateTournament,
+} from "@/dal/tournament-management";
 import { acceptTournamentInvite } from "@/dal/tournament-invites";
 import { ERROR_CODES } from "@/lib/errors";
 import { upsertTournamentApplication } from "@/dal/tournament-application";
@@ -26,23 +29,40 @@ export async function upsertTournamentAction(
     };
   }
 
-  const { data, error } = await upsertTournament(validatedFields.data);
-  if (error) {
-    switch (error.code) {
-      case ERROR_CODES.UNAUTHORIZED:
-        redirect("/login");
-      case ERROR_CODES.NOT_FOUND:
-        notFound();
-      default:
-        return { message: error.message, success: false };
+  if (validatedFields.data.id) {
+    const { error } = await updateTournament(
+      validatedFields.data.id,
+      validatedFields.data,
+    );
+    if (error) {
+      switch (error.code) {
+        case ERROR_CODES.UNAUTHORIZED:
+          redirect("/login");
+        case ERROR_CODES.NOT_FOUND:
+          notFound();
+        default:
+          return { message: error.message, success: false };
+      }
     }
-  }
-  // new tournaments need to be redirected
-  if (data?.slug) {
+    return { success: true };
+  } else {
+    const { id, approved, ...tournament } = validatedFields.data;
+    const { data, error } = await insertTournament(tournament);
+    if (error) {
+      switch (error.code) {
+        case ERROR_CODES.UNAUTHORIZED:
+          redirect("/login");
+        case ERROR_CODES.NOT_FOUND:
+          notFound();
+        default:
+          return { message: error.message, success: false };
+      }
+    }
+    if (!data?.slug) {
+      redirect("/tournaments");
+    }
     redirect(`/tournaments/manage/${data.slug}`);
   }
-
-  return { success: true };
 }
 
 export async function upsertTournamentApplicationAction(

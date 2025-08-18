@@ -7,11 +7,15 @@ import {
   TournamentNotFoundError,
 } from "@/lib/errors";
 import { createClient } from "@/utils/supabase/server";
+import { string as zodString, uuid as zodUuid } from "zod/v4";
 import {
-  string as zodString,
-  uuid as zodUuid,
-  infer as zodInfer,
-} from "zod/v4";
+  acceptInvite,
+  checkUserIsTournamentAdmin,
+  getAdminEmails,
+  getInviteId,
+  getInviteInfo,
+  getTournamentId,
+} from "./tournament-invites-queries";
 
 export async function getInviteManagement(
   slugRaw: string,
@@ -29,11 +33,8 @@ export async function getInviteManagement(
     return { error: AppAuthError };
   }
 
-  const { data: tournamentData, error: tournamentError } = await supabase
-    .from("tournaments")
-    .select("id")
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data: tournamentData, error: tournamentError } =
+    await getTournamentId(slug);
 
   if (tournamentError) {
     return { error: toAppError(tournamentError) };
@@ -44,15 +45,10 @@ export async function getInviteManagement(
   }
   const tournamentId = tournamentData.id;
 
-  // check user authorizaton
+  // check user authorization
 
-  const { data: adminData, error: adminError } = await supabase
-    .from("tournament_admins")
-    .select("user_id")
-    .eq("user_id", authData.claims.sub)
-    .eq("tournament_id", tournamentId)
-    .single();
-
+  const { data: adminData, error: adminError } =
+    await checkUserIsTournamentAdmin(authData.claims.sub, tournamentId);
   if (adminError || !adminData) {
     return {
       error: {
@@ -63,21 +59,16 @@ export async function getInviteManagement(
     };
   }
 
-  const { data: allAdminsData, error: allAdminsError } = await supabase
-    .from("tournament_admins")
-    .select("email")
-    .eq("tournament_id", tournamentId);
+  const { data: allAdminsData, error: allAdminsError } =
+    await getAdminEmails(tournamentId);
   if (allAdminsError) {
     return { error: toAppError(allAdminsError) };
   }
 
   const emails = allAdminsData ? allAdminsData.map((val) => val.email) : [];
 
-  const { data: inviteData, error: inviteError } = await supabase
-    .from("tournament_invites")
-    .select("id")
-    .eq("tournament_id", tournamentId)
-    .maybeSingle();
+  const { data: inviteData, error: inviteError } =
+    await getInviteId(tournamentId);
 
   if (inviteError) {
     return { error: toAppError(inviteError) };
@@ -85,7 +76,7 @@ export async function getInviteManagement(
   const link =
     inviteData?.id ?
       `${process.env.NEXT_PUBLIC_SITE_URL!}/tournaments/invite/${inviteData.id}`
-    : "";
+    : "Couldn't retrieve invite link";
   return { data: { link, emails } };
 }
 
@@ -109,9 +100,7 @@ export async function getTournamentInviteInfo(inviteIdRaw: string): Promise<
     return { error: AppAuthError };
   }
 
-  const { data, error } = await supabase.rpc("get_invite_info", {
-    invite_id: inviteId,
-  });
+  const { data, error } = await getInviteInfo(inviteId);
   if (error) {
     if (error.code === "P0001") {
       // exception was raised by rpc
@@ -134,12 +123,12 @@ export async function getTournamentInviteInfo(inviteIdRaw: string): Promise<
       return { error: toAppError(error) };
     }
   }
-  if (data) {
+  if (data[0]) {
     return {
       data: {
-        name: data.tour_name,
-        division: data.tour_division,
-        imageUrl: data.tour_image,
+        name: data[0].name,
+        division: data[0].division,
+        imageUrl: data[0].image_url,
       },
     };
   } else {
@@ -163,9 +152,7 @@ export async function acceptTournamentInvite(
     return { error: AppAuthError };
   }
 
-  const { data, error } = await supabase.rpc("accept_invite", {
-    invite_id: inviteId,
-  });
+  const { data, error } = await acceptInvite(inviteId);
   if (error) {
     if (error.code === "P0001") {
       // exception was raised by rpc

@@ -298,3 +298,7 @@ export type AcceptTournamentInviteState =
       success: boolean;
     }
   | undefined;
+export const TournamentUpdatePayload = EditTournamentSchemaServer.omit({
+  id: true,
+  approved: true,
+});

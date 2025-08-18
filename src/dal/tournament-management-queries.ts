@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createClient } from "@/utils/supabase/server";
 /* v8 ignore start */
 export async function fetchManagedTournaments(userId: string) {

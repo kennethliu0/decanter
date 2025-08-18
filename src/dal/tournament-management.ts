@@ -4,6 +4,7 @@ import {
   EditTournamentSchemaServer,
   Result,
   TournamentAdminCards,
+  TournamentUpdatePayload,
 } from "@/lib/definitions";
 import {
   AppAuthError,
@@ -58,12 +59,18 @@ export async function getTournamentsManagedByUser(): Promise<
       .flatMap((admin) => admin.tournaments || [])
       .map((tournament) => ({
         ...toCamel<Record<string, string>>({ ...tournament }),
-        applicationCount: tournament.tournament_applications?.[0]?.count || 0,
+        applicationCount: tournament.tournament_applications?.[0]?.count,
       })),
   );
   if (!validatedFields.success) {
     console.error(validatedFields.error);
-    return { error: toAppError(validatedFields.error) };
+    return {
+      error: {
+        message: "Data returned by database did not match expected shape",
+        code: ERROR_CODES.SERVER_ERROR,
+        status: 500,
+      },
+    };
   }
   return {
     data: validatedFields.data,
@@ -150,24 +157,7 @@ export async function getTournamentManagement(slug: string): Promise<
     return { error: toAppError(applicationError) };
   }
   const applications =
-    applicationData ?
-      applicationData
-        .filter((val) => val.volunteer_profiles != null)
-        .map((val) => {
-          // force treat volunteer_profiles as an object, not an array
-          const profile = val.volunteer_profiles as {
-            name?: string;
-            education?: string;
-            email?: string;
-          };
-          return {
-            id: val.user_id,
-            email: profile?.email || "Unknown",
-            name: profile?.name || "Unknown",
-            education: profile?.education || "Unknown",
-          };
-        })
-    : [];
+    applicationData ? formatApplicationsSummary(applicationData) : [];
 
   return {
     data: {
@@ -177,14 +167,48 @@ export async function getTournamentManagement(slug: string): Promise<
   };
 }
 
+function formatApplicationsSummary(
+  applications: {
+    user_id: any;
+    volunteer_profiles: {
+      name: any;
+      email: any;
+      education: any;
+    }[];
+  }[],
+) {
+  return applications
+    .filter((val) => val.volunteer_profiles != null)
+    .map((val) => {
+      // force treat volunteer_profiles as an object, not an array
+      const profile = val.volunteer_profiles as {
+        name?: string;
+        education?: string;
+        email?: string;
+      };
+      return {
+        id: val.user_id,
+        email: profile?.email || "Unknown",
+        name: profile?.name || "Unknown",
+        education: profile?.education || "Unknown",
+      };
+    });
+}
+
 export async function insertTournament(
-  values: Omit<zodInfer<typeof EditTournamentSchemaServer>, "id" | "approved">,
+  values: zodInfer<typeof TournamentUpdatePayload>,
 ): Promise<Result<{ slug: string }>> {
+  const validatedValues = TournamentUpdatePayload.safeParse(values);
+  if (!validatedValues.success) {
+    return { error: toAppError(validatedValues.error) };
+  }
+
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (!authData?.claims || authError) {
     return { error: AppAuthError };
   }
+
   const id = uuidv4();
   const created_by = authData.claims.sub;
   const slug = slugify(
@@ -195,9 +219,10 @@ export async function insertTournament(
       trim: true,
     },
   );
+
   const { error: tournamentError } = await insertTournamentTable({
     id,
-    ...toSnake({ ...values }),
+    ...toSnake(validatedValues.data),
     created_by,
     slug,
   });
@@ -205,13 +230,25 @@ export async function insertTournament(
     console.error(tournamentError);
     return { error: toAppError(tournamentError) };
   }
+
   return { data: { slug } };
 }
 
 export async function updateTournament(
-  id: string,
-  values: Omit<zodInfer<typeof EditTournamentSchemaServer>, "id" | "approved">,
+  idRaw: string,
+  valuesRaw: zodInfer<typeof TournamentUpdatePayload>,
 ): Promise<{ error?: AppError }> {
+  const validatedValues = TournamentUpdatePayload.safeParse(valuesRaw);
+  if (!validatedValues.success) {
+    return { error: toAppError(validatedValues.error) };
+  }
+  const values = validatedValues.data;
+  const validatedId = zodUuid({ version: "v4" }).safeParse(idRaw);
+  if (!validatedId.success) {
+    return { error: TournamentNotFoundError };
+  }
+  const id = validatedId.data;
+
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getClaims();
   if (!authData?.claims || authError) {
@@ -230,8 +267,8 @@ export async function updateTournament(
     ...toSnake({ ...values }),
   });
   if (updateError) {
-    console.error(error);
-    return { error: toAppError(error) };
+    console.error(updateError);
+    return { error: toAppError(updateError) };
   }
   return {};
 }
@@ -319,16 +356,16 @@ export async function getApplicationsCSV(
         const timestamp = new Date(application.updated_at);
         return [
           timestamp.toLocaleString("en-US", { timeZoneName: "short" }),
-          volunteerProfile.email ?? "",
-          volunteerProfile.name ?? "",
-          volunteerProfile.education ?? "",
-          volunteerProfile.bio ?? "",
+          volunteerProfile.email,
+          volunteerProfile.name,
+          volunteerProfile.education,
+          volunteerProfile.bio,
           ...application.preferences,
           volunteerProfile.experience,
           ...applicationFields.map(
             (field) =>
               responses.find((response) => response.fieldId === field.id)
-                ?.response ?? "",
+                ?.response,
           ),
         ];
       }),

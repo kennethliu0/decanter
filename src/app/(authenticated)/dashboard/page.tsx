@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import TournamentAdminTableSkeleton from "../(directors)/tournaments/TournamentAdminTableSkeleton";
-import TournamentAdminTable from "../(directors)/tournaments/TournamentAdminTable";
+import TournamentAdminTableSkeleton from "./TournamentAdminTableSkeleton";
+import TournamentAdminTable from "./TournamentAdminTable";
 import { Button } from "@/components/shadcn/button";
 import Link from "next/link";
 import TournamentsSummary from "./TournamentsSummary";

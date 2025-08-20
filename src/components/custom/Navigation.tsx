@@ -27,7 +27,6 @@ type Props = {};
 
 const Navigation = (props: Props) => {
   const links = [
-    { label: "Manage Tournaments", path: "/tournaments" },
     { label: "Tournament Search", path: "/tournaments/search" },
     { label: "Volunteer Profile", path: "/profile" },
   ];
@@ -41,8 +40,11 @@ const Navigation = (props: Props) => {
                 asChild
                 className="px-4"
               >
-                <Link href="/">
-                  <DecanterIcon className="text-primary" />
+                <Link href="/dashboard">
+                  <div className="flex gap-2 items-center">
+                    <DecanterIcon className="text-primary" />
+                    <span className="font-semibold">Dashboard</span>
+                  </div>
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
@@ -50,7 +52,7 @@ const Navigation = (props: Props) => {
               <NavigationMenuItem key={index}>
                 <NavigationMenuLink asChild>
                   <Link href={path}>
-                    <p className="font-semibold">{label}</p>
+                    <span className="font-semibold">{label}</span>
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

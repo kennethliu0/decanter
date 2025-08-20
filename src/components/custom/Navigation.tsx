@@ -31,7 +31,7 @@ const Navigation = (props: Props) => {
     { label: "Volunteer Profile", path: "/profile" },
   ];
   return (
-    <header className="bg-background sticky top-0 z-50 w-full px-8 py-2">
+    <header className="bg-background sticky top-0 z-50 w-full px-8 py-4 border-b mb-4">
       <div className="hidden sm:flex justify-between items-center">
         <NavigationMenu viewport={false}>
           <NavigationMenuList>

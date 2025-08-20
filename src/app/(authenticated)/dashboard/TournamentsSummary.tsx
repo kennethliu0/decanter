@@ -67,7 +67,7 @@ const StatCard = ({
       href={link}
       className="hover:underline block group flex-1"
     >
-      <div className="flex gap-4 p-4 rounded-lg bg-card border items-center hover:bg-muted">
+      <div className="max-w-xs w-full flex gap-4 p-4 rounded-lg bg-card border items-center hover:bg-muted">
         {icon}
         <div className="text-lg">
           {count} {title}

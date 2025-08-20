@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     );
   } else {
     return NextResponse.json({
-      url: `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/${bucket}/${fileName}`,
+      url: `${process.env.SUPABASE_URL!}/storage/v1/object/public/${bucket}/${fileName}`,
     });
   }
 }

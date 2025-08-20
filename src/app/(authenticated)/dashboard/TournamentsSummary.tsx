@@ -14,12 +14,18 @@ const TournamentsSummary = async (props: Props) => {
     tournamentsC: 0,
   };
   return (
-    <div className="w-full flex flex-col xs:flex-row xs:justify-stretch gap-4">
+    <div className="w-full flex flex-col sm:flex-row sm:justify-stretch gap-2">
       <StatCard
         title="Saved Applications"
         count={savedApplications}
         link="/tournaments/search?page=1&saved=true"
-        icon={<FolderOpen />}
+        icon={
+          <Avatar>
+            <AvatarFallback>
+              <FolderOpen className="size-4" />
+            </AvatarFallback>
+          </Avatar>
+        }
       />
       <StatCard
         title="Div B Tournaments"
@@ -61,7 +67,7 @@ const StatCard = ({
       href={link}
       className="hover:underline block group flex-1"
     >
-      <div className="flex gap-4 p-4 rounded-lg bg-card border items-center hover:bg-muted/70">
+      <div className="flex gap-4 p-4 rounded-lg bg-card border items-center hover:bg-muted">
         {icon}
         <div className="text-lg">
           {count} {title}

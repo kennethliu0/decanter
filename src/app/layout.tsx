@@ -29,10 +29,17 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className="w-full h-full"
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} w-full h-full flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} w-full min-h-screen flex flex-col 
+        before:content-[''] before:fixed before:inset-0 before:-z-10 before:pointer-events-none
+        before:animate-grid-scroll before:[will-change:transform]
+        before:bg-[linear-gradient(to_right,rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.05)_1px,transparent_1px)]
+        dark:before:bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)]
+        before:bg-[length:30px_30px]
+        before:[mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]
+        before:[-webkit-mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]
+        relative`}
       >
         <ThemeProvider
           attribute="class"

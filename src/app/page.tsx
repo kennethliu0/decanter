@@ -6,32 +6,14 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main
-        className="w-full grow flex flex-col items-center justify-center px-5"
-        style={{
-          backgroundImage: `
-    linear-gradient(to right, var(--muted) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--muted) 1px, transparent 1px)
-  `,
-          backgroundSize: "20px 20px",
-          WebkitMaskImage: `
-    linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)
-  `,
-          maskImage: `
-    linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)
-  `,
-        }}
-      >
+      <main className="w-full grow flex flex-col items-center justify-center px-5">
         <div className="relative flex flex-col items-center w-full">
           <div className="">
             <img
               src="/hero_banner.svg"
               draggable="false"
               alt="logo"
-              className="relative dark:invert-95 size-50 xs:size-112"
-              style={{
-                userSelect: "none",
-              }}
+              className="relative dark:invert-95 size-50 xs:size-112 select-none"
             />
           </div>
         </div>

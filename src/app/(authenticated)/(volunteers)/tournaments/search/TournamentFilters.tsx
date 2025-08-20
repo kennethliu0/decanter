@@ -238,6 +238,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             value={startDateAfter}
             onChange={handleDateChange("startDateAfter")}
             placeholder={today}
+            className="w-full max-w-2xs"
           />
           <Label htmlFor="start-date-before">Start Date Before</Label>
           <DatePicker
@@ -245,6 +246,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             value={startDateBefore}
             onChange={handleDateChange("startDateBefore")}
             placeholder={SEASON_END_DATE}
+            className="w-full max-w-2xs"
           />
           <Label htmlFor="start-date-after">Apply Deadline After</Label>
           <DatePicker
@@ -252,6 +254,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
             value={applyDeadlineAfter}
             onChange={handleDateChange("applyDeadlineAfter")}
             placeholder={today}
+            className="w-full max-w-2xs"
           />
           <Button
             variant="link"

@@ -21,9 +21,8 @@ type Props = {
   disableOutOfSeason?: boolean;
   disablePast?: boolean;
   small?: boolean;
-  id?: string;
   grayed?: boolean;
-};
+} & Pick<React.ComponentPropsWithoutRef<typeof Button>, "className" | "id">;
 
 const DatePicker = ({
   value,
@@ -31,10 +30,10 @@ const DatePicker = ({
   error,
   disableOutOfSeason,
   disablePast,
-  small,
-  id,
   grayed,
   placeholder,
+  className,
+  ...buttonProps
 }: Props) => {
   const today = new Date();
   const [open, setOpen] = useState(false);
@@ -48,16 +47,15 @@ const DatePicker = ({
           <Button
             variant="outline"
             data-empty={!value}
-            id={id}
             className={clsx(
               "data-[empty=true]:text-muted-foreground justify-start text-left font-normal",
+              className,
               {
                 "!border-destructive": error,
-                "w-[200px]": small,
-                "w-[280px]": !small,
                 "text-muted-foreground": !value || grayed,
               },
             )}
+            {...buttonProps}
           >
             <CalendarIcon />
             {value ?

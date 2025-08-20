@@ -4,6 +4,7 @@ import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/se
 import { Suspense } from "react";
 import TournamentTableSkeleton from "./TournamentTableSkeleton";
 import TournamentTableServer from "./TournamentTableServer";
+import { Card } from "@/components/shadcn/card";
 type Props = {};
 const Page = (props: Props) => {
   return (
@@ -11,14 +12,14 @@ const Page = (props: Props) => {
       {/* for desktop layouts */}
       <TournamentFilters
         type="multiple"
-        className="max-w-2xs w-full shrink-0 hidden md:block"
+        className="bg-card w-xs shrink-0 hidden md:block px-6 py-2 self-start rounded-xl border shadow-sm"
       />
-      <div className="max-w-5xl w-full shrink flex flex-col gap-2">
+      <div className="max-w-5xl w-full shrink flex flex-col gap-2 self-stretch">
         <div className="flex">
           {/* For mobile layouts*/}
           <MobileTournamentFilters />
           <Search
-            className="grow m-auto"
+            className="bg-card dark:bg-card"
             placeholder="Search tournaments..."
           />
         </div>

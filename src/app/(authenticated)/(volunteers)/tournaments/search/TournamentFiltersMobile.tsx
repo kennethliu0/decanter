@@ -27,7 +27,7 @@ const MobileTournamentFilters = (props: Props) => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-full"
+        className="w-full max-w-md"
       >
         <SheetHeader>
           <SheetTitle>Tournament Filters</SheetTitle>

@@ -28,6 +28,7 @@ export default async function Home({
   const inviteLinkPromise = getInviteManagement(slug);
 
   const { data, error } = await getTournamentManagement(slug);
+
   if (error) {
     switch (error.code) {
       case ERROR_CODES.UNAUTHORIZED:
@@ -38,7 +39,7 @@ export default async function Home({
         redirect("/tournaments");
       default:
         return (
-          <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-muted/30 text-center space-y-2">
+          <main className="w-full max-w-2xl mx-auto rounded-xl border p-4 bg-background text-center space-y-2">
             <h2 className="text-xl font-semibold text-destructive">
               Something went wrong
             </h2>
@@ -57,7 +58,7 @@ export default async function Home({
   const { tournament, applications } = data;
 
   return (
-    <main className="px-4 max-w-4xl w-full mx-auto space-y-4">
+    <main className="p-4 max-w-4xl w-full mx-auto space-y-4 bg-background border rounded-xl shadow-lg">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Manage Tournament</h1>
         <Link href="/tournaments">

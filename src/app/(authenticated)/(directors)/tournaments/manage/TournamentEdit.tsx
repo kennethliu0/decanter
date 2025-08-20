@@ -270,7 +270,7 @@ const TournamentEdit = (props: Props) => {
                           error={Boolean(fieldState.error)}
                           disablePast
                           disableOutOfSeason
-                          small
+                          className="w-[200px]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -295,7 +295,7 @@ const TournamentEdit = (props: Props) => {
                           disablePast
                           disableOutOfSeason
                           error={Boolean(fieldState.error)}
-                          small
+                          className="w-[200px]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -321,7 +321,7 @@ const TournamentEdit = (props: Props) => {
                           onChange={field.onChange}
                           disablePast
                           disableOutOfSeason
-                          small
+                          className="w-[200px]"
                           error={Boolean(fieldState.error)}
                         />
                       </FormControl>

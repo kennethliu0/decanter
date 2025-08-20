@@ -68,7 +68,7 @@ export function FancyMultiSelect({
   return (
     <Command
       onKeyDown={handleKeyDown}
-      className="overflow-visible bg-transparent w-[280px]"
+      className="overflow-visible bg-transparent w-full max-w-2xs"
     >
       <div
         className={`group rounded-md border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground 

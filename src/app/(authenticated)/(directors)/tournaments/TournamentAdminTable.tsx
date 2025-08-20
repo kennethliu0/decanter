@@ -24,7 +24,7 @@ const TournamentAdminTable = async (props: Props) => {
   const pastTournaments = tournamentDisplays.filter((t) => t.startDate < today);
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl">Upcoming Tournaments</h2>
+      <h2 className="text-2xl">Your Upcoming Tournaments</h2>
       <div className="grid sm:grid-cols-2 gap-2">
         {upcomingTournaments.length > 0 ?
           upcomingTournaments.map((t) => (
@@ -35,7 +35,7 @@ const TournamentAdminTable = async (props: Props) => {
           ))
         : "No upcoming found"}
       </div>
-      <h2 className="text-2xl">Past Tournaments</h2>
+      <h2 className="text-2xl">Your Past Tournaments</h2>
       <div className="grid sm:grid-cols-2 gap-2">
         {pastTournaments.length > 0 ?
           pastTournaments.map((t) => (

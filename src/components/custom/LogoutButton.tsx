@@ -16,7 +16,7 @@ const LogoutButton = (props: Props) => {
         });
       }}
       className="font-semibold"
-      variant="ghost"
+      variant="outline"
     >
       Log out
     </LoadingButton>

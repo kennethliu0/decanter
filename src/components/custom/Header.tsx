@@ -23,7 +23,7 @@ type Props = {};
 
 const Header = (props: Props) => {
   return (
-    <header className="bg-background sticky top-0 z-50 w-full px-2 sm:px-8 py-2">
+    <header className="bg-background sticky top-0 z-50 w-full px-2 sm:px-8 py-4 border-b mb-4">
       <div className="flex items-center justify-between">
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
@@ -32,8 +32,11 @@ const Header = (props: Props) => {
                 asChild
                 className="px-4"
               >
-                <Link href="/">
-                  <DecanterIcon className="text-primary" />
+                <Link href="/dashboard">
+                  <div className="flex gap-2 items-center">
+                    <DecanterIcon className="text-primary" />
+                    <span className="font-semibold">Decanter</span>
+                  </div>
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>

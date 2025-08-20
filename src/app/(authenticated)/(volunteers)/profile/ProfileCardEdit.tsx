@@ -109,7 +109,7 @@ const ProfileCardEdit = ({ profile }: Props) => {
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
                   <Textarea
-                    className="min-h-25"
+                    className="min-h-21"
                     placeholder="Any relevant achievements"
                     {...field}
                   />
@@ -132,7 +132,7 @@ const ProfileCardEdit = ({ profile }: Props) => {
                 <FormLabel>Experience</FormLabel>
                 <FormControl>
                   <Textarea
-                    className="min-h-25"
+                    className="min-h-21"
                     placeholder="Past volunteering experience, including events and roles"
                     {...field}
                   />

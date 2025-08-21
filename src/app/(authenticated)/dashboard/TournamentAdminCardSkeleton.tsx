@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/shadcn/skeleton";
 
 export default function TournamentAdminCardSkeleton() {
   return (
-    <div className="min-w-xs w-full max-w-md border p-3 rounded-lg bg-card space-y-1">
+    <div className="min-w-xs w-full max-w-md border p-3 rounded-lg bg-card space-y-1 shadow-sm">
       <div className="flex gap-2">
         <Skeleton className="w-[60px] h-[60px]" />
         <Skeleton className="h-5 w-50" />

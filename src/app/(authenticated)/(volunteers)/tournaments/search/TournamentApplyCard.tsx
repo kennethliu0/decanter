@@ -32,7 +32,7 @@ const TournamentApplyCard = (props: Props) => {
   };
 
   return (
-    <div className="min-w-[312px] w-full max-w-[413px] border p-4 rounded-lg bg-card justify-self-start self-start">
+    <div className="min-w-[312px] w-full max-w-[413px] border shadow-sm p-4 rounded-lg bg-card justify-self-start self-start">
       <div className="flex gap-2">
         <Avatar className="w-[60px] h-[60px]">
           <AvatarImage

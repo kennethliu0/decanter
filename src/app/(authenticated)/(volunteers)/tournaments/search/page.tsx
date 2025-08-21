@@ -19,7 +19,7 @@ const Page = (props: Props) => {
           {/* For mobile layouts*/}
           <MobileTournamentFilters />
           <Search
-            className="bg-card dark:bg-card"
+            className="bg-card dark:bg-card shadow-sm"
             placeholder="Search tournaments..."
           />
         </div>

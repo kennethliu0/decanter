@@ -16,11 +16,51 @@ import { Button } from "@/components/shadcn/button";
 import { CONTACT_EMAIL } from "@/lib/config";
 import InviteManagement from "../InviteManagement";
 import { CopyableLink } from "@/components/custom/copyable-link";
-export default async function Home({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+import { Metadata } from "next";
+import { fetchTournamentSummary } from "@/dal/tournament-management-queries";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  if (typeof slug !== "string") {
+    return {
+      title: "Edit Tournament",
+      description:
+        "Edit the details of a tournament, change application fields, or view volunteer applications",
+    };
+  }
+  const res = await fetchTournamentSummary(slug);
+  const tournament = res.data;
+  if (
+    res.error
+    || !tournament?.name
+    || !tournament?.division
+    || !tournament?.image_url
+  ) {
+    return {
+      title: "Edit Tournament",
+      description:
+        "Edit the details of a tournament, change application fields, or view volunteer applications",
+    };
+  }
+  return {
+    title: `Edit ${tournament.name} (${tournament.division})`,
+    description: `Edit the details ${tournament.name} (Division ${tournament.division}).`,
+    openGraph: {
+      images: [
+        {
+          url: tournament.image_url,
+          width: 128,
+          height: 128,
+          alt: tournament.name,
+        },
+      ],
+    },
+  };
+}
+
+export default async function Home({ params }: Props) {
   const { slug } = await params;
 
   const applicationsPromise = getApplicationsCSV(slug);

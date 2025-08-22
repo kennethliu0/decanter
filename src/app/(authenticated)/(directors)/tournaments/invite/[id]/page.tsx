@@ -9,10 +9,52 @@ import {
   AvatarFallback,
 } from "@/components/shadcn/avatar";
 import DecanterIcon from "@/components/custom/DecanterIcon";
+import { Metadata } from "next";
+import { uuid as zodUuid } from "zod/v4";
+import { getInviteInfo } from "@/dal/tournament-invites-queries";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  if (!zodUuid().safeParse(id).success) {
+    return {
+      title: "Accept Invite",
+      description:
+        "You've been invited to manage a tournament. Click here to accept the invite.",
+    };
+  }
+  const res = await getInviteInfo(id);
+  const tournament = res.data[0];
+  if (
+    res.error
+    || !tournament?.name
+    || !tournament?.division
+    || !tournament?.image_url
+  ) {
+    return {
+      title: "Accept Invite",
+      description:
+        "You've been invited to manage a tournament. Click here to accept the invite.",
+    };
+  }
+  return {
+    title: `Invited to ${tournament.name} (${tournament.division})`,
+    description: `You've been invited to manage ${tournament.name} (Division ${tournament.division}). Click here to accept the invite.`,
+    openGraph: {
+      images: [
+        {
+          url: tournament.image_url,
+          width: 128,
+          height: 128,
+          alt: tournament.name,
+        },
+      ],
+    },
+  };
+}
 
 const page = async (props: Props) => {
   const params = await props.params;

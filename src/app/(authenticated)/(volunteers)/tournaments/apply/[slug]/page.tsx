@@ -6,12 +6,49 @@ import {
   getTournamentApplicationInfo,
 } from "@/dal/tournament-application";
 import { getEventPreferences } from "@/dal/profile";
+import { fetchTournamentSummary } from "@/dal/tournament-management-queries";
+import { Metadata } from "next";
 
-export default async function Home({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  if (typeof slug !== "string") {
+    return {
+      title: "Apply to Tournament",
+      description: "Apply to volunteer for a tournament.",
+    };
+  }
+  const res = await fetchTournamentSummary(slug);
+  const tournament = res.data;
+  if (
+    res.error
+    || !tournament?.name
+    || !tournament?.division
+    || !tournament?.image_url
+  ) {
+    return {
+      title: "Apply to Tournament",
+      description: "Apply to volunteer for a tournament.",
+    };
+  }
+  return {
+    title: `Apply to ${tournament.name} (${tournament.division})`,
+    description: `Apply to volunteer for ${tournament.name} (Division ${tournament.division}).`,
+    openGraph: {
+      images: [
+        {
+          url: tournament.image_url,
+          width: 128,
+          height: 128,
+          alt: tournament.name,
+        },
+      ],
+    },
+  };
+}
+
+export default async function Home({ params }: Props) {
   const { slug } = await params;
   const [applicationInfo, savedApplication, eventPreferences] =
     await Promise.all([

@@ -47,6 +47,15 @@ export async function fetchTournamentDetails(tournamentId: string) {
     .maybeSingle();
 }
 
+export async function fetchTournamentSummary(slug: string) {
+  const supabase = await createClient();
+  return supabase
+    .from("tournaments")
+    .select("name, division, image_url")
+    .eq("slug", slug)
+    .maybeSingle();
+}
+
 export async function fetchTournamentApplications(
   tournamentId: string,
   limit = 100,

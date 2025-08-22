@@ -4,7 +4,12 @@ import TournamentFilters from "@/app/(authenticated)/(volunteers)/tournaments/se
 import { Suspense } from "react";
 import TournamentTableSkeleton from "./TournamentTableSkeleton";
 import TournamentTableServer from "./TournamentTableServer";
-import { Card } from "@/components/shadcn/card";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tournament Search",
+  description: "Search for tournaments to apply to.",
+};
 type Props = {};
 const Page = (props: Props) => {
   return (

@@ -32,7 +32,7 @@ const Header = (props: Props) => {
                 asChild
                 className="px-4"
               >
-                <Link href="/dashboard">
+                <Link href="/">
                   <div className="flex gap-2 items-center">
                     <DecanterIcon className="text-primary" />
                     <span className="font-semibold">Decanter</span>

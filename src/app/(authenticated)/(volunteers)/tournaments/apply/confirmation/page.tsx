@@ -1,5 +1,11 @@
 import { Button } from "@/components/shadcn/button";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Application Submitted",
+  description: "Your application has been successfully submitted.",
+};
 
 export default function Page() {
   return (

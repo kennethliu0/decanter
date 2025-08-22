@@ -4,8 +4,14 @@ import TournamentAdminTable from "./TournamentAdminTable";
 import { Button } from "@/components/shadcn/button";
 import Link from "next/link";
 import TournamentsSummary from "./TournamentsSummary";
+import { Metadata } from "next";
 
 type Props = {};
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Welcome to Decanter!",
+};
 
 const page = (props: Props) => {
   return (

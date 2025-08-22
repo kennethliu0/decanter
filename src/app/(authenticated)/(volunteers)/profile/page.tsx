@@ -3,6 +3,12 @@ import ProfileCardEdit from "./ProfileCardEdit";
 import { ERROR_CODES } from "@/lib/errors";
 import { redirect } from "next/navigation";
 import { CONTACT_EMAIL } from "@/lib/config";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Edit Profile",
+  description: "Edit your profile information.",
+};
 
 export default async function Home() {
   const { data, error } = await getProfile();

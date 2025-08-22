@@ -8,6 +8,12 @@ import {
 } from "@/components/shadcn/card";
 import GoogleSignInButton from "../GoogleSignInButton";
 import DecanterIcon from "@/components/custom/DecanterIcon";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign In to Decanter",
+  description: "Sign in with Google to continue to Decanter",
+};
 export default function LoginPage() {
   return (
     <main className="flex flex-col items-center px-4">

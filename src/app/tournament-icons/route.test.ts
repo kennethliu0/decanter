@@ -134,7 +134,7 @@ describe("/tournament-icons", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.url).toBe(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/tournament-icons/8b9c6149-b4a8-414f-adf2-a1ccbe7ecd8f.png`,
+      `${process.env.SUPABASE_URL!}/storage/v1/object/public/tournament-icons/8b9c6149-b4a8-414f-adf2-a1ccbe7ecd8f.png`,
     );
   });
 

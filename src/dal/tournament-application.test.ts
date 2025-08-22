@@ -64,7 +64,7 @@ describe("getTournaments", () => {
           endDate: "2026-03-09",
           applyDeadline: "2025-12-01T05:59:59.999+00:00",
           slug: "jordan-so-invit-divb-2026-3ab0f1b2",
-          applied: false,
+          status: "saved",
         },
       ],
     });

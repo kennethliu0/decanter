@@ -16,7 +16,7 @@ const TournamentsSummary = async () => {
       <StatCard
         title="Saved Applications"
         count={savedApplications}
-        link="/tournaments/search?page=1&saved=true"
+        link="/tournaments/search?page=1&status=saved"
         icon={
           <Avatar>
             <AvatarFallback>

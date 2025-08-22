@@ -50,7 +50,12 @@ export async function getTournaments(): Promise<
   const validatedFields = TournamentCards.safeParse(
     data?.map(({ tournament_applications, ...rest }) => {
       return toCamel({
-        applied: !!tournament_applications?.[0]?.submitted,
+        status:
+          tournament_applications?.[0] ?
+            !!tournament_applications?.[0]?.submitted ?
+              "applied"
+            : "saved"
+          : "notstarted",
         ...rest,
       });
     }),

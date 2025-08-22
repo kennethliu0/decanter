@@ -72,11 +72,17 @@ const TournamentApplyCard = (props: Props) => {
 
           <Button
             asChild
-            variant={props.tournament.applied ? "outline" : "default"}
+            variant={
+              props.tournament.status === "applied" ? "outline" : "default"
+            }
             className="w-17"
           >
             <Link href={`/tournaments/apply/${props.tournament.slug}`}>
-              {props.tournament.applied ? "Applied" : "Apply"}
+              {props.tournament.status === "applied" ?
+                "Applied"
+              : props.tournament.status === "saved" ?
+                "Saved"
+              : "Apply"}
             </Link>
           </Button>
         </div>

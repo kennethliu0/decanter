@@ -9,6 +9,7 @@ import { infer as zodInfer } from "zod/v4";
 import { TournamentCards } from "@/lib/definitions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/shadcn/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { useMemo } from "react";
 
 type Props = {
   tournaments: zodInfer<typeof TournamentCards>;
@@ -17,20 +18,29 @@ type Props = {
 const TournamentTable = (props: Props) => {
   const today = clearUTCTime(new Date());
   const params = useSearchParams();
-  const query = params.get("query");
-  const location = params.getAll("location");
-  const division = params.getAll("division");
-  const showApplied = params.get("showApplied");
-  const sort = params.get("sort") ?? "startDate";
-  const currentPage = parseInt(params.get("page") ?? "1");
-  const startDateAfter = clearUTCTime(
-    new Date(params.get("startDateAfter") ?? today),
-  );
-  const startDateBefore = clearUTCTime(
-    new Date(params.get("startDateBefore") ?? SEASON_END_DATE),
-  );
-  const applyDeadlineAfter = clearUTCTime(
-    new Date(params.get("applyDeadlineAfter") ?? today),
+  const [
+    query,
+    location,
+    division,
+    status,
+    sort,
+    currentPage,
+    startDateAfter,
+    startDateBefore,
+    applyDeadlineAfter,
+  ] = useMemo(
+    () => [
+      params.get("query"),
+      params.getAll("location"),
+      params.getAll("division"),
+      params.getAll("status"),
+      params.get("sort") ?? "startDate",
+      parseInt(params.get("page") ?? "1"),
+      new Date(params.get("startDateAfter") ?? today),
+      new Date(params.get("startDateBefore") ?? SEASON_END_DATE),
+      new Date(params.get("applyDeadlineAfter") ?? today),
+    ],
+    [params],
   );
   const filteredTournaments = props.tournaments
     .map(({ startDate, endDate, applyDeadline, ...rest }) => ({
@@ -47,7 +57,7 @@ const TournamentTable = (props: Props) => {
         && t.startDate < startDateBefore
         && t.applyDeadline > applyDeadlineAfter
         && (!query || fuzzyMatch(query, t.name))
-        && (showApplied || !t.applied),
+        && (status.length === 0 || status.includes(t.status)),
     )
     .sort((a, b) =>
       sort === "applyDeadline" ?

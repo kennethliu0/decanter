@@ -10,8 +10,7 @@ export const metadata: Metadata = {
   title: "Tournament Search",
   description: "Search for tournaments to apply to.",
 };
-type Props = {};
-const Page = (props: Props) => {
+const Page = () => {
   return (
     <main className="grow flex p-4 gap-4 justify-center">
       {/* for desktop layouts */}

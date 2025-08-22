@@ -2,13 +2,11 @@
 
 import { Button } from "@/components/shadcn/button";
 import { signInWithGoogleAction } from "@/app/actions/auth";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { isSafeRedirect } from "@/lib/utils";
 
-type Props = {};
-
-const GoogleSignInButton = (props: Props) => {
+const GoogleSignInButton = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const params = useSearchParams();
   const redirectToRaw = params.get("redirect");

@@ -4,7 +4,6 @@ import { Mock } from "vitest";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest } from "next/server";
 import * as utils from "@/lib/utils";
-import { create } from "domain";
 
 const createSupabaseMock = (exchangeCodeForSessionMock?: Mock) => {
   return vi.mocked(createClient).mockResolvedValue({

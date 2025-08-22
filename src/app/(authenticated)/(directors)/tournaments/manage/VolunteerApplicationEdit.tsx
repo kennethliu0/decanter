@@ -114,7 +114,7 @@ const VolunteerApplicationEdit = ({ value, onChange }: Props) => {
         <Button
           variant="outline"
           onClick={() => {
-            let newFields = [
+            const newFields = [
               ...value,
               {
                 prompt: "",

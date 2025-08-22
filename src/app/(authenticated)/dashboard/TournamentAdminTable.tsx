@@ -1,9 +1,7 @@
 import { TournamentAdminCard } from "./TournamentAdminCard";
 import { getTournamentsManagedByUser } from "@/dal/tournament-management";
 
-type Props = {};
-
-const TournamentAdminTable = async (props: Props) => {
+const TournamentAdminTable = async () => {
   const today = new Date();
   today.setUTCHours(0, 0, 0);
   const { data, error } = await getTournamentsManagedByUser();

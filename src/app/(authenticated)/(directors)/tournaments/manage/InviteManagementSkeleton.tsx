@@ -1,9 +1,7 @@
 import { Label } from "@/components/shadcn/label";
 import { Skeleton } from "@/components/shadcn/skeleton";
 
-type Props = {};
-
-const InviteManagementSkeleton = (props: Props) => {
+const InviteManagementSkeleton = () => {
   return (
     <div className="space-y-2">
       <div className="space-y-2">

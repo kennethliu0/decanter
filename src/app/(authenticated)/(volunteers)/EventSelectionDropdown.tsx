@@ -30,7 +30,7 @@ type Props = {
 const EventSelectionDropdown = (props: Props) => {
   const [open, setOpen] = useState(false);
 
-  let textRank = [
+  const textRank = [
     "First Selection",
     "Second Selection",
     "Third Selection",

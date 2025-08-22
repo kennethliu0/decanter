@@ -4,9 +4,7 @@ import { ERROR_CODES } from "@/lib/errors";
 import { redirect } from "next/navigation";
 import TournamentTable from "./TournamentTable";
 
-type Props = {};
-
-const TournamentTableServer = async (props: Props) => {
+const TournamentTableServer = async () => {
   const { data = [], error } = await getTournaments();
   if (error) {
     if (error.code === ERROR_CODES.UNAUTHORIZED) {

@@ -23,9 +23,7 @@ import { Separator } from "../shadcn/separator";
 import DecanterIcon from "./DecanterIcon";
 import LogoutButton from "./LogoutButton";
 
-type Props = {};
-
-const Navigation = (props: Props) => {
+const Navigation = () => {
   const links = [
     { label: "Tournament Search", path: "/tournaments/search" },
     { label: "Volunteer Profile", path: "/profile" },

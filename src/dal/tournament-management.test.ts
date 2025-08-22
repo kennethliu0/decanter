@@ -322,7 +322,7 @@ describe("getTournamentManagement", () => {
   });
 
   it("validates tournament", async () => {
-    let invalidTournament = await queries.fetchTournamentDetails(
+    const invalidTournament = await queries.fetchTournamentDetails(
       "3ab0f1b2-2425-4abb-b295-b51c7c2fdd1d",
     );
     invalidTournament.data!.division = "D";
@@ -540,7 +540,7 @@ describe("insertTournament", async () => {
     });
   });
   it("calls insert tournament", async () => {
-    const result = await insertTournament(updateTournamentData);
+    await insertTournament(updateTournamentData);
     expect(queries.insertTournamentTable).toHaveBeenCalledExactlyOnceWith({
       application_fields: [
         {
@@ -665,7 +665,7 @@ describe("updateTournament", async () => {
     });
   });
   it("calls update tournament", async () => {
-    const result = await updateTournament(
+    await updateTournament(
       "3ab0f1b2-2425-4abb-b295-b51c7c2fdd1d",
       updateTournamentData,
     );
@@ -857,7 +857,7 @@ describe("getApplicationsCSV", () => {
   });
 
   it("cleans application data", async () => {
-    let sampleApplicationData = await queries.fetchTournamentApplicationsFull(
+    const sampleApplicationData = await queries.fetchTournamentApplicationsFull(
       "3ab0f1b2-2425-4abb-b295-b51c7c2fdd1d",
     );
     sampleApplicationData.data![0].volunteer_profiles = {

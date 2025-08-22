@@ -7,14 +7,9 @@ type Props = {
   error?: boolean;
 };
 
-const GroupedEventPreferencesInput = ({
-  value,
-  division,
-  onChange,
-  error,
-}: Props) => {
+const GroupedEventPreferencesInput = ({ value, division, onChange }: Props) => {
   const onSelectionChange = (selection: string, rank: number) => {
-    let newArray = value ? [...value] : ["", "", "", ""];
+    const newArray = value ? [...value] : ["", "", "", ""];
     newArray[rank] = selection;
     onChange(newArray);
   };

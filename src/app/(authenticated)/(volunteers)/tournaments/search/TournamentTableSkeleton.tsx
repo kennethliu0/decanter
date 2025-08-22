@@ -2,9 +2,7 @@ import TournamentApplyCardSkeleton from "./TournamentApplyCardSkeleton";
 import { TOURNAMENT_CARDS_PER_PAGE } from "@/lib/config";
 import { Pagination } from "@/components/custom/pagination";
 
-type Props = {};
-
-const TournamentTableSkeleton = (props: Props) => {
+const TournamentTableSkeleton = () => {
   const count = Array.from({ length: TOURNAMENT_CARDS_PER_PAGE });
   return (
     <div className="flex flex-col grow gap-4">

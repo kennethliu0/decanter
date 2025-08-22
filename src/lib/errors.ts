@@ -1,8 +1,4 @@
-import {
-  AuthApiError,
-  isAuthApiError,
-  PostgrestError,
-} from "@supabase/supabase-js";
+import { isAuthApiError, PostgrestError } from "@supabase/supabase-js";
 import { ZodError } from "zod/v4";
 
 export enum ERROR_CODES {

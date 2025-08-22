@@ -92,7 +92,6 @@ export async function getTournamentCounts(): Promise<
     console.error(error);
     return { error: toAppError(error) };
   }
-  const total = data.length;
   const tournamentsB = data.filter((t) => t.division === "B").length;
   const tournamentsC = data.filter((t) => t.division === "C").length;
   return {

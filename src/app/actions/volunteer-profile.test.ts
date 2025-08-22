@@ -2,11 +2,7 @@ import { upsertProfile } from "@/dal/profile";
 import { upsertProfileAction } from "./volunteer-profiles";
 import { infer as zodInfer } from "zod/v4";
 import { VolunteerProfileSchema } from "@/lib/definitions";
-import {
-  AppAuthError,
-  ERROR_CODES,
-  TournamentNotFoundError,
-} from "@/lib/errors";
+import { AppAuthError, ERROR_CODES } from "@/lib/errors";
 import { redirect } from "next/navigation";
 
 vi.mock("next/navigation");

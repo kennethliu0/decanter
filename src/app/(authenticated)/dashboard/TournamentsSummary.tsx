@@ -3,10 +3,8 @@ import { getTournamentCounts } from "@/dal/tournament-application";
 import { FolderOpen } from "lucide-react";
 import Link from "next/link";
 
-type Props = {};
-
-const TournamentsSummary = async (props: Props) => {
-  const { data, error } = await getTournamentCounts();
+const TournamentsSummary = async () => {
+  const { data } = await getTournamentCounts();
 
   const { savedApplications, tournamentsB, tournamentsC } = data || {
     savedApplications: 0,

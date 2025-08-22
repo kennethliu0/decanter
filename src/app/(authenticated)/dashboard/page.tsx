@@ -6,14 +6,12 @@ import Link from "next/link";
 import TournamentsSummary from "./TournamentsSummary";
 import { Metadata } from "next";
 
-type Props = {};
-
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Welcome to Decanter!",
 };
 
-const page = (props: Props) => {
+const page = () => {
   return (
     <main className="max-w-4xl w-full mx-auto space-y-8 px-4">
       <h1 className="text-3xl font-bold">Welcome to Decanter!</h1>

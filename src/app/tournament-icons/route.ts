@@ -1,5 +1,4 @@
 import { createClient } from "@/utils/supabase/server";
-import sanitize from "sanitize-filename";
 import { v4 as uuidv4 } from "uuid";
 import { fileTypeFromBuffer } from "file-type";
 import { NextRequest, NextResponse } from "next/server";

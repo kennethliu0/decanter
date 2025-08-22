@@ -1,7 +1,6 @@
 import { ERROR_CODES, TournamentNotFoundError } from "@/lib/errors";
 import {
   createSupabaseMock,
-  mockedFrom,
   sampleSupabaseAppError,
   sampleSupabaseResponseFailure,
 } from "../../tests/utils/__mocks__/supabase";
@@ -13,7 +12,6 @@ import {
   getTournaments,
   upsertTournamentApplication,
 } from "./tournament-application";
-import { PostgrestError } from "@supabase/supabase-js";
 import * as queries from "./tournament-application-queries";
 
 beforeEach(() => {

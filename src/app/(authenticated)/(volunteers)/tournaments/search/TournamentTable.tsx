@@ -80,8 +80,8 @@ const TournamentTable = (props: Props) => {
               <AlertCircleIcon />
               <AlertTitle>Invalid filters</AlertTitle>
               <AlertDescription>
-                "Start Date After" field cannot be greater than "Start Date
-                Before"
+                &quot;Start Date After&quot; field cannot be greater than
+                &quot;Start Date Before&quot;
               </AlertDescription>
             </Alert>
           )}

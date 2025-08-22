@@ -1,7 +1,6 @@
 import { Skeleton } from "@/components/shadcn/skeleton";
-type Props = {};
 
-const TournamentApplyCardSkeleton = (props: Props) => {
+const TournamentApplyCardSkeleton = () => {
   return (
     <div className="min-w-[312px] max-w-[413px] w-full border shadow-sm p-4 rounded-lg bg-card space-y-1">
       <div className="flex gap-2">

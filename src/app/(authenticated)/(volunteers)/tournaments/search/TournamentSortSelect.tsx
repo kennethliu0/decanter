@@ -7,9 +7,8 @@ import {
   SelectValue,
 } from "@/components/shadcn/select";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-type Props = {};
 
-const TournamentSortSelect = (props: Props) => {
+const TournamentSortSelect = () => {
   const sortOptions = [
     { label: "Tournament Start Date", param: "startDate" },
     { label: "Application Due Date", param: "applyDeadline" },

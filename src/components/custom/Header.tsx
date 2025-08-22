@@ -1,13 +1,3 @@
-import { Button } from "@/components/shadcn/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/shadcn/sheet";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -19,9 +9,7 @@ import Link from "next/link";
 import React from "react";
 import DecanterIcon from "./DecanterIcon";
 
-type Props = {};
-
-const Header = (props: Props) => {
+const Header = () => {
   return (
     <header className="bg-background sticky top-0 z-50 w-full px-2 sm:px-8 py-4 border-b mb-4">
       <div className="flex items-center justify-between">

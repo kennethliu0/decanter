@@ -1,4 +1,3 @@
-import { Globe } from "lucide-react";
 import {
   Avatar,
   AvatarImage,
@@ -68,7 +67,6 @@ const TournamentApplyCard = (props: Props) => {
         <div className="flex gap-1 items-center">
           <ExternalLinkIcon
             href={props.tournament.websiteUrl}
-            iconSize={24}
             label={`${props.tournament.name} external link`}
           />
 

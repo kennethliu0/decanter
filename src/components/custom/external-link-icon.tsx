@@ -19,14 +19,12 @@ interface ExternalLinkIconProps {
   href: string;
   label?: string;
   className?: string;
-  iconSize?: number;
 }
 
 export function ExternalLinkIcon({
   href,
   label = "external link",
   className = "",
-  iconSize = 16,
 }: ExternalLinkIconProps) {
   const [showDialog, setShowDialog] = useState(false);
 

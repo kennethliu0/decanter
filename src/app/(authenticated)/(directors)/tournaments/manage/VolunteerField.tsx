@@ -40,7 +40,7 @@ const VolunteerField = forwardRef<HTMLLIElement, VolunteerFieldProps>(
               onTypeChange ? onTypeChange(value as InputType) : null
             }
             onClick={(e) => {
-              e.stopPropagation;
+              e.stopPropagation();
             }}
           >
             <div className="flex gap-2 items-center">
@@ -69,5 +69,7 @@ const VolunteerField = forwardRef<HTMLLIElement, VolunteerFieldProps>(
     );
   },
 );
+
+VolunteerField.displayName = "VolunteerField";
 
 export default VolunteerField;

@@ -12,9 +12,7 @@ import {
 import { FilterIcon } from "lucide-react";
 import TournamentFilters from "./TournamentFilters";
 
-type Props = {};
-
-const MobileTournamentFilters = (props: Props) => {
+const MobileTournamentFilters = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>

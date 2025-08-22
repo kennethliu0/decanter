@@ -11,7 +11,7 @@ import { Label } from "@/components/shadcn/label";
 import { useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { SEASON_END_DATE, US_STATES } from "@/lib/config";
-import { cn, safeParseDate } from "@/lib/utils";
+import { safeParseDate } from "@/lib/utils";
 import DatePicker from "@/components/custom/DatePicker";
 import { RadioGroup, RadioGroupItem } from "@/components/shadcn/radio-group";
 import { Button } from "@/components/shadcn/button";
@@ -30,7 +30,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
     sortValue,
     selectedDivisions,
     selectedLocations,
-    showApplied,
+    selectedStatus,
     startDateAfter,
     startDateBefore,
     applyDeadlineAfter,
@@ -39,24 +39,13 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
       searchParams.get("sort") ?? "startDate",
       searchParams.getAll("division"),
       searchParams.getAll("location"),
-      searchParams.get("showApplied") ?? "false",
+      searchParams.getAll("status"),
       safeParseDate(searchParams.get("startDateAfter")),
       safeParseDate(searchParams.get("startDateBefore")),
       safeParseDate(searchParams.get("applyDeadlineAfter")),
     ],
     [searchParams],
   );
-
-  const numSortFiltersEdited = useMemo(() => {
-    let count = 0;
-    if (showApplied !== "false") {
-      count++;
-    }
-    if (sortValue !== "startDate") {
-      count++;
-    }
-    return count;
-  }, [showApplied, sortValue]);
 
   const numDateFiltersEdited = useMemo(() => {
     let count = 0;
@@ -158,10 +147,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
   return (
     <Accordion {...props}>
       <AccordionItem value="item-1">
-        <AccordionTrigger>
-          Sort & Filter{" "}
-          {numSortFiltersEdited > 0 && `(${numSortFiltersEdited})`}
-        </AccordionTrigger>
+        <AccordionTrigger>Sort</AccordionTrigger>
         <AccordionContent className="space-y-4">
           <RadioGroup
             value={sortValue}
@@ -183,23 +169,42 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
               <Label htmlFor="applyDeadline">Application Deadline</Label>
             </div>
           </RadioGroup>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>
+          Status {selectedStatus.length > 0 && `(${selectedStatus.length})`}
+        </AccordionTrigger>
+        <AccordionContent className="space-y-4">
           <AccordionOption
-            id="show-applied"
-            text="Show Applied Tournaments"
-            onCheckedChange={getCheckboxHandler("showApplied", "true")}
-            checked={showApplied === "true"}
+            id="not-started"
+            text="Not Started"
+            onCheckedChange={getCheckboxHandler("status", "notstarted")}
+            checked={selectedStatus.includes("notstarted")}
+          />
+          <AccordionOption
+            id="saved"
+            text="Saved"
+            onCheckedChange={getCheckboxHandler("status", "saved")}
+            checked={selectedStatus.includes("saved")}
+          />
+          <AccordionOption
+            id="applied"
+            text="Applied"
+            onCheckedChange={getCheckboxHandler("status", "applied")}
+            checked={selectedStatus.includes("applied")}
           />
           <Button
             variant="link"
             className="p-0 h-auto"
-            onClick={handleClearParams(["sort", "showApplied"])}
-            disabled={numSortFiltersEdited === 0}
+            onClick={handleClearParams(["status"])}
+            disabled={selectedStatus.length === 0}
           >
             Clear
           </Button>
         </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="item-2">
+      <AccordionItem value="item-3">
         <AccordionTrigger>
           Division{" "}
           {selectedDivisions.length > 0 && `(${selectedDivisions.length})`}
@@ -227,7 +232,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           </Button>
         </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="item-3">
+      <AccordionItem value="item-4">
         <AccordionTrigger>
           Date {numDateFiltersEdited > 0 && `(${numDateFiltersEdited})`}
         </AccordionTrigger>
@@ -270,7 +275,7 @@ const TournamentFilters = ({ ...props }: AccordionWrapperProps) => {
           </Button>
         </AccordionContent>
       </AccordionItem>
-      <AccordionItem value="item-4">
+      <AccordionItem value="item-5">
         <AccordionTrigger>
           Location{" "}
           {selectedLocations.length > 0 && `(${selectedLocations.length})`}
@@ -301,14 +306,10 @@ const AccordionOption = (
     text: string;
   } & React.ComponentProps<typeof Checkbox>,
 ) => {
-  const { text, id, className, ...otherProps } = props;
   return (
-    <div className={cn("flex items-center gap-3", className)}>
-      <Checkbox
-        id={id}
-        {...otherProps}
-      />
-      <Label htmlFor={id}>{text}</Label>
+    <div className="flex items-center gap-3">
+      <Checkbox {...props} />
+      <Label htmlFor={props.id}>{props.text}</Label>
     </div>
   );
 };

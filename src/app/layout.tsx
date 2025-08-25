@@ -32,10 +32,18 @@ export const metadata: Metadata = {
         width: 512,
         height: 512,
       },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Decanter",
+    description:
+      "Easily discover and apply to Science Olympiad tournaments while organizers recruit volunteers in one streamlined platform.",
+    images: [
       {
-        url: "/opengraph-rectangular.png",
-        width: 1200,
-        height: 630,
+        url: "/web-app-manifest-512x512.png",
+        width: 512,
+        height: 512,
       },
     ],
   },

@@ -19,7 +19,7 @@ export async function logout() {
     });
     return { message: "An error occurred while logging out." };
   }
-  
+
   revalidatePath("/login", "layout");
   redirect("/login");
 }
@@ -27,7 +27,7 @@ export async function logout() {
 export async function signInWithGoogleAction(redirectToRaw: string) {
   const supabase = await createClient();
   const requestHeaders = await headers();
-  const origin = requestHeaders.get("origin"); 
+  const origin = requestHeaders.get("origin");
   if (origin !== process.env.NEXT_PUBLIC_SITE_URL!) {
     console.error("Untrusted origin:", origin);
     return redirect("/login");

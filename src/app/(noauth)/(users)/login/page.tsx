@@ -11,7 +11,7 @@ import DecanterIcon from "@/components/custom/DecanterIcon";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In to Decanter",
+  title: "Sign In",
   description: "Sign in with Google to continue to Decanter",
 };
 export default function LoginPage() {

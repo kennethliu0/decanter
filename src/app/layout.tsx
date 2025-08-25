@@ -16,7 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Decanter",
+  title: {
+    template: "%s | Decanter",
+    default: "Decanter",
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
   description:
     "Easily discover and apply to Science Olympiad tournaments while organizers recruit volunteers in one streamlined platform.",
   appleWebApp: {

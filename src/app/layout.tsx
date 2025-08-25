@@ -19,6 +19,26 @@ export const metadata: Metadata = {
   title: "Decanter",
   description:
     "Easily discover and apply to Science Olympiad tournaments while organizers recruit volunteers in one streamlined platform.",
+  appleWebApp: {
+    title: "Decanter",
+  },
+  openGraph: {
+    title: "Decanter",
+    description:
+      "Easily discover and apply to Science Olympiad tournaments while organizers recruit volunteers in one streamlined platform.",
+    images: [
+      {
+        url: "/web-app-manifest-512x512.png",
+        width: 512,
+        height: 512,
+      },
+      {
+        url: "/opengraph-rectangular.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

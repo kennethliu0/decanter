@@ -8,6 +8,7 @@ export const EVENTS = {
     "Anatomy and Physiology",
     "Boomilever",
     "Bungee Drop",
+    "Crime Busters",
     "Circuit Lab",
     "Codebusters",
     "Disease Detectives",
